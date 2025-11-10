@@ -1,0 +1,58 @@
+# Node modules and build output
+node_modules/
+dist/
+dist-ssr/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment files
+.env
+*.local
+
+# App data
+.data/
+files/
+ormconfig.json
+.codegpt
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# OS files
+.DS_Store
+
+# IDE and editor settings
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Frontend build (React/Next)
+frontend/.next/
+frontend/out/
+
+# Misc
+*.pid
+*.seed
+*.pid.lock
