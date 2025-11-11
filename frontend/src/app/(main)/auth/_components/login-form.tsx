@@ -11,6 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -59,12 +60,12 @@ export function LoginForm() {
     }
   };
 
-  // Keep this commented to test login
-  // useEffect(() => {
-  //   if (isAuthenticated) {
-  //     router.replace('/dashboard');
-  //   }
-  // }, [isAuthenticated, router]);
+  // Redirect if the user is already authentificated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/dashboard');
+    }
+  }, [isAuthenticated, router]);
 
   return (
     <Form {...form}>

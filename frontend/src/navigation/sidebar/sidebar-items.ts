@@ -1,6 +1,4 @@
 import {
-  ShoppingBag,
-  Forklift,
   Mail,
   MessageSquare,
   Calendar,
@@ -9,13 +7,12 @@ import {
   Users,
   Lock,
   Fingerprint,
-  SquareArrowUpRight,
   LayoutDashboard,
-  ChartBar,
   Banknote,
   Gauge,
-  GraduationCap,
   type LucideIcon,
+  Shield,
+  ClipboardList,
 } from "lucide-react";
 
 export interface NavSubItem {
@@ -49,43 +46,19 @@ export const sidebarItems: NavGroup[] = [
     label: "Dashboards",
     items: [
       {
-        title: "Default",
+        title: "Home",
         url: "/dashboard/default",
         icon: LayoutDashboard,
       },
       {
-        title: "CRM",
+        title: "Annual Calendar",
         url: "/dashboard/crm",
-        icon: ChartBar,
+        icon: Calendar, // calendar instead of ChartBar
       },
       {
         title: "Finance",
         url: "/dashboard/finance",
         icon: Banknote,
-      },
-      {
-        title: "Analytics",
-        url: "/dashboard/coming-soon",
-        icon: Gauge,
-        comingSoon: true,
-      },
-      {
-        title: "E-commerce",
-        url: "/dashboard/coming-soon",
-        icon: ShoppingBag,
-        comingSoon: true,
-      },
-      {
-        title: "Academy",
-        url: "/dashboard/coming-soon",
-        icon: GraduationCap,
-        comingSoon: true,
-      },
-      {
-        title: "Logistics",
-        url: "/dashboard/coming-soon",
-        icon: Forklift,
-        comingSoon: true,
       },
     ],
   },
@@ -94,33 +67,51 @@ export const sidebarItems: NavGroup[] = [
     label: "Pages",
     items: [
       {
-        title: "Email",
+        title: "Sprints",
         url: "/dashboard/coming-soon",
-        icon: Mail,
+        icon: Kanban, // sprints = board/kanban
+        comingSoon: true,
+      },
+      {
+        title: "Tasks",
+        url: "/dashboard/coming-soon",
+        icon: ReceiptText, // tasks/document style
+        comingSoon: true,
+      },
+      {
+        title: "KPIs",
+        url: "/dashboard/coming-soon",
+        icon: Gauge, // gauge = performance metrics
+        comingSoon: true,
+      },
+      {
+        title: "Reports",
+        url: "/dashboard/coming-soon",
+        icon: ClipboardList,
+        comingSoon: true,
+      },
+      {
+        title: "Risks",
+        url: "/dashboard/coming-soon",
+        icon: Shield,
+        comingSoon: true,
+      },
+      {
+        title: "Alumni",
+        url: "/dashboard/coming-soon",
+        icon: Users, // alumni = group of users
+        comingSoon: true,
+      },
+      {
+        title: "Notifications",
+        url: "/dashboard/coming-soon",
+        icon: Mail, // notification = mail/envelope
         comingSoon: true,
       },
       {
         title: "Chat",
         url: "/dashboard/coming-soon",
         icon: MessageSquare,
-        comingSoon: true,
-      },
-      {
-        title: "Calendar",
-        url: "/dashboard/coming-soon",
-        icon: Calendar,
-        comingSoon: true,
-      },
-      {
-        title: "Kanban",
-        url: "/dashboard/coming-soon",
-        icon: Kanban,
-        comingSoon: true,
-      },
-      {
-        title: "Invoice",
-        url: "/dashboard/coming-soon",
-        icon: ReceiptText,
         comingSoon: true,
       },
       {
@@ -147,17 +138,5 @@ export const sidebarItems: NavGroup[] = [
         ],
       },
     ],
-  },
-  {
-    id: 3,
-    label: "Misc",
-    items: [
-      {
-        title: "Others",
-        url: "/dashboard/coming-soon",
-        icon: SquareArrowUpRight,
-        comingSoon: true,
-      },
-    ],
-  },
+  }
 ];

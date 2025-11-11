@@ -1,13 +1,15 @@
 import type { UserResponse } from '../schemas/auth.schemas';
 import type { LoginRequest } from '../schemas/auth.schemas';
 
+export type User = UserResponse;
+
 export interface AuthState {
   user: UserResponse | null;
   accessToken: string | null;
   refreshToken: string | null;
   tokenExpires?: number;
   isAuthenticated: boolean;
-  hasHydrated?: boolean; // ← flag to know when persisted state is loaded
+  hasHydrated?: boolean; // ← flag to know when persisted (in localStorage) state is loaded
 }
 
 
