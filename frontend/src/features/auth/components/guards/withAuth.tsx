@@ -12,7 +12,7 @@ export function withAuth<P extends object>(WrappedComponent: React.ComponentType
 
     useEffect(() => {
       if (hasHydrated && !user) {
-        router.replace('/login');
+        router.replace('/auth/v1/login');
       }
     }, [hasHydrated, user, router]);
 
