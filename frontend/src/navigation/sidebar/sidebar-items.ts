@@ -1,6 +1,5 @@
 import {
   Mail,
-  MessageSquare,
   Calendar,
   Kanban,
   ReceiptText,
@@ -52,7 +51,7 @@ export const sidebarItems: NavGroup[] = [
       },
       {
         title: "Annual Calendar",
-        url: "/dashboard/crm",
+        url: "/dashboard/annual-calendar",
         icon: Calendar, // calendar instead of ChartBar
       },
       {
@@ -68,63 +67,48 @@ export const sidebarItems: NavGroup[] = [
     items: [
       {
         title: "Sprints",
-        url: "/dashboard/coming-soon",
+        url: "/dashboard/sprints",
         icon: Kanban, // sprints = board/kanban
-        comingSoon: true,
       },
       {
         title: "Tasks",
-        url: "/dashboard/coming-soon",
+        url: "/dashboard/tasks",
         icon: ReceiptText, // tasks/document style
-        comingSoon: true,
       },
       {
         title: "KPIs",
-        url: "/dashboard/coming-soon",
+        url: "/dashboard/kpis",
         icon: Gauge, // gauge = performance metrics
-        comingSoon: true,
       },
       {
         title: "Reports",
-        url: "/dashboard/coming-soon",
+        url: "/dashboard/reports",
         icon: ClipboardList,
-        comingSoon: true,
       },
       {
         title: "Risks",
-        url: "/dashboard/coming-soon",
+        url: "/dashboard/risks",
         icon: Shield,
-        comingSoon: true,
       },
       {
         title: "Alumni",
-        url: "/dashboard/coming-soon",
+        url: "/dashboard/alumni",
         icon: Users, // alumni = group of users
-        comingSoon: true,
       },
       {
         title: "Notifications",
-        url: "/dashboard/coming-soon",
+        url: "/dashboard/notifications",
         icon: Mail, // notification = mail/envelope
-        comingSoon: true,
-      },
-      {
-        title: "Chat",
-        url: "/dashboard/coming-soon",
-        icon: MessageSquare,
-        comingSoon: true,
       },
       {
         title: "Users",
-        url: "/dashboard/coming-soon",
+        url: "/dashboard/users",
         icon: Users,
-        comingSoon: true,
       },
       {
         title: "Roles",
-        url: "/dashboard/coming-soon",
+        url: "/dashboard/roles",
         icon: Lock,
-        comingSoon: true,
       },
       {
         title: "Authentication",
