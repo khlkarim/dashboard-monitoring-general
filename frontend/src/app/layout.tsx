@@ -10,6 +10,7 @@ import { PreferencesStoreProvider } from "@/stores/preferences/preferences-provi
 import { THEME_MODE_VALUES, THEME_PRESET_VALUES, type ThemePreset, type ThemeMode } from "@/types/preferences/theme";
 
 import "./globals.css";
+import QueryProvider from "@/providers/query-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,10 +31,12 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       suppressHydrationWarning
     >
       <body className={`${inter.className} min-h-screen antialiased`}>
-        <PreferencesStoreProvider themeMode={themeMode} themePreset={themePreset}>
-          {children}
-          <Toaster />
-        </PreferencesStoreProvider>
+        <QueryProvider>
+          <PreferencesStoreProvider themeMode={themeMode} themePreset={themePreset}>
+            {children}
+            <Toaster />
+          </PreferencesStoreProvider>
+        </QueryProvider>
       </body>
     </html>
   );

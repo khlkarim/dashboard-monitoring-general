@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:17.6-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - ${DATABASE_PORT}:5432
+  
+  adminer:
+    image: adminer:latest
+    restart: always
+    ports:
+      - ${ADMINER_PORT}:8080
+    depends_on:
+      - postgres
+
+  maildev:
+    image: maildev/maildev:latest
+    restart: always
+    ports:
+      - ${MAIL_CLIENT_PORT}:1080  # Web UI
+      - ${MAIL_PORT}:1025  # SMTP
+    environment:
+      - MAILDEV_SMTP_PORT=1025
+      - MAILDEV_WEB_PORT=1080
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    ports:
+      - ${EXPOSED_BACKEND_PORT}:3000
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+    ports:
+      - ${EXPOSED_FRONTEND_PORT}:3000
+
+volumes:
+  pg_data:

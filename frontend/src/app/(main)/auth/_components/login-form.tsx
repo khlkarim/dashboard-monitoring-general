@@ -9,6 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAuthStore } from "@/features/auth/store/auth.store";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -17,6 +20,10 @@ const FormSchema = z.object({
 });
 
 export function LoginForm() {
+  const router = useRouter();
+  const login = useAuthStore((state) => state.login);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -34,7 +41,31 @@ export function LoginForm() {
         </pre>
       ),
     });
+
+    try {
+      await login(data);
+
+      // Redirect after successful login
+      if (isAuthenticated) {
+        router.push('/dashboard');
+      }
+    } catch (err: any) {
+      toast("Login failed", {
+        description: (
+          <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
+            <code className="text-white">{err?.message}</code>
+          </pre>
+        ),
+      });
+    }
   };
+
+  // Redirect if the user is already authentificated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/dashboard');
+    }
+  }, [isAuthenticated, router]);
 
   return (
     <Form {...form}>

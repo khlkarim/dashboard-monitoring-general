@@ -1,21 +1,17 @@
 import {
-  ShoppingBag,
-  Forklift,
   Mail,
-  MessageSquare,
   Calendar,
   Kanban,
   ReceiptText,
   Users,
   Lock,
   Fingerprint,
-  SquareArrowUpRight,
   LayoutDashboard,
-  ChartBar,
   Banknote,
   Gauge,
-  GraduationCap,
   type LucideIcon,
+  Shield,
+  ClipboardList,
 } from "lucide-react";
 
 export interface NavSubItem {
@@ -49,43 +45,19 @@ export const sidebarItems: NavGroup[] = [
     label: "Dashboards",
     items: [
       {
-        title: "Default",
+        title: "Home",
         url: "/dashboard/default",
         icon: LayoutDashboard,
       },
       {
-        title: "CRM",
-        url: "/dashboard/crm",
-        icon: ChartBar,
+        title: "Annual Calendar",
+        url: "/dashboard/annual-calendar",
+        icon: Calendar, // calendar instead of ChartBar
       },
       {
         title: "Finance",
         url: "/dashboard/finance",
         icon: Banknote,
-      },
-      {
-        title: "Analytics",
-        url: "/dashboard/coming-soon",
-        icon: Gauge,
-        comingSoon: true,
-      },
-      {
-        title: "E-commerce",
-        url: "/dashboard/coming-soon",
-        icon: ShoppingBag,
-        comingSoon: true,
-      },
-      {
-        title: "Academy",
-        url: "/dashboard/coming-soon",
-        icon: GraduationCap,
-        comingSoon: true,
-      },
-      {
-        title: "Logistics",
-        url: "/dashboard/coming-soon",
-        icon: Forklift,
-        comingSoon: true,
       },
     ],
   },
@@ -94,46 +66,49 @@ export const sidebarItems: NavGroup[] = [
     label: "Pages",
     items: [
       {
-        title: "Email",
-        url: "/dashboard/coming-soon",
-        icon: Mail,
-        comingSoon: true,
+        title: "Sprints",
+        url: "/dashboard/sprints",
+        icon: Kanban, // sprints = board/kanban
       },
       {
-        title: "Chat",
-        url: "/dashboard/coming-soon",
-        icon: MessageSquare,
-        comingSoon: true,
+        title: "Tasks",
+        url: "/dashboard/tasks",
+        icon: ReceiptText, // tasks/document style
       },
       {
-        title: "Calendar",
-        url: "/dashboard/coming-soon",
-        icon: Calendar,
-        comingSoon: true,
+        title: "KPIs",
+        url: "/dashboard/kpis",
+        icon: Gauge, // gauge = performance metrics
       },
       {
-        title: "Kanban",
-        url: "/dashboard/coming-soon",
-        icon: Kanban,
-        comingSoon: true,
+        title: "Reports",
+        url: "/dashboard/reports",
+        icon: ClipboardList,
       },
       {
-        title: "Invoice",
-        url: "/dashboard/coming-soon",
-        icon: ReceiptText,
-        comingSoon: true,
+        title: "Risks",
+        url: "/dashboard/risks",
+        icon: Shield,
+      },
+      {
+        title: "Alumni",
+        url: "/dashboard/alumni",
+        icon: Users, // alumni = group of users
+      },
+      {
+        title: "Notifications",
+        url: "/dashboard/notifications",
+        icon: Mail, // notification = mail/envelope
       },
       {
         title: "Users",
-        url: "/dashboard/coming-soon",
+        url: "/dashboard/users",
         icon: Users,
-        comingSoon: true,
       },
       {
         title: "Roles",
-        url: "/dashboard/coming-soon",
+        url: "/dashboard/roles",
         icon: Lock,
-        comingSoon: true,
       },
       {
         title: "Authentication",
@@ -147,17 +122,5 @@ export const sidebarItems: NavGroup[] = [
         ],
       },
     ],
-  },
-  {
-    id: 3,
-    label: "Misc",
-    items: [
-      {
-        title: "Others",
-        url: "/dashboard/coming-soon",
-        icon: SquareArrowUpRight,
-        comingSoon: true,
-      },
-    ],
-  },
+  }
 ];
