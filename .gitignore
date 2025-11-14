@@ -18,7 +18,6 @@ lerna-debug.log*
 
 # App data
 .data/
-files/
 ormconfig.json
 .codegpt
 
