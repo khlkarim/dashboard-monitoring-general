@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { authApi } from '../api/auth.api';
 import type { AuthState, AuthActions } from '../types/auth.types';
-import type { LoginRequest, UserResponse } from '../schemas/auth.schemas';
+import type { LoginRequest, RegisterRequest, UserResponse } from '../schemas/auth.schemas';
 
 export const useAuthStore = create<AuthState & AuthActions>()(
   persist(
@@ -25,6 +25,12 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           tokenExpires: response.tokenExpires,
           isAuthenticated: true,
         });
+      },
+
+      /** Log in the user and update tokens */
+      register: async (credentials: RegisterRequest) => {
+        const response = await authApi.register(credentials);
+        console.log("store response: ", response);
       },
 
       /** Refresh access token when it expires */

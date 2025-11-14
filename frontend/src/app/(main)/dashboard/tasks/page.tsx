@@ -1,18 +1,17 @@
 "use client";
 
 import { withAuth } from "@/features/auth/components/guards/withAuth";
-import { InsightCards } from "./_components/insight-cards";
-import { OperationalCards } from "./_components/operational-cards";
-import { OverviewCards } from "./_components/overview-cards";
-import { TableCards } from "./_components/table-cards";
+import { ChartAreaInteractive } from "./_components/chart-area-interactive";
+import { DataTable } from "./_components/data-table";
+import data from "./_components/data.json";
+import { SectionCards } from "./_components/section-cards";
 
 function Page() {
   return (
-    <div className="flex flex-col gap-4 md:gap-6">
-      <OverviewCards />
-      <InsightCards />
-      <OperationalCards />
-      <TableCards />
+    <div className="@container/main flex flex-col gap-4 md:gap-6">
+      <SectionCards />
+      <ChartAreaInteractive />
+      <DataTable data={data} />
     </div>
   );
 }

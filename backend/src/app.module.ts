@@ -32,8 +32,16 @@ const infrastructureDatabaseModule = TypeOrmModule.forRootAsync({
   },
 });
 
+import { SprintsModule } from './sprints/sprints.module';
+import { TasksModule } from './tasks/tasks.module';
+
+import { KpisModule } from './kpis/kpis.module';
+
 @Module({
   imports: [
+    KpisModule,
+    TasksModule,
+    SprintsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
