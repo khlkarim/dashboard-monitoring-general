@@ -38,8 +38,13 @@ docker compose up -d
 ```
 
 The backend swagger api is at http://localhost:3001/docs.
+
 The frontend is at http://localhost:3000/.
+
 Login creds:
-    admin@example.com  
-    secret
+```bash
+admin@example.com  
+secret
+```
+
 Email verification links are sent to the maildev server.
