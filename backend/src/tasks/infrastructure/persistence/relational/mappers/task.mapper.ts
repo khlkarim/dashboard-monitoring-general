@@ -1,4 +1,5 @@
 import { Task } from '../../../../domain/task';
+
 import { UserMapper } from '../../../../../users/infrastructure/persistence/relational/mappers/user.mapper';
 
 import { SprintMapper } from '../../../../../sprints/infrastructure/persistence/relational/mappers/sprint.mapper';
@@ -8,6 +9,10 @@ import { TaskEntity } from '../entities/task.entity';
 export class TaskMapper {
   static toDomain(raw: TaskEntity): Task {
     const domainEntity = new Task();
+    domainEntity.type = raw.type;
+
+    domainEntity.status = raw.status;
+
     if (raw.reporter) {
       domainEntity.reporter = UserMapper.toDomain(raw.reporter);
     }
@@ -35,6 +40,10 @@ export class TaskMapper {
 
   static toPersistence(domainEntity: Task): TaskEntity {
     const persistenceEntity = new TaskEntity();
+    persistenceEntity.type = domainEntity.type;
+
+    persistenceEntity.status = domainEntity.status;
+
     if (domainEntity.reporter) {
       persistenceEntity.reporter = UserMapper.toPersistence(
         domainEntity.reporter,

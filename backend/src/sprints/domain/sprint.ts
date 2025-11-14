@@ -3,6 +3,12 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class Sprint {
   @ApiProperty({
+    type: () => Number,
+    nullable: false,
+  })
+  status: number;
+
+  @ApiProperty({
     type: () => User,
     nullable: false,
   })

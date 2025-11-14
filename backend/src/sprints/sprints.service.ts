@@ -25,6 +25,7 @@ export class SprintsService {
   async create(createSprintDto: CreateSprintDto) {
     // Do not remove comment below.
     // <creating-property />
+
     const createdByObject = await this.userService.findById(
       createSprintDto.createdBy.id,
     );
@@ -41,6 +42,8 @@ export class SprintsService {
     return this.sprintRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+      status: createSprintDto.status,
+
       createdBy,
 
       endDate: createSprintDto.endDate,
@@ -81,6 +84,7 @@ export class SprintsService {
   ) {
     // Do not remove comment below.
     // <updating-property />
+
     let createdBy: User | undefined = undefined;
 
     if (updateSprintDto.createdBy) {
@@ -101,6 +105,8 @@ export class SprintsService {
     return this.sprintRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+      status: updateSprintDto.status,
+
       createdBy,
 
       endDate: updateSprintDto.endDate,

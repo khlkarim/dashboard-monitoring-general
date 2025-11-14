@@ -4,6 +4,18 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class Task {
   @ApiProperty({
+    type: () => Number,
+    nullable: false,
+  })
+  type: number;
+
+  @ApiProperty({
+    type: () => Number,
+    nullable: false,
+  })
+  status: number;
+
+  @ApiProperty({
     type: () => User,
     nullable: false,
   })

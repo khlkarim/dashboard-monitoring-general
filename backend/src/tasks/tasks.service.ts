@@ -30,6 +30,7 @@ export class TasksService {
   async create(createTaskDto: CreateTaskDto) {
     // Do not remove comment below.
     // <creating-property />
+
     const reporterObject = await this.userService.findById(
       createTaskDto.reporter.id,
     );
@@ -72,6 +73,10 @@ export class TasksService {
     return this.taskRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+      type: createTaskDto.type,
+
+      status: createTaskDto.status,
+
       reporter,
 
       assignee,
@@ -114,6 +119,7 @@ export class TasksService {
   ) {
     // Do not remove comment below.
     // <updating-property />
+
     let reporter: User | undefined = undefined;
 
     if (updateTaskDto.reporter) {
@@ -168,6 +174,10 @@ export class TasksService {
     return this.taskRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+      type: updateTaskDto.type,
+
+      status: updateTaskDto.status,
+
       reporter,
 
       assignee,

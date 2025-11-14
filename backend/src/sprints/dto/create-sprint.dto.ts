@@ -8,6 +8,7 @@ import {
   IsDate,
   ValidateNested,
   IsNotEmptyObject,
+  IsNumber,
 } from 'class-validator';
 
 import {
@@ -23,6 +24,13 @@ import {
 } from 'class-transformer';
 
 export class CreateSprintDto {
+  @ApiProperty({
+    required: true,
+    type: () => Number,
+  })
+  @IsNumber()
+  status: number;
+
   @ApiProperty({
     required: true,
     type: () => UserDto,

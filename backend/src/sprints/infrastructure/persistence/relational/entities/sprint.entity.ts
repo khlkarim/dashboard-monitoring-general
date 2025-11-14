@@ -14,6 +14,12 @@ import { EntityRelationalHelper } from '../../../../../utils/relational-entity-h
   name: 'sprint',
 })
 export class SprintEntity extends EntityRelationalHelper {
+  @Column({
+    nullable: false,
+    type: Number,
+  })
+  status: number;
+
   @ManyToOne(() => UserEntity, { eager: true, nullable: false })
   createdBy: UserEntity;
 

@@ -16,6 +16,18 @@ import { EntityRelationalHelper } from '../../../../../utils/relational-entity-h
   name: 'task',
 })
 export class TaskEntity extends EntityRelationalHelper {
+  @Column({
+    nullable: false,
+    type: Number,
+  })
+  type: number;
+
+  @Column({
+    nullable: false,
+    type: Number,
+  })
+  status: number;
+
   @ManyToOne(() => UserEntity, { eager: true, nullable: false })
   reporter: UserEntity;
 

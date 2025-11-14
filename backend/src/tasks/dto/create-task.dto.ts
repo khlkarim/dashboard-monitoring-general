@@ -10,6 +10,7 @@ import {
   IsDate,
   ValidateNested,
   IsNotEmptyObject,
+  IsNumber,
 } from 'class-validator';
 
 import {
@@ -25,6 +26,20 @@ import {
 } from 'class-transformer';
 
 export class CreateTaskDto {
+  @ApiProperty({
+    required: true,
+    type: () => Number,
+  })
+  @IsNumber()
+  type: number;
+
+  @ApiProperty({
+    required: true,
+    type: () => Number,
+  })
+  @IsNumber()
+  status: number;
+
   @ApiProperty({
     required: true,
     type: () => UserDto,

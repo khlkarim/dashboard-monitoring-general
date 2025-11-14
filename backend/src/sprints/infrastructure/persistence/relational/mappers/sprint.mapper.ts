@@ -1,4 +1,5 @@
 import { Sprint } from '../../../../domain/sprint';
+
 import { UserMapper } from '../../../../../users/infrastructure/persistence/relational/mappers/user.mapper';
 
 import { SprintEntity } from '../entities/sprint.entity';
@@ -6,6 +7,8 @@ import { SprintEntity } from '../entities/sprint.entity';
 export class SprintMapper {
   static toDomain(raw: SprintEntity): Sprint {
     const domainEntity = new Sprint();
+    domainEntity.status = raw.status;
+
     if (raw.createdBy) {
       domainEntity.createdBy = UserMapper.toDomain(raw.createdBy);
     }
@@ -27,6 +30,8 @@ export class SprintMapper {
 
   static toPersistence(domainEntity: Sprint): SprintEntity {
     const persistenceEntity = new SprintEntity();
+    persistenceEntity.status = domainEntity.status;
+
     if (domainEntity.createdBy) {
       persistenceEntity.createdBy = UserMapper.toPersistence(
         domainEntity.createdBy,
