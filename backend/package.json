@@ -39,6 +39,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.864.0",
     "@aws-sdk/s3-request-presigner": "3.864.0",
+    "@clerk/backend": "^2.22.0",
     "@nestjs/common": "11.1.6",
     "@nestjs/config": "4.0.2",
     "@nestjs/core": "11.1.6",
@@ -62,6 +63,7 @@
     "nodemailer": "7.0.6",
     "passport": "0.7.0",
     "passport-anonymous": "1.0.1",
+    "passport-custom": "^1.1.1",
     "passport-jwt": "4.0.1",
     "pg": "8.16.3",
     "reflect-metadata": "0.2.2",
