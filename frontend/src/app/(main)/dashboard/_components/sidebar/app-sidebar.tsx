@@ -17,14 +17,9 @@ import { APP_CONFIG } from "@/config/app-config";
 import { sidebarItems } from "@/navigation/sidebar/sidebar-items";
 
 import { NavMain } from "./nav-main";
-import { NavUser } from "./nav-user";
-import { withAuth } from "@/features/auth/components/guards/withAuth";
-import { useAuthStore } from "@/features/auth/store/auth.store";
+import { UserButton } from "@clerk/nextjs";
 
-export const AppSidebar = withAuth(({ ...props }: React.ComponentProps<typeof Sidebar>) => {
-  const user = useAuthStore((state) => state.user);
-  if(!user) return null;
-
+export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -43,8 +38,8 @@ export const AppSidebar = withAuth(({ ...props }: React.ComponentProps<typeof Si
         <NavMain items={sidebarItems} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        <UserButton />
       </SidebarFooter>
     </Sidebar>
   );
-});
+};
