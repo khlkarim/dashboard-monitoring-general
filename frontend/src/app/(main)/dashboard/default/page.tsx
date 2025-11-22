@@ -1,6 +1,5 @@
 "use client";
 
-import { withAuth } from "@/features/auth/components/guards/withAuth";
 import { ChartAreaInteractive } from "./_components/chart-area-interactive";
 import { DataTable } from "./_components/data-table";
 import data from "./_components/data.json";
@@ -16,4 +15,4 @@ function Page() {
   );
 }
 
-export default withAuth(Page);
+export default Page;

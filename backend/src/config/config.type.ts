@@ -6,6 +6,7 @@ import { FacebookConfig } from '../auth-facebook/config/facebook-config.type';
 import { FileConfig } from '../files/config/file-config.type';
 import { GoogleConfig } from '../auth-google/config/google-config.type';
 import { MailConfig } from '../mail/config/mail-config.type';
+import { ClerkConfig } from 'src/clerk/config/clerk-config.type';
 
 export type AllConfigType = {
   app: AppConfig;
@@ -15,5 +16,6 @@ export type AllConfigType = {
   facebook: FacebookConfig;
   file: FileConfig;
   google: GoogleConfig;
+  clerk: ClerkConfig;
   mail: MailConfig;
 };
