@@ -1,3 +1,4 @@
+import { Processus } from '../../processus/domain/processus';
 import { Exclude, Expose } from 'class-transformer';
 import { FileType } from '../../files/domain/file';
 import { Role } from '../../roles/domain/role';
@@ -7,6 +8,14 @@ import { ApiProperty } from '@nestjs/swagger';
 const idType = Number;
 
 export class User {
+@ApiProperty({
+  type: () => 
+                  Processus,
+            nullable: true,
+})
+
+  processus?: Processus  | null;
+
   @ApiProperty({
     type: idType,
   })

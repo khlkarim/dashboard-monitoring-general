@@ -1,3 +1,5 @@
+  import { ProcessusEntity } from '../../../../../processus/infrastructure/persistence/relational/entities/processus.entity';
+
 import {
   Column,
   CreateDateColumn,
@@ -9,6 +11,9 @@ import {
   UpdateDateColumn,
   JoinColumn,
   OneToOne,
+
+
+
 } from 'typeorm';
 import { RoleEntity } from '../../../../../roles/infrastructure/persistence/relational/entities/role.entity';
 import { StatusEntity } from '../../../../../statuses/infrastructure/persistence/relational/entities/status.entity';
@@ -21,6 +26,19 @@ import { EntityRelationalHelper } from '../../../../../utils/relational-entity-h
   name: 'user',
 })
 export class UserEntity extends EntityRelationalHelper {
+
+
+      @ManyToOne(
+      () => ProcessusEntity,
+            { eager: true, nullable: true }
+    )
+  
+  
+  
+  processus?: ProcessusEntity  | null;
+
+
+
   @PrimaryGeneratedColumn()
   id: number;
 

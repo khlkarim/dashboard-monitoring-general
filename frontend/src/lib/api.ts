@@ -30,19 +30,21 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error),
+  (error) => Promise.reject(normalizeApiError(error))
 );
 
 /**
  * Handle automatic token refresh and retry logic.
  */
-api.interceptors.response.use(
-  (response: AxiosResponse) => response,
-  async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+let tried_refresh = false;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+api.interceptors.response.use(
+  (response: AxiosResponse) => { tried_refresh = false; return response },
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig;
+
+    if (error.response?.status === 401 && !tried_refresh) {
+      tried_refresh = true;
 
       try {
         const { refreshToken } = useAuthStore.getState();

@@ -11,7 +11,6 @@ import { THEME_MODE_VALUES, THEME_PRESET_VALUES, type ThemePreset, type ThemeMod
 
 import "./globals.css";
 import QueryProvider from "@/providers/query-provider";
-import { ClerkProvider, RedirectToSignIn, SignedIn, SignedOut, SignIn } from '@clerk/nextjs';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,17 +31,12 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       suppressHydrationWarning
     >
       <body className={`${inter.className} min-h-screen antialiased`}>
-        <ClerkProvider>
-          <SignedOut>
-            <RedirectToSignIn />
-          </SignedOut>
-          <QueryProvider>
-            <PreferencesStoreProvider themeMode={themeMode} themePreset={themePreset}>
-              {children}
-              <Toaster />
-            </PreferencesStoreProvider>
-          </QueryProvider>
-        </ClerkProvider>
+        <QueryProvider>
+          <PreferencesStoreProvider themeMode={themeMode} themePreset={themePreset}>
+            {children}
+            <Toaster />
+          </PreferencesStoreProvider>
+        </QueryProvider>
       </body>
     </html>
   );
