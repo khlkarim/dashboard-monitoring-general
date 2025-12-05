@@ -38,8 +38,11 @@ import { KpisModule } from './kpis/kpis.module';
 import { ClerkModule } from './clerk/clerk.module';
 import clerkConfig from './clerk/config/clerk.config';
 
+import { ProcessusModule } from './processus/processus.module';
+
 @Module({
   imports: [
+    ProcessusModule,
     KpisModule,
     TasksModule,
     SprintsModule,

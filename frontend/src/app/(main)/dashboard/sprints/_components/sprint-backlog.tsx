@@ -49,7 +49,7 @@ const shortDateFormatter = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
 });
 
-const Example = () => {
+const Backlog = () => {
   const [features, setFeatures] = useState(exampleFeatures);
 
   return (
@@ -105,4 +105,4 @@ const Example = () => {
   );
 };
 
-export default Example;
+export default Backlog;

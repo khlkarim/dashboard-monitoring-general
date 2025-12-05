@@ -71,11 +71,6 @@ export const sidebarItems: NavGroup[] = [
         icon: Kanban, // sprints = board/kanban
       },
       {
-        title: "Tasks",
-        url: "/dashboard/tasks",
-        icon: ReceiptText, // tasks/document style
-      },
-      {
         title: "KPIs",
         url: "/dashboard/kpis",
         icon: Gauge, // gauge = performance metrics

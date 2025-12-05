@@ -1,5 +1,6 @@
 "use client";
 
+import { withAuth } from "@/features/auth/components/guards/withAuth";
 import { InsightCards } from "./_components/insight-cards";
 import { OperationalCards } from "./_components/operational-cards";
 import { OverviewCards } from "./_components/overview-cards";
@@ -16,4 +17,4 @@ function Page() {
   );
 }
 
-export default Page;
+export default withAuth(Page);
