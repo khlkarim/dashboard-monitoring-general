@@ -9,35 +9,50 @@ export class RoleSeedService {
   constructor(
     @InjectRepository(RoleEntity)
     private repository: Repository<RoleEntity>,
-  ) {}
+  ) { }
 
   async run() {
-    const countUser = await this.repository.count({
+    const countAdministrator = await this.repository.count({
       where: {
-        id: RoleEnum.user,
+        id: RoleEnum.administrator,
       },
     });
 
-    if (!countUser) {
+    if (!countAdministrator) {
       await this.repository.save(
         this.repository.create({
-          id: RoleEnum.user,
-          name: 'User',
+          id: RoleEnum.administrator,
+          name: 'Administrator',
         }),
       );
     }
 
-    const countAdmin = await this.repository.count({
+    const countPresident = await this.repository.count({
       where: {
-        id: RoleEnum.admin,
+        id: RoleEnum.president,
       },
     });
 
-    if (!countAdmin) {
+    if (!countPresident) {
       await this.repository.save(
         this.repository.create({
-          id: RoleEnum.admin,
-          name: 'Admin',
+          id: RoleEnum.president,
+          name: 'President',
+        }),
+      );
+    }
+
+    const countMember = await this.repository.count({
+      where: {
+        id: RoleEnum.member,
+      },
+    });
+
+    if (!countMember) {
+      await this.repository.save(
+        this.repository.create({
+          id: RoleEnum.member,
+          name: 'Member',
         }),
       );
     }

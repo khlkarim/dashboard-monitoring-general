@@ -12,13 +12,13 @@ export class UserSeedService {
   constructor(
     @InjectRepository(UserEntity)
     private repository: Repository<UserEntity>,
-  ) {}
+  ) { }
 
   async run() {
     const countAdmin = await this.repository.count({
       where: {
         role: {
-          id: RoleEnum.admin,
+          id: RoleEnum.administrator,
         },
       },
     });
@@ -34,8 +34,8 @@ export class UserSeedService {
           email: 'admin@example.com',
           password,
           role: {
-            id: RoleEnum.admin,
-            name: 'Admin',
+            id: RoleEnum.administrator,
+            name: 'Administrator',
           },
           status: {
             id: StatusEnum.active,
@@ -45,27 +45,57 @@ export class UserSeedService {
       );
     }
 
-    const countUser = await this.repository.count({
+    const countPresident = await this.repository.count({
       where: {
         role: {
-          id: RoleEnum.user,
+          id: RoleEnum.president,
         },
       },
     });
 
-    if (!countUser) {
+    if (!countPresident) {
       const salt = await bcrypt.genSalt();
       const password = await bcrypt.hash('secret', salt);
 
       await this.repository.save(
         this.repository.create({
           firstName: 'John',
-          lastName: 'Doe',
-          email: 'john.doe@example.com',
+          lastName: 'President',
+          email: 'president@example.com',
           password,
           role: {
-            id: RoleEnum.user,
-            name: 'Admin',
+            id: RoleEnum.president,
+            name: 'President',
+          },
+          status: {
+            id: StatusEnum.active,
+            name: 'Active',
+          },
+        }),
+      );
+    }
+
+    const countMember = await this.repository.count({
+      where: {
+        role: {
+          id: RoleEnum.member,
+        },
+      },
+    });
+
+    if (!countMember) {
+      const salt = await bcrypt.genSalt();
+      const password = await bcrypt.hash('secret', salt);
+
+      await this.repository.save(
+        this.repository.create({
+          firstName: 'Jane',
+          lastName: 'Member',
+          email: 'member@example.com',
+          password,
+          role: {
+            id: RoleEnum.member,
+            name: 'Member',
           },
           status: {
             id: StatusEnum.active,
@@ -76,3 +106,4 @@ export class UserSeedService {
     }
   }
 }
+

@@ -21,6 +21,9 @@ import {
 } from '@nestjs/swagger';
 import { Sprint } from './domain/sprint';
 import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../roles/roles.guard';
+import { Roles } from '../roles/roles.decorator';
+import { RoleEnum } from '../roles/roles.enum';
 import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
@@ -30,18 +33,19 @@ import { FindAllSprintsDto } from './dto/find-all-sprints.dto';
 
 @ApiTags('Sprints')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({
   path: 'sprints',
   version: '1',
 })
 export class SprintsController {
-  constructor(private readonly sprintsService: SprintsService) {}
+  constructor(private readonly sprintsService: SprintsService) { }
 
   @Post()
   @ApiCreatedResponse({
     type: Sprint,
   })
+  @Roles(RoleEnum.president, RoleEnum.administrator)
   create(@Body() createSprintDto: CreateSprintDto) {
     return this.sprintsService.create(createSprintDto);
   }
@@ -50,6 +54,7 @@ export class SprintsController {
   @ApiOkResponse({
     type: InfinityPaginationResponse(Sprint),
   })
+  @Roles(RoleEnum.member, RoleEnum.president, RoleEnum.administrator)
   async findAll(
     @Query() query: FindAllSprintsDto,
   ): Promise<InfinityPaginationResponseDto<Sprint>> {
@@ -79,7 +84,8 @@ export class SprintsController {
   @ApiOkResponse({
     type: Sprint,
   })
-  findById(@Param('id') id: string) {
+  @Roles(RoleEnum.member, RoleEnum.president, RoleEnum.administrator)
+  findOne(@Param('id') id: string) {
     return this.sprintsService.findById(id);
   }
 
@@ -92,6 +98,7 @@ export class SprintsController {
   @ApiOkResponse({
     type: Sprint,
   })
+  @Roles(RoleEnum.president, RoleEnum.administrator)
   update(@Param('id') id: string, @Body() updateSprintDto: UpdateSprintDto) {
     return this.sprintsService.update(id, updateSprintDto);
   }
@@ -102,6 +109,7 @@ export class SprintsController {
     type: String,
     required: true,
   })
+  @Roles(RoleEnum.president, RoleEnum.administrator)
   remove(@Param('id') id: string) {
     return this.sprintsService.remove(id);
   }

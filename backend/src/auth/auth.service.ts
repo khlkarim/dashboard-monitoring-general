@@ -37,7 +37,7 @@ export class AuthService {
     private sessionService: SessionService,
     private mailService: MailService,
     private configService: ConfigService<AllConfigType>,
-  ) {}
+  ) { }
 
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseDto> {
     const user = await this.usersService.findByEmail(loginDto.email);
@@ -136,7 +136,7 @@ export class AuthService {
       user = userByEmail;
     } else if (socialData.id) {
       const role = {
-        id: RoleEnum.user,
+        id: RoleEnum.member,
       };
       const status = {
         id: StatusEnum.active,
@@ -198,7 +198,7 @@ export class AuthService {
       ...dto,
       email: dto.email,
       role: {
-        id: RoleEnum.user,
+        id: RoleEnum.member,
       },
       status: {
         id: StatusEnum.inactive,
