@@ -8,6 +8,9 @@ import {
   Delete,
   UseGuards,
   Query,
+  Request,
+  ForbiddenException,
+  NotFoundException,
 } from '@nestjs/common';
 import { KpisService } from './kpis.service';
 import { CreateKpiDto } from './dto/create-kpi.dto';
@@ -21,6 +24,9 @@ import {
 } from '@nestjs/swagger';
 import { Kpi } from './domain/kpi';
 import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../roles/roles.guard';
+import { Roles } from '../roles/roles.decorator';
+import { RoleEnum } from '../roles/roles.enum';
 import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
@@ -30,14 +36,15 @@ import { FindAllKpisDto } from './dto/find-all-kpis.dto';
 
 @ApiTags('Kpis')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({
   path: 'kpis',
   version: '1',
 })
 export class KpisController {
-  constructor(private readonly kpisService: KpisService) {}
+  constructor(private readonly kpisService: KpisService) { }
 
+  @Roles(RoleEnum.member, RoleEnum.president, RoleEnum.administrator)
   @Post()
   @ApiCreatedResponse({
     type: Kpi,
@@ -46,6 +53,7 @@ export class KpisController {
     return this.kpisService.create(createKpiDto);
   }
 
+  @Roles(RoleEnum.member, RoleEnum.president, RoleEnum.administrator)
   @Get()
   @ApiOkResponse({
     type: InfinityPaginationResponse(Kpi),
@@ -70,6 +78,7 @@ export class KpisController {
     );
   }
 
+  @Roles(RoleEnum.member, RoleEnum.president, RoleEnum.administrator)
   @Get(':id')
   @ApiParam({
     name: 'id',
@@ -83,6 +92,7 @@ export class KpisController {
     return this.kpisService.findById(id);
   }
 
+  @Roles(RoleEnum.member, RoleEnum.president, RoleEnum.administrator)
   @Patch(':id')
   @ApiParam({
     name: 'id',
@@ -92,17 +102,43 @@ export class KpisController {
   @ApiOkResponse({
     type: Kpi,
   })
-  update(@Param('id') id: string, @Body() updateKpiDto: UpdateKpiDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateKpiDto: UpdateKpiDto,
+    @Request() request,
+  ) {
+    // If user is Member, check if they are the creator
+    if (request.user.role.id === RoleEnum.member) {
+      const kpi = await this.kpisService.findById(id);
+      if (!kpi) {
+        throw new NotFoundException('KPI not found');
+      }
+      if (kpi.createdBy.id !== request.user.id) {
+        throw new ForbiddenException('You can only update KPIs created by you');
+      }
+    }
     return this.kpisService.update(id, updateKpiDto);
   }
 
+  @Roles(RoleEnum.member, RoleEnum.president, RoleEnum.administrator)
   @Delete(':id')
   @ApiParam({
     name: 'id',
     type: String,
     required: true,
   })
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string, @Request() request) {
+    // If user is Member, check if they are the creator
+    if (request.user.role.id === RoleEnum.member) {
+      const kpi = await this.kpisService.findById(id);
+      if (!kpi) {
+        throw new NotFoundException('KPI not found');
+      }
+      if (kpi.createdBy.id !== request.user.id) {
+        throw new ForbiddenException('You can only delete KPIs created by you');
+      }
+    }
     return this.kpisService.remove(id);
   }
 }
+
