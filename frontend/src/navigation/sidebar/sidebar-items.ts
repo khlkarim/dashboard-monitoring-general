@@ -54,11 +54,6 @@ export const sidebarItems: NavGroup[] = [
         url: "/dashboard/annual-calendar",
         icon: Calendar, // calendar instead of ChartBar
       },
-      {
-        title: "Finance",
-        url: "/dashboard/finance",
-        icon: Banknote,
-      },
     ],
   },
   {

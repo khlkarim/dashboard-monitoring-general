@@ -88,6 +88,12 @@ export const userResponseSchema = z.object({
   deletedAt: z.string().datetime().nullable(),
 });
 
+export const publicUserSchema = userResponseSchema.extend({
+  email: z.string().email().optional(),
+  provider: z.string().optional(),
+  socialId: z.string().nullable().optional(),
+});
+
 export type UserResponse = z.infer<typeof userResponseSchema>;
 
 /** Login Response */
