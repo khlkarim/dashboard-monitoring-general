@@ -56,5 +56,20 @@ export class RoleSeedService {
         }),
       );
     }
+
+    const countAlumni = await this.repository.count({
+      where: {
+        id: RoleEnum.alumni,
+      },
+    });
+
+    if (!countAlumni) {
+      await this.repository.save(
+        this.repository.create({
+          id: RoleEnum.alumni,
+          name: 'Alumni',
+        }),
+      );
+    }
   }
 }

@@ -1,22 +1,22 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { sprintsApi } from "@/features/sprints/api/sprints.api";
+import { usersApi } from "@/features/users/api/users.api";
 import { columns } from "./columns";
 import { EntityTable } from "@/components/common/entity-table";
 
-export function SprintsTable() {
+export function AlumniTable() {
     const { data, isLoading, isError, error } = useQuery({
-        queryKey: ["sprints"],
-        queryFn: () => sprintsApi.findAll(),
+        queryKey: ["alumnis"],
+        queryFn: () => usersApi.getAlumni(),
     });
 
     return (
         <EntityTable
             data={data?.data ?? []}
             columns={columns}
-            title="Sprints"
-            description="Track and manage all the sprints."
+            title="Alumni"
+            description="Track and manage all the alumni."
             isLoading={isLoading}
             isError={isError}
             error={error}

@@ -1,14 +1,11 @@
 "use client";
 
-import { TableCards } from "./_components/table-cards";
-import { withAuth } from "@/features/auth/components/guards/withAuth";
+import { UsersTable } from "./_components/users-table";
 
-function Page() {
+export default function UsersPage() {
   return (
     <div className="flex flex-col gap-4 md:gap-6">
-      <TableCards />
+      <UsersTable />
     </div>
   );
 }
-
-export default withAuth(Page);
