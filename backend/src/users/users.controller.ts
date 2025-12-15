@@ -37,7 +37,6 @@ import { RolesGuard } from '../roles/roles.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
 
 @ApiBearerAuth()
-@Roles(RoleEnum.administrator)
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiTags('Users')
 @Controller({
@@ -53,6 +52,7 @@ export class UsersController {
   @SerializeOptions({
     groups: ['admin'],
   })
+  @Roles(RoleEnum.administrator)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createProfileDto: CreateUserDto): Promise<User> {
@@ -65,6 +65,7 @@ export class UsersController {
   @SerializeOptions({
     groups: ['admin'],
   })
+  @Roles(RoleEnum.administrator)
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(
@@ -89,12 +90,46 @@ export class UsersController {
     );
   }
 
+  @SerializeOptions({
+    groups: ['alumni_read'],
+  })
+  @Get('alumni')
+  @HttpCode(HttpStatus.OK)
+  @Roles(RoleEnum.administrator, RoleEnum.president, RoleEnum.member, RoleEnum.alumni)
+  async getAlumni(
+    @Query() query: QueryUserDto,
+  ): Promise<InfinityPaginationResponseDto<User>> {
+    const page = query?.page ?? 1;
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+
+    return infinityPagination(
+      await this.usersService.findManyWithPagination({
+        filterOptions: {
+          ...query?.filters,
+          roles: [{
+            id: RoleEnum.alumni,
+          }],
+        },
+        sortOptions: query?.sort,
+        paginationOptions: {
+          page,
+          limit,
+        },
+      }),
+      { page, limit },
+    );
+  }
+
   @ApiOkResponse({
     type: User,
   })
   @SerializeOptions({
     groups: ['admin'],
   })
+  @Roles(RoleEnum.administrator)
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @ApiParam({
@@ -112,6 +147,7 @@ export class UsersController {
   @SerializeOptions({
     groups: ['admin'],
   })
+  @Roles(RoleEnum.administrator)
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
   @ApiParam({
@@ -126,6 +162,7 @@ export class UsersController {
     return this.usersService.update(id, updateProfileDto);
   }
 
+  @Roles(RoleEnum.administrator)
   @Delete(':id')
   @ApiParam({
     name: 'id',

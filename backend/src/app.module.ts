@@ -98,4 +98,4 @@ import { ProcessusModule } from './processus/processus.module';
     HomeModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

@@ -81,17 +81,11 @@ export const userResponseSchema = z.object({
   photo: fileTypeSchema.nullable().optional(),
   role: roleSchema.optional(),
   status: statusSchema.optional(),
-  provider: z.string(),
+  provider: z.string().optional(),
   socialId: z.string().nullable().optional(),
   createdAt: z.string().datetime().optional(),
   updatedAt: z.string().datetime().optional(),
   deletedAt: z.string().datetime().nullable(),
-});
-
-export const publicUserSchema = userResponseSchema.extend({
-  email: z.string().email().optional(),
-  provider: z.string().optional(),
-  socialId: z.string().nullable().optional(),
 });
 
 export type UserResponse = z.infer<typeof userResponseSchema>;

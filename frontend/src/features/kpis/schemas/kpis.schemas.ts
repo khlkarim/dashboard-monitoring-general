@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { publicUserSchema } from '@/features/auth/schemas/auth.schemas';
+import { userResponseSchema } from '@/features/auth/schemas/auth.schemas';
 import { sprintResponseSchema } from '@/features/sprints/schemas/sprints.schemas';
 
 /* ------------------------------------------------------------
@@ -9,7 +9,7 @@ import { sprintResponseSchema } from '@/features/sprints/schemas/sprints.schemas
 /** Create KPI */
 export const createKpiRequestSchema = z.object({
     sprint: sprintResponseSchema.nullable().optional(),
-    createdBy: publicUserSchema,
+    createdBy: userResponseSchema,
     targetValue: z.number().nullable().optional(),
     actualValue: z.number().nullable().optional(),
     description: z.string().nullable().optional(),
@@ -29,7 +29,7 @@ export type UpdateKpiRequest = z.infer<typeof updateKpiRequestSchema>;
 export const kpiResponseSchema = z.object({
     id: z.string(),
     sprint: sprintResponseSchema.nullable().optional(),
-    createdBy: publicUserSchema,
+    createdBy: userResponseSchema,
     targetValue: z.coerce.number().nullable().optional(),
     actualValue: z.coerce.number().nullable().optional(),
     description: z.string().nullable().optional(),

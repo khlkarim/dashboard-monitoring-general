@@ -8,13 +8,13 @@ import { ApiProperty } from '@nestjs/swagger';
 const idType = Number;
 
 export class User {
-@ApiProperty({
-  type: () => 
-                  Processus,
-            nullable: true,
-})
+  @ApiProperty({
+    type: () =>
+      Processus,
+    nullable: true,
+  })
 
-  processus?: Processus  | null;
+  processus?: Processus | null;
 
   @ApiProperty({
     type: idType,
@@ -25,7 +25,6 @@ export class User {
     type: String,
     example: 'john.doe@example.com',
   })
-  @Expose({ groups: ['me', 'admin'] })
   email: string | null;
 
   @Exclude({ toPlainOnly: true })

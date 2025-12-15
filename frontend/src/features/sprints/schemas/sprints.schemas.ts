@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { publicUserSchema } from '@/features/auth/schemas/auth.schemas';
+import { userResponseSchema } from '@/features/auth/schemas/auth.schemas';
 
 /* ------------------------------------------------------------
    REQUEST SCHEMAS
@@ -12,7 +12,7 @@ export const createSprintRequestSchema = z.object({
     startDate: z.string().datetime(), // Expecting ISO string
     endDate: z.string().datetime(),   // Expecting ISO string
     status: z.number(),
-    createdBy: publicUserSchema,
+    createdBy: userResponseSchema,
 });
 export type CreateSprintRequest = z.infer<typeof createSprintRequestSchema>;
 
@@ -33,7 +33,7 @@ export const sprintResponseSchema = z.object({
     startDate: z.string().datetime(),
     endDate: z.string().datetime(),
     status: z.number(),
-    createdBy: publicUserSchema,
+    createdBy: userResponseSchema,
     createdAt: z.string().datetime(),
     updatedAt: z.string().datetime(),
 });

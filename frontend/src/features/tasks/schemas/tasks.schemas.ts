@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { publicUserSchema } from '@/features/auth/schemas/auth.schemas';
+import { userResponseSchema } from '@/features/auth/schemas/auth.schemas';
 import { sprintResponseSchema } from '@/features/sprints/schemas/sprints.schemas';
 
 /* ------------------------------------------------------------
@@ -10,8 +10,8 @@ import { sprintResponseSchema } from '@/features/sprints/schemas/sprints.schemas
 export const createTaskRequestSchema = z.object({
     type: z.number(),
     status: z.number(),
-    reporter: publicUserSchema,
-    assignee: publicUserSchema,
+    reporter: userResponseSchema,
+    assignee: userResponseSchema,
     sprint: sprintResponseSchema,
     dueDate: z.string().datetime(),
     description: z.string().optional().nullable(),
@@ -32,8 +32,8 @@ export const taskResponseSchema = z.object({
     id: z.string(),
     type: z.number(),
     status: z.number(),
-    reporter: publicUserSchema,
-    assignee: publicUserSchema,
+    reporter: userResponseSchema,
+    assignee: userResponseSchema,
     sprint: sprintResponseSchema,
     dueDate: z.string().datetime(),
     description: z.string().nullable().optional(),
