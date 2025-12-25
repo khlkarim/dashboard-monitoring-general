@@ -38,7 +38,7 @@ export const userSchema = z.object({
     lastName: z.string().nullable(),
     photo: fileSchema.nullable().optional(),
     role: roleSchema.nullable().optional(),
-    status: statusSchema.optional(),
+    status: statusSchema.nullable().optional(),
     provider: z.string().optional(),
     socialId: z.string().nullable().optional(),
     processus: processusSchema.nullable().optional(),

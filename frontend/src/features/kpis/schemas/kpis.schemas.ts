@@ -8,8 +8,8 @@ import { sprintResponseSchema } from '@/features/sprints/schemas/sprints.schemas
 
 /** Create KPI */
 export const createKpiRequestSchema = z.object({
-    sprint: sprintResponseSchema.nullable().optional(),
-    createdBy: userResponseSchema,
+    sprint: z.object({ id: z.string() }).nullable().optional(),
+    createdBy: z.object({ id: z.union([z.string(), z.number()]) }),
     targetValue: z.number().nullable().optional(),
     actualValue: z.number().nullable().optional(),
     description: z.string().nullable().optional(),
@@ -28,8 +28,8 @@ export type UpdateKpiRequest = z.infer<typeof updateKpiRequestSchema>;
 /** KPI Entity */
 export const kpiResponseSchema = z.object({
     id: z.string(),
-    sprint: sprintResponseSchema.nullable().optional(),
-    createdBy: userResponseSchema,
+    sprint: z.object({ id: z.string() }).nullable().optional(),
+    createdBy: z.object({ id: z.union([z.string(), z.number()]) }),
     targetValue: z.coerce.number().nullable().optional(),
     actualValue: z.coerce.number().nullable().optional(),
     description: z.string().nullable().optional(),

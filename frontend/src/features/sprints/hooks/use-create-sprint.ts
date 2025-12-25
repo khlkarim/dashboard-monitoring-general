@@ -9,7 +9,7 @@ export const useCreateSprint = () => {
     return useMutation({
         mutationFn: (data: CreateSprintRequest) => sprintsApi.create(data),
         onSuccess: () => {
-            setTimeout(() => queryClient.invalidateQueries({ queryKey: ['sprints'] }), 1000);
+            queryClient.invalidateQueries({ queryKey: ['sprints'] });
             toast.success('Sprint created successfully');
         },
         onError: (error) => {
