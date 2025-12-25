@@ -19,6 +19,7 @@ import {
   UserResponse,
   RefreshResponse,
 } from '@/features/auth/schemas/auth.schemas';
+import { useAuthStore } from '../store/auth.store';
 
 /**
  * Service layer for communicating with the NestJS AuthController endpoints.
@@ -82,7 +83,17 @@ export const authApi = {
 
   /** POST /api/v1/auth/refresh */
   refreshToken: async (): Promise<RefreshResponse> => {
-    const res = await api.post('/api/v1/auth/refresh');
+    const res = await api.post(
+      '/api/v1/auth/refresh',
+      {
+        refreshToken: useAuthStore.getState().refreshToken,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${useAuthStore.getState().refreshToken}`,
+        },
+      }
+    );
     return refreshResponseSchema.parse(res.data);
   },
 

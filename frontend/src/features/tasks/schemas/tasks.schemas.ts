@@ -10,9 +10,9 @@ import { sprintResponseSchema } from '@/features/sprints/schemas/sprints.schemas
 export const createTaskRequestSchema = z.object({
     type: z.number(),
     status: z.number(),
-    reporter: userResponseSchema,
-    assignee: userResponseSchema,
-    sprint: sprintResponseSchema,
+    reporter: z.object({ id: z.union([z.string(), z.number()]) }),
+    assignee: z.object({ id: z.union([z.string(), z.number()]) }),
+    sprint: z.object({ id: z.string() }),
     dueDate: z.string().datetime(),
     description: z.string().optional().nullable(),
     title: z.string().min(1),

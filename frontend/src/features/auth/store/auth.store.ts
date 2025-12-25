@@ -60,7 +60,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       logout: async () => {
         try {
           await authApi.logout();
-          localStorage.removeItem('accessToken');
         } catch {
           /* ignore network errors on logout */
         }
@@ -94,7 +93,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         isAuthenticated: state.isAuthenticated,
       }),
       onRehydrateStorage: () => (state) => {
-        if(state){
+        if (state) {
           state.setHasHydrated(true);
         }
       }
