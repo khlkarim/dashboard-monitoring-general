@@ -166,7 +166,7 @@ export const KanbanCards = <T extends KanbanItemProps = KanbanItemProps>({
       <SortableContext items={items}>
         <div
           className={cn('flex flex-grow flex-col gap-2 p-2', className)}
-          {...props}
+          {...(props as any)}
         >
           {filteredData.map(children)}
         </div>
@@ -179,7 +179,7 @@ export const KanbanCards = <T extends KanbanItemProps = KanbanItemProps>({
 export type KanbanHeaderProps = HTMLAttributes<HTMLDivElement>;
 
 export const KanbanHeader = ({ className, ...props }: KanbanHeaderProps) => (
-  <div className={cn('m-0 p-2 font-semibold text-sm', className)} {...props} />
+  <div className={cn('m-0 p-2 font-semibold text-sm', className)} {...(props as any)} />
 );
 
 export type KanbanProviderProps<
@@ -315,7 +315,7 @@ export const KanbanProvider = <
         onDragOver={handleDragOver}
         onDragStart={handleDragStart}
         sensors={sensors}
-        {...props}
+        {...(props as any)}
       >
         <div
           className={cn(

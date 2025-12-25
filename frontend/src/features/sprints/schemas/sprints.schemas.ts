@@ -12,7 +12,7 @@ export const createSprintRequestSchema = z.object({
     startDate: z.string().datetime(), // Expecting ISO string
     endDate: z.string().datetime(),   // Expecting ISO string
     status: z.number(),
-    createdBy: userResponseSchema,
+    createdBy: z.object({ id: z.union([z.string(), z.number()]) }),
 });
 export type CreateSprintRequest = z.infer<typeof createSprintRequestSchema>;
 

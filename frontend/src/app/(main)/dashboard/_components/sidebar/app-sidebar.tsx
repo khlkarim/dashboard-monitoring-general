@@ -14,16 +14,18 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { APP_CONFIG } from "@/config/app-config";
-import { sidebarItems } from "@/navigation/sidebar/sidebar-items";
 
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
 import { withAuth } from "@/features/auth/components/guards/withAuth";
 import { useAuthStore } from "@/features/auth/store/auth.store";
+import { useNavigationStore } from "@/navigation/store/navigation.store";
 
 export const AppSidebar = withAuth(({ ...props }: React.ComponentProps<typeof Sidebar>) => {
   const user = useAuthStore((state) => state.user);
-  if(!user) return null;
+  const sidebarItems = useNavigationStore((state) => state.sidebarItems);
+
+  if (!user) return null;
 
   return (
     <Sidebar {...props}>

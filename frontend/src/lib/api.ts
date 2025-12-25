@@ -1,11 +1,7 @@
-import axios, {
-  AxiosError,
-  AxiosInstance,
-  AxiosResponse,
-  InternalAxiosRequestConfig,
-} from 'axios';
-import { useAuthStore } from '@/features/auth/store/auth.store';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { authApi } from '@/features/auth/api/auth.api';
+import createAuthRefreshInterceptor from 'axios-auth-refresh';
+import { useAuthStore } from '@/features/auth/store/auth.store';
 
 /**
  * Axios instance for all HTTP requests.
@@ -23,54 +19,29 @@ const api: AxiosInstance = axios.create({
  * Attach the access token from Zustand to every request (if available).
  */
 api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+  (request) => {
     const token = useAuthStore.getState().accessToken;
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (token && !request.headers.Authorization?.toString().startsWith('Bearer')) {
+      request.headers.Authorization = `Bearer ${token}`;
     }
-    return config;
+    return request;
   },
   (error) => Promise.reject(normalizeApiError(error))
 );
 
-/**
- * Handle automatic token refresh and retry logic.
- */
-let tried_refresh = false;
+/* Function that will be called to refresh authorization */
+const refreshAuthLogic = (failedRequest: any) =>
+  authApi.refreshToken().then((tokenRefreshResponse) => {
+    useAuthStore.setState({
+      accessToken: tokenRefreshResponse.token,
+      refreshToken: tokenRefreshResponse.refreshToken
+    });
+    failedRequest.response.config.headers['Authorization'] = 'Bearer ' + tokenRefreshResponse.token;
+    return Promise.resolve();
+  });
 
-api.interceptors.response.use(
-  (response: AxiosResponse) => { tried_refresh = false; return response },
-  async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig;
-
-    if (error.response?.status === 401 && !tried_refresh) {
-      tried_refresh = true;
-
-      try {
-        const { refreshToken } = useAuthStore.getState();
-        if (!refreshToken) throw new Error('No refresh token');
-
-        const refreshResponse = await authApi.refreshToken();
-        const { token: newAccessToken, refreshToken: newRefreshToken } = refreshResponse;
-
-        // Update store tokens
-        useAuthStore.setState({
-          accessToken: newAccessToken,
-          refreshToken: newRefreshToken,
-        });
-
-        // Retry original request with the new access token
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        return api(originalRequest);
-      } catch (refreshError) {
-        // Refresh failed, force logout
-        useAuthStore.getState().logout();
-      }
-    }
-
-    return Promise.reject(normalizeApiError(error));
-  },
-);
+/* Instantiate the interceptor */
+createAuthRefreshInterceptor(api, refreshAuthLogic);
 
 /**
  * Normalizes Axios errors into a consistent shape.

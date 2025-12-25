@@ -75,9 +75,9 @@ export const fileTypeSchema = z.object({
 /** mirror backend’s User entity fields you need */
 export const userResponseSchema = z.object({
   id: z.string().or(z.number()), // backend may return UUID or numeric ID
-  email: z.string().email(),
-  firstName: z.string(),
-  lastName: z.string(),
+  email: z.string().email().nullable(),
+  firstName: z.string().nullable(),
+  lastName: z.string().nullable(),
   photo: fileTypeSchema.nullable().optional(),
   role: roleSchema.optional(),
   status: statusSchema.optional(),
