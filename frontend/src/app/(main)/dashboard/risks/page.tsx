@@ -1,20 +1,14 @@
 "use client";
 
+import { RisksTable } from "./_components/risks-table";
 import { withAuth } from "@/features/auth/components/guards/withAuth";
-import { InsightCards } from "./_components/insight-cards";
-import { OperationalCards } from "./_components/operational-cards";
-import { OverviewCards } from "./_components/overview-cards";
-import { TableCards } from "./_components/table-cards";
 
-function Page() {
-  return (
-    <div className="flex flex-col gap-4 md:gap-6">
-      <OverviewCards />
-      <InsightCards />
-      <OperationalCards />
-      <TableCards />
-    </div>
-  );
+function RisksPage() {
+    return (
+        <div className="flex flex-col gap-4 md:gap-6">
+            <RisksTable />
+        </div>
+    );
 }
 
-export default withAuth(Page);
+export default withAuth(RisksPage);

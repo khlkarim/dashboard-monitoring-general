@@ -1,6 +1,4 @@
 import { z } from 'zod';
-import { userResponseSchema } from '@/features/auth/schemas/auth.schemas';
-import { sprintResponseSchema } from '@/features/sprints/schemas/sprints.schemas';
 
 /* ------------------------------------------------------------
    REQUEST SCHEMAS

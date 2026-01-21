@@ -30,20 +30,6 @@ import {
 } from "@/features/sprints/schemas/sprints.schemas";
 import { sprintStatusMap } from "@/app/(main)/dashboard/sprints/_components/columns"; // Reusing the map
 
-// We need to adjust the schema slightly for the form because date inputs might handle dates differently (as Date objects) 
-// but the API expects strings. Zod schema expects strings.
-// Also 'createdBy' is likely handled by backend or auth context, but schema requires it. 
-// For now, let's assume we pass the raw values or handle the transformation.
-// The `createSprintRequestSchema` requires `createdBy`, which is a user object. 
-// Usually the backend assigns `createdBy` from the token. Let's check if we can omit it for the form.
-// If the API strictly requires it in the body, we have a problem. 
-// Looking at the schema: `createdBy: userResponseSchema`. 
-// If the backend requires this, we might need to mock it or fix the backend.
-// HOWEVER, usually Create DTOs on frontend form don't ask user to input "CreatedBy". 
-// I will assume for now we might need to cast or the schema defined in frontend is strictly checking response types?
-// No, `createSprintRequestSchema` is for request.
-// Let's create a form schema that might differ slightly (e.g. Date object vs ISO string).
-
 const formSchema = z.object({
     name: z.string().min(1, "Name is required"),
     goal: z.string().optional(),

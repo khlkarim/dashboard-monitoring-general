@@ -11,6 +11,8 @@ import { ProcessusSeedModule } from './processus/processus-seed.module';
 import { SprintSeedModule } from './sprint/sprint-seed.module';
 import { TaskSeedModule } from './task/task-seed.module';
 import { KpiSeedModule } from './kpi/kpi-seed.module';
+import { ActionsSeedModule } from './actions/actions-seed.module';
+import { RisksSeedModule } from './risks/risks-seed.module';
 import databaseConfig from '../../config/database.config';
 import appConfig from '../../../config/app.config';
 
@@ -23,6 +25,8 @@ import appConfig from '../../../config/app.config';
     SprintSeedModule,
     TaskSeedModule,
     KpiSeedModule,
+    ActionsSeedModule,
+    RisksSeedModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig, appConfig],
