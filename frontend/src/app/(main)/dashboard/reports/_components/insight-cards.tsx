@@ -20,7 +20,7 @@ export function InsightCards() {
     <div className="grid grid-cols-1 gap-4 *:data-[slot=card]:shadow-xs sm:grid-cols-2 xl:grid-cols-5">
       <Card className="col-span-1 xl:col-span-2">
         <CardHeader>
-          <CardTitle>Leads by Source</CardTitle>
+          <CardTitle>Current Sprint Tasks</CardTitle>
         </CardHeader>
         <CardContent className="max-h-48">
           <ChartContainer config={leadsBySourceChartConfig} className="size-full">
@@ -85,19 +85,11 @@ export function InsightCards() {
             </PieChart>
           </ChartContainer>
         </CardContent>
-        <CardFooter className="gap-2">
-          <Button size="sm" variant="outline" className="basis-1/2">
-            View Full Report
-          </Button>
-          <Button size="sm" variant="outline" className="basis-1/2">
-            Download CSV
-          </Button>
-        </CardFooter>
       </Card>
 
       <Card className="col-span-1 xl:col-span-3">
         <CardHeader>
-          <CardTitle>Project Revenue vs. Target</CardTitle>
+          <CardTitle>Charge par processus</CardTitle>
         </CardHeader>
         <CardContent className="size-full max-h-52">
           <ChartContainer config={projectRevenueChartConfig} className="size-full">

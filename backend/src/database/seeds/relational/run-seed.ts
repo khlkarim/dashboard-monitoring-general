@@ -7,6 +7,8 @@ import { ProcessusSeedService } from './processus/processus-seed.service';
 import { SprintSeedService } from './sprint/sprint-seed.service';
 import { TaskSeedService } from './task/task-seed.service';
 import { KpiSeedService } from './kpi/kpi-seed.service';
+import { RisksSeedService } from './risks/risks-seed.service';
+import { ActionsSeedService } from './actions/actions-seed.service';
 
 const runSeed = async () => {
   const app = await NestFactory.create(SeedModule);
@@ -19,6 +21,8 @@ const runSeed = async () => {
   await app.get(SprintSeedService).run();
   await app.get(TaskSeedService).run();
   await app.get(KpiSeedService).run();
+  await app.get(RisksSeedService).run();
+  await app.get(ActionsSeedService).run();
 
   await app.close();
 };

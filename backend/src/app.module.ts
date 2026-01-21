@@ -37,11 +37,16 @@ import { TasksModule } from './tasks/tasks.module';
 import { KpisModule } from './kpis/kpis.module';
 import { ClerkModule } from './clerk/clerk.module';
 import clerkConfig from './clerk/config/clerk.config';
-
 import { ProcessusModule } from './processus/processus.module';
+
+import { RisksModule } from './risks/risks.module';
+
+import { ActionsModule } from './actions/actions.module';
 
 @Module({
   imports: [
+    ActionsModule,
+    RisksModule,
     ProcessusModule,
     KpisModule,
     TasksModule,
