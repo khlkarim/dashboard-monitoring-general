@@ -10,6 +10,7 @@ import {
   JoinColumn,
   OneToOne,
   OneToMany,
+  ManyToMany,
 } from 'typeorm';
 import { TaskEntity } from '../../../../../tasks/infrastructure/persistence/relational/entities/task.entity';
 import { RoleEntity } from '../../../../../roles/infrastructure/persistence/relational/entities/role.entity';
@@ -17,6 +18,7 @@ import { StatusEntity } from '../../../../../statuses/infrastructure/persistence
 import { FileEntity } from '../../../../../files/infrastructure/persistence/relational/entities/file.entity';
 import { AuthProvidersEnum } from '../../../../../auth/auth-providers.enum';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
+import { NotificationEntity } from '../../../../../notifications/infrastructure/persistence/relational/entities/notification.entity';
 
 @Entity({
   name: 'user',
@@ -66,6 +68,9 @@ export class UserEntity extends EntityRelationalHelper {
 
   @OneToMany(() => TaskEntity, (task) => task.assignee)
   assignedTasks: TaskEntity[];
+
+  @ManyToMany(() => NotificationEntity, (notification) => notification.recipients)
+  notifications: NotificationEntity[];
 
   @CreateDateColumn()
   createdAt: Date;

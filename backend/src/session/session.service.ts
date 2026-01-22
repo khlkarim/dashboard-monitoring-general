@@ -7,7 +7,7 @@ import { NullableType } from '../utils/types/nullable.type';
 
 @Injectable()
 export class SessionService {
-  constructor(private readonly sessionRepository: SessionRepository) {}
+  constructor(private readonly sessionRepository: SessionRepository) { }
 
   findById(id: Session['id']): Promise<NullableType<Session>> {
     return this.sessionRepository.findById(id);

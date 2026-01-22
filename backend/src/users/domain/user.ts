@@ -4,6 +4,7 @@ import { Role } from '../../roles/domain/role';
 import { Status } from '../../statuses/domain/status';
 import { ApiProperty } from '@nestjs/swagger';
 import { Task } from '../../tasks/domain/task';
+import { Notification } from '../../notifications/domain/notification';
 
 export class User {
   @ApiProperty({
@@ -59,15 +60,17 @@ export class User {
   @ApiProperty({
     type: () => Status,
   })
-  @ApiProperty({
-    type: () => Status,
-  })
   status?: Status;
 
   @ApiProperty({
     type: () => [Task],
   })
   assignedTasks?: Task[];
+
+  @ApiProperty({
+    type: () => [Notification],
+  })
+  notifications?: Notification[];
 
   @ApiProperty()
   createdAt: Date;
