@@ -1,3 +1,4 @@
+import { Sprint } from 'src/sprints/domain/sprint';
 import { DeepPartial } from '../../../utils/types/deep-partial.type';
 import { NullableType } from '../../../utils/types/nullable.type';
 import { IPaginationOptions } from '../../../utils/types/pagination-options';
@@ -12,6 +13,14 @@ export abstract class TaskRepository {
     paginationOptions,
   }: {
     paginationOptions: IPaginationOptions;
+  }): Promise<Task[]>;
+
+  abstract findAllBySprintIdWithPagination({
+    paginationOptions,
+    sprintId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    sprintId: Sprint['id'];
   }): Promise<Task[]>;
 
   abstract findById(id: Task['id']): Promise<NullableType<Task>>;

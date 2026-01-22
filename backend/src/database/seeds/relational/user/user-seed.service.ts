@@ -18,7 +18,7 @@ export class UserSeedService {
     const countAdmin = await this.repository.count({
       where: {
         role: {
-          id: RoleEnum.administrator,
+          id: RoleEnum.ADMINISTRATOR,
         },
       },
     });
@@ -34,11 +34,11 @@ export class UserSeedService {
           email: 'admin@example.com',
           password,
           role: {
-            id: RoleEnum.administrator,
+            id: RoleEnum.ADMINISTRATOR,
             name: 'Administrator',
           },
           status: {
-            id: StatusEnum.active,
+            id: StatusEnum.ACTIVE,
             name: 'Active',
           },
         }),
@@ -48,7 +48,7 @@ export class UserSeedService {
     const countPresident = await this.repository.count({
       where: {
         role: {
-          id: RoleEnum.president,
+          id: RoleEnum.PRESIDENT,
         },
       },
     });
@@ -64,11 +64,11 @@ export class UserSeedService {
           email: 'president@example.com',
           password,
           role: {
-            id: RoleEnum.president,
+            id: RoleEnum.PRESIDENT,
             name: 'President',
           },
           status: {
-            id: StatusEnum.active,
+            id: StatusEnum.ACTIVE,
             name: 'Active',
           },
         }),
@@ -78,7 +78,7 @@ export class UserSeedService {
     const countMember = await this.repository.count({
       where: {
         role: {
-          id: RoleEnum.member,
+          id: RoleEnum.MEMBER,
         },
       },
     });
@@ -94,11 +94,11 @@ export class UserSeedService {
           email: 'member@example.com',
           password,
           role: {
-            id: RoleEnum.member,
+            id: RoleEnum.MEMBER,
             name: 'Member',
           },
           status: {
-            id: StatusEnum.active,
+            id: StatusEnum.ACTIVE,
             name: 'Active',
           },
         }),
@@ -108,7 +108,7 @@ export class UserSeedService {
     const countAlumni = await this.repository.count({
       where: {
         role: {
-          id: RoleEnum.alumni,
+          id: RoleEnum.ALUMNI,
         },
       },
     });
@@ -124,11 +124,11 @@ export class UserSeedService {
           email: 'alumni@example.com',
           password,
           role: {
-            id: RoleEnum.alumni,
+            id: RoleEnum.ALUMNI,
             name: 'Alumni',
           },
           status: {
-            id: StatusEnum.active,
+            id: StatusEnum.ACTIVE,
             name: 'Active',
           },
         }),

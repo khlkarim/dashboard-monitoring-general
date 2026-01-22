@@ -71,7 +71,7 @@ export function EntityTable<TData, TValue>({
                         <div className="flex items-center gap-2">
                             {onCreate && (
                                 <Button onClick={onCreate} size="sm">
-                                    <Plus className="mr-2 h-4 w-4" />
+                                    <Plus className="h-4 w-4" />
                                     Create {entityName}
                                 </Button>
                             )}

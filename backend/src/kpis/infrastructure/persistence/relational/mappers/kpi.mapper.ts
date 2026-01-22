@@ -1,4 +1,5 @@
 import { Kpi } from '../../../../domain/kpi';
+import { ProcessusMapper } from '../../../../../processus/infrastructure/persistence/relational/mappers/processus.mapper';
 import { KpiEntity } from '../entities/kpi.entity';
 import { SprintEntity } from '../../../../../sprints/infrastructure/persistence/relational/entities/sprint.entity';
 import { UserEntity } from '../../../../../users/infrastructure/persistence/relational/entities/user.entity';
@@ -9,6 +10,13 @@ export class KpiMapper {
   static toDomain(raw: KpiEntity): Kpi {
     const domainEntity = new Kpi();
 
+    domainEntity.samples = raw.samples;
+    domainEntity.samplingRate = raw.samplingRate;
+
+    if (raw.processus) {
+      domainEntity.processus = ProcessusMapper.toDomain(raw.processus);
+    }
+
     if (raw.sprint) {
       domainEntity.sprint = SprintMapper.toDomain(raw.sprint);
     }
@@ -17,8 +25,6 @@ export class KpiMapper {
       domainEntity.createdBy = UserMapper.toDomain(raw.createdBy);
     }
 
-    domainEntity.targetValue = raw.targetValue;
-    domainEntity.actualValue = raw.actualValue;
     domainEntity.description = raw.description;
     domainEntity.name = raw.name;
     domainEntity.id = raw.id;
@@ -31,6 +37,13 @@ export class KpiMapper {
   static toPersistence(domainEntity: Kpi): KpiEntity {
     const persistenceEntity = new KpiEntity();
 
+    persistenceEntity.samples = domainEntity.samples;
+    persistenceEntity.samplingRate = domainEntity.samplingRate;
+
+    if (domainEntity.processus) {
+      persistenceEntity.processus = ProcessusMapper.toPersistence(domainEntity.processus);
+    }
+
     if (domainEntity.sprint) {
       const sprintEntity = new SprintEntity();
       sprintEntity.id = domainEntity.sprint.id;
@@ -39,18 +52,17 @@ export class KpiMapper {
 
     if (domainEntity.createdBy) {
       const userEntity = new UserEntity();
-      userEntity.id = Number(domainEntity.createdBy.id);
+      userEntity.id = domainEntity.createdBy.id;
       persistenceEntity.createdBy = userEntity;
     }
 
-    persistenceEntity.targetValue = domainEntity.targetValue;
-    persistenceEntity.actualValue = domainEntity.actualValue;
     persistenceEntity.description = domainEntity.description;
     persistenceEntity.name = domainEntity.name;
 
     if (domainEntity.id) {
       persistenceEntity.id = domainEntity.id;
     }
+
     persistenceEntity.createdAt = domainEntity.createdAt;
     persistenceEntity.updatedAt = domainEntity.updatedAt;
 

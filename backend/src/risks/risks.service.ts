@@ -11,9 +11,6 @@ import { Risk } from './domain/risk';
 @Injectable()
 export class RisksService {
   constructor(
-
-
-
     // Dependencies here
     private readonly riskRepository: RiskRepository,
   ) { }
@@ -24,19 +21,18 @@ export class RisksService {
   ) {
     // Do not remove comment below.
     // <creating-property />
-
-
-
-
     return this.riskRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+      detection: createRiskDto.detection,
+
+      occurrence: createRiskDto.occurrence,
+
+      severity: createRiskDto.severity,
+
       description: createRiskDto.description,
 
-      criticity: createRiskDto.criticity,
-
       title: createRiskDto.title,
-
     });
   }
 
@@ -68,16 +64,16 @@ export class RisksService {
   ) {
     // Do not remove comment below.
     // <updating-property />
-
-
-
-
     return this.riskRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
-      description: updateRiskDto.description,
+      detection: updateRiskDto.detection,
 
-      criticity: updateRiskDto.criticity,
+      occurrence: updateRiskDto.occurrence,
+
+      severity: updateRiskDto.severity,
+
+      description: updateRiskDto.description,
 
       title: updateRiskDto.title,
 

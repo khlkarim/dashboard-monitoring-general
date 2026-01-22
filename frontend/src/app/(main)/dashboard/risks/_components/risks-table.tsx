@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { getColumns } from "./columns";
 import { EntityTable } from "@/components/common/entity-table";
 import { Risk } from "@/features/risks/types/risks.types";
@@ -14,6 +14,7 @@ import { useUpdateRisk } from "@/features/risks/hooks/use-update-risk";
 import { useDeleteRisk } from "@/features/risks/hooks/use-delete-risk";
 import { CreateRiskRequest } from "@/features/risks/schemas/risks.schemas";
 import { UpdateRiskRequest } from "@/features/risks/schemas/risks.schemas";
+import { toast } from "sonner";
 
 export function RisksTable() {
     const createMutation = useCreateRisk();
@@ -28,23 +29,23 @@ export function RisksTable() {
     const [editingRisk, setEditingRisk] = useState<Risk | null>(null);
     const [deletingRisk, setDeletingRisk] = useState<Risk | null>(null);
 
-    // Handlers
-    const handleEdit = (risk: Risk) => {
+    // Handlers - wrapped in useCallback to maintain stable references
+    const handleEdit = useCallback((risk: Risk) => {
         setEditingRisk(risk);
         setIsEditOpen(true);
-    };
+    }, []);
 
-    const handleDelete = (risk: Risk) => {
+    const handleDelete = useCallback((risk: Risk) => {
         setDeletingRisk(risk);
         setIsDeleteOpen(true);
-    };
+    }, []);
 
     const handleCreateSubmit = (data: CreateRiskRequest, setOpen: (open: boolean) => void) => {
         try {
             createMutation.mutate(data);
             setOpen(false);
         } catch (error) {
-            // Error handled in hook
+            toast.error("Failed to create risk");
         }
     };
 
@@ -54,7 +55,7 @@ export function RisksTable() {
                 updateMutation.mutate({ id: editingRisk.id, data });
                 setIsEditOpen(false);
             } catch (error) {
-                // Error handled in hook
+                toast.error("Failed to update risk");
             }
         }
     };
@@ -64,11 +65,11 @@ export function RisksTable() {
             deleteMutation.mutate(risk.id);
             setIsDeleteOpen(false);
         } catch (error) {
-            // Error handled in hook
+            toast.error("Failed to delete risk");
         }
     };
 
-    const columns = useMemo(() => getColumns(handleEdit, handleDelete), []);
+    const columns = useMemo(() => getColumns(handleEdit, handleDelete), [handleEdit, handleDelete]);
 
     return (
         <>

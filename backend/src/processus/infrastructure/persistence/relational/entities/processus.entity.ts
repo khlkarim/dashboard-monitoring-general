@@ -1,24 +1,12 @@
-
 import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   Column,
-
-
-
-
-
-
-
-
-
-
-
-
-
+  OneToMany,
 } from 'typeorm';
+import { KpiEntity } from '../../../../../kpis/infrastructure/persistence/relational/entities/kpi.entity';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 
 @Entity({
@@ -28,24 +16,19 @@ export class ProcessusEntity extends EntityRelationalHelper {
   @Column({
     nullable: true,
     type:
-              String,
-        })
-
-
-  description?: string  | null;
-
-
+      String,
+  })
+  description?: string | null;
 
   @Column({
     nullable: false,
     type:
-              String,
-        })
+      String,
+  })
+  label: string;
 
-
-  label: string ;
-
-
+  @OneToMany(() => KpiEntity, (kpi) => kpi.processus)
+  kpis: KpiEntity[];
 
   @PrimaryGeneratedColumn('uuid')
   id: string;

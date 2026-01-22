@@ -1,12 +1,6 @@
-
-
-
 import {
   // do not remove this comment
   Module,
-
-
-
 } from '@nestjs/common';
 import { RisksService } from './risks.service';
 import { RisksController } from './risks.controller';
@@ -14,12 +8,6 @@ import { RelationalRiskPersistenceModule } from './infrastructure/persistence/re
 
 @Module({
   imports: [
-
-
-
-
-
-
     // do not remove this comment
     RelationalRiskPersistenceModule,
   ],
@@ -27,4 +15,4 @@ import { RelationalRiskPersistenceModule } from './infrastructure/persistence/re
   providers: [RisksService],
   exports: [RisksService, RelationalRiskPersistenceModule],
 })
-export class RisksModule {}
+export class RisksModule { }

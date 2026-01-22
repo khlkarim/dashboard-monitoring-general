@@ -43,8 +43,11 @@ import { RisksModule } from './risks/risks.module';
 
 import { ActionsModule } from './actions/actions.module';
 
+import { CommentsModule } from './comments/comments.module';
+
 @Module({
   imports: [
+    CommentsModule,
     ActionsModule,
     RisksModule,
     ProcessusModule,

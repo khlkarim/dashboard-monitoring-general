@@ -16,10 +16,9 @@ import {
     FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { User, CreateUserRequest } from "@/features/users/schemas/users.schemas";
+import { CreateUserRequest } from "@/features/users/schemas/users.schemas";
+import { User } from "@/features/users/types/users.types";
 
-// Schema for the form
-// We need to extend/modify the base schema to handle password confirmation or specific UI needs
 const formSchema = z.object({
     firstName: z.string().min(1, "First name is required"),
     lastName: z.string().min(1, "Last name is required"),

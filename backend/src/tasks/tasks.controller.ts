@@ -47,7 +47,7 @@ export class TasksController {
   @ApiCreatedResponse({
     type: Task,
   })
-  @Roles(RoleEnum.president, RoleEnum.administrator)
+  @Roles(RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   @Post()
   create(@Body() createTaskDto: CreateTaskDto) {
     return this.tasksService.create(createTaskDto);
@@ -56,7 +56,7 @@ export class TasksController {
   @ApiOkResponse({
     type: InfinityPaginationResponse(Task),
   })
-  @Roles(RoleEnum.member, RoleEnum.president, RoleEnum.administrator)
+  @Roles(RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   @Get()
   async findAll(
     @Query() query: FindAllTasksDto,
@@ -79,9 +79,36 @@ export class TasksController {
   }
 
   @ApiOkResponse({
+    type: InfinityPaginationResponse(Task),
+  })
+  @Roles(RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
+  @Get('sprint/:sprintId')
+  async findAllBySprintId(
+    @Param('sprintId') sprintId: string,
+    @Query() query: FindAllTasksDto,
+  ): Promise<InfinityPaginationResponseDto<Task>> {
+    const page = query?.page ?? 1;
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+
+    return infinityPagination(
+      await this.tasksService.findAllBySprintIdWithPagination({
+        paginationOptions: {
+          page,
+          limit,
+        },
+        sprintId,
+      }),
+      { page, limit },
+    );
+  }
+
+  @ApiOkResponse({
     type: Task,
   })
-  @Roles(RoleEnum.member, RoleEnum.president, RoleEnum.administrator)
+  @Roles(RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   @Get(':id')
   @ApiParam({
     name: 'id',
@@ -95,7 +122,7 @@ export class TasksController {
   @ApiOkResponse({
     type: Task,
   })
-  @Roles(RoleEnum.member, RoleEnum.president, RoleEnum.administrator)
+  @Roles(RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   @Patch(':id')
   @ApiParam({
     name: 'id',
@@ -108,7 +135,7 @@ export class TasksController {
     @Request() request,
   ) {
     // If the user is a member, they can only update tasks assigned to them
-    if (request.user.role.id === RoleEnum.member) {
+    if (request.user.role.id === RoleEnum.MEMBER) {
       const task = await this.tasksService.findById(id);
       if (!task) {
         throw new NotFoundException('Task not found');
@@ -122,7 +149,7 @@ export class TasksController {
     return this.tasksService.update(id, updateTaskDto);
   }
 
-  @Roles(RoleEnum.president, RoleEnum.administrator)
+  @Roles(RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   @Delete(':id')
   @ApiParam({
     name: 'id',

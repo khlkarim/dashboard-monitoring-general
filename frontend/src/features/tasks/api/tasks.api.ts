@@ -25,6 +25,12 @@ export const tasksApi = {
         return taskListResponseSchema.parse(res.data);
     },
 
+    /** GET /api/v1/tasks/sprint/:sprintId */
+    findAllBySprintId: async (sprintId: string): Promise<TaskListResponse> => {
+        const res = await api.get(`/api/v1/tasks/sprint/${sprintId}`);
+        return taskListResponseSchema.parse(res.data);
+    },
+
     /** GET /api/v1/tasks/:id */
     findOne: async (id: string): Promise<TaskResponse> => {
         const res = await api.get(`/api/v1/tasks/${id}`);

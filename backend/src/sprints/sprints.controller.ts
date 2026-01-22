@@ -45,7 +45,7 @@ export class SprintsController {
   @ApiCreatedResponse({
     type: Sprint,
   })
-  @Roles(RoleEnum.president, RoleEnum.administrator)
+  @Roles(RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   create(@Body() createSprintDto: CreateSprintDto) {
     return this.sprintsService.create(createSprintDto);
   }
@@ -54,7 +54,7 @@ export class SprintsController {
   @ApiOkResponse({
     type: InfinityPaginationResponse(Sprint),
   })
-  @Roles(RoleEnum.member, RoleEnum.president, RoleEnum.administrator)
+  @Roles(RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   async findAll(
     @Query() query: FindAllSprintsDto,
   ): Promise<InfinityPaginationResponseDto<Sprint>> {
@@ -84,7 +84,7 @@ export class SprintsController {
   @ApiOkResponse({
     type: Sprint,
   })
-  @Roles(RoleEnum.member, RoleEnum.president, RoleEnum.administrator)
+  @Roles(RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   findOne(@Param('id') id: string) {
     return this.sprintsService.findById(id);
   }
@@ -98,7 +98,7 @@ export class SprintsController {
   @ApiOkResponse({
     type: Sprint,
   })
-  @Roles(RoleEnum.president, RoleEnum.administrator)
+  @Roles(RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   update(@Param('id') id: string, @Body() updateSprintDto: UpdateSprintDto) {
     return this.sprintsService.update(id, updateSprintDto);
   }
@@ -109,7 +109,7 @@ export class SprintsController {
     type: String,
     required: true,
   })
-  @Roles(RoleEnum.president, RoleEnum.administrator)
+  @Roles(RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   remove(@Param('id') id: string) {
     return this.sprintsService.remove(id);
   }

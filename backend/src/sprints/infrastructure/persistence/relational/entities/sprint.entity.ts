@@ -1,4 +1,6 @@
 import { UserEntity } from '../../../../../users/infrastructure/persistence/relational/entities/user.entity';
+import { TaskEntity } from '../../../../../tasks/infrastructure/persistence/relational/entities/task.entity';
+import { KpiEntity } from '../../../../../kpis/infrastructure/persistence/relational/entities/kpi.entity';
 
 import {
   CreateDateColumn,
@@ -7,21 +9,38 @@ import {
   UpdateDateColumn,
   Column,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
+import { SprintStatus } from 'src/sprints/domain/sprint-status.enum';
 
 @Entity({
   name: 'sprint',
 })
 export class SprintEntity extends EntityRelationalHelper {
   @Column({
-    nullable: false,
-    type: Number,
+    nullable: true,
+    type:
+      Date,
   })
-  status: number;
+  validationDate?: Date | null;
+
+  @Column({
+    nullable: false,
+    type: 'enum',
+    enum: SprintStatus,
+    default: SprintStatus.PLANNED,
+  })
+  status: SprintStatus;
 
   @ManyToOne(() => UserEntity, { eager: true, nullable: false })
   createdBy: UserEntity;
+
+  @OneToMany(() => TaskEntity, (task) => task.sprint)
+  tasks: TaskEntity[];
+
+  @OneToMany(() => KpiEntity, (kpi) => kpi.sprint)
+  kpis: KpiEntity[];
 
   @Column({
     nullable: false,

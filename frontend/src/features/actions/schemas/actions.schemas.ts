@@ -1,14 +1,17 @@
 import { z } from 'zod';
+import { riskResponseSchema } from '@/features/risks/schemas/risks.schemas';
 
-/* ------------------------------------------------------------
-   REQUEST SCHEMAS
------------------------------------------------------------- */
+export enum ActionType {
+    PREVENTIVE = 'PREVENTIVE',
+    CORRECTIVE = 'CORRECTIVE',
+}
 
 /** Create Action */
 export const createActionRequestSchema = z.object({
     title: z.string().min(1),
+    risk: z.object({ id: z.string() }),
     description: z.string().optional().nullable(),
-    risk: z.object({ id: z.string() }).nullable().optional(),
+    type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE]).default(ActionType.CORRECTIVE),
 });
 export type CreateActionRequest = z.infer<typeof createActionRequestSchema>;
 
@@ -16,16 +19,13 @@ export type CreateActionRequest = z.infer<typeof createActionRequestSchema>;
 export const updateActionRequestSchema = createActionRequestSchema.partial();
 export type UpdateActionRequest = z.infer<typeof updateActionRequestSchema>;
 
-/* ------------------------------------------------------------
-   RESPONSE SCHEMAS
------------------------------------------------------------- */
-
 /** Action Entity */
 export const actionResponseSchema = z.object({
     id: z.string(),
     title: z.string().nullable().optional(),
     description: z.string().nullable().optional(),
-    risk: z.object({ id: z.string() }).nullable().optional(),
+    risk: riskResponseSchema,
+    type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE]),
     createdAt: z.string().datetime(),
     updatedAt: z.string().datetime(),
 });

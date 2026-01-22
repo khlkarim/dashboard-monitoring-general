@@ -2,13 +2,13 @@ import { UserDto } from '../../users/dto/user.dto';
 
 import {
   // decorators here
-
   IsString,
   IsOptional,
   IsDate,
   ValidateNested,
   IsNotEmptyObject,
   IsNumber,
+  IsEnum,
 } from 'class-validator';
 
 import {
@@ -18,18 +18,29 @@ import {
 
 import {
   // decorators here
-
   Transform,
   Type,
 } from 'class-transformer';
+import { SprintStatus } from '../domain/sprint-status.enum';
 
 export class CreateSprintDto {
   @ApiProperty({
-    required: true,
-    type: () => Number,
+    required: false,
+    type: () =>
+      Date,
   })
-  @IsNumber()
-  status: number;
+  @IsOptional()
+  @Transform(({ value }) => new Date(value))
+  @IsDate()
+
+  validationDate?: Date | null;
+
+  @ApiProperty({
+    required: true,
+    enum: SprintStatus,
+  })
+  @IsEnum(SprintStatus)
+  status: SprintStatus;
 
   @ApiProperty({
     required: true,
@@ -70,6 +81,4 @@ export class CreateSprintDto {
   })
   @IsString()
   name: string;
-
-  // Don't forget to use the class-validator decorators in the DTO properties.
 }

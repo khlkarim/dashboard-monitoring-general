@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,17 +24,22 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
-import { sprintsApi } from "@/features/sprints/api/sprints.api";
 import { KpiResponse } from "@/features/kpis/schemas/kpis.schemas";
 import { useAuthStore } from "@/features/auth/store/auth.store";
+import { useGetSprints } from "@/features/sprints/hooks/use-get-sprints";
+import { useGetProcessus } from "@/features/processus/hooks/use-get-processus";
 
-// Schema for the form
+export enum KpiType {
+    SPRINT = "SPRINT",
+    PROCESSUS = "PROCESSUS",
+}
+
 const formSchema = z.object({
     name: z.string().min(1, "Name is required"),
     description: z.string().optional(),
-    targetValue: z.string().optional(), // Input type="number" returns string usually, we parse later
-    actualValue: z.string().optional(),
-    sprintId: z.string().optional().nullable(),
+    sprint: z.object({ id: z.string() }).optional().nullable(),
+    processus: z.object({ id: z.string() }).optional().nullable(),
+    samplingRate: z.string().optional(),
 });
 
 type KpiFormValues = z.infer<typeof formSchema>;
@@ -44,45 +48,41 @@ interface KpiFormProps {
     initialData?: KpiResponse | null;
     onSubmit: (data: any) => void;
     isLoading?: boolean;
+    type: KpiType;
 }
 
-export function KpiForm({ initialData, onSubmit, isLoading }: KpiFormProps) {
+export function KpiForm({ initialData, onSubmit, isLoading, type }: KpiFormProps) {
     const user = useAuthStore((state) => state.user);
-
-    // Fetch sprints for the dropdown
-    const { data: sprintsData } = useQuery({
-        queryKey: ["sprints-select"],
-        queryFn: () => sprintsApi.findAll(),
-    });
+    const { data: sprints } = useGetSprints();
+    const { data: processus } = useGetProcessus();
 
     const form = useForm<KpiFormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: initialData?.name || "",
             description: initialData?.description || "",
-            targetValue: initialData?.targetValue?.toString() || "",
-            actualValue: initialData?.actualValue?.toString() || "",
-            sprintId: initialData?.sprint?.id || "none", // "none" to handle unassigning if needed
+            sprint: initialData?.sprint || null,
+            processus: initialData?.processus || null,
+            samplingRate: initialData?.samplingRate || "",
         },
     });
 
-    // Reset form when initialData changes (for edit mode switching items)
     useEffect(() => {
         if (initialData) {
             form.reset({
                 name: initialData.name,
                 description: initialData.description || "",
-                targetValue: initialData.targetValue?.toString() || "",
-                actualValue: initialData.actualValue?.toString() || "",
-                sprintId: initialData.sprint?.id || "none",
+                sprint: initialData.sprint || null,
+                processus: initialData.processus || null,
+                samplingRate: initialData.samplingRate || "",
             });
         } else {
             form.reset({
                 name: "",
                 description: "",
-                targetValue: "",
-                actualValue: "",
-                sprintId: "none",
+                sprint: null,
+                processus: null,
+                samplingRate: "",
             });
         }
     }, [initialData, form]);
@@ -90,24 +90,12 @@ export function KpiForm({ initialData, onSubmit, isLoading }: KpiFormProps) {
     const handleSubmit = (values: KpiFormValues) => {
         const apiData = {
             ...values,
-            targetValue: values.targetValue ? parseFloat(values.targetValue) : null,
-            actualValue: values.actualValue ? parseFloat(values.actualValue) : null,
-            sprint: values.sprintId && values.sprintId !== "none" ? { id: values.sprintId } : null,
+            sprint: type === KpiType.SPRINT && values.sprint ? values.sprint : null,
+            processus: type === KpiType.PROCESSUS && values.processus ? values.processus : null,
             createdBy: {
                 id: user?.id,
             },
         };
-
-        if (values.sprintId && values.sprintId !== "none" && sprintsData?.data) {
-            const selectedSprint = sprintsData.data.find(s => s.id === values.sprintId);
-            if (selectedSprint) {
-                // @ts-ignore
-                apiData.sprint = selectedSprint;
-            }
-        } else {
-            // @ts-ignore
-            apiData.sprint = null;
-        }
 
         onSubmit(apiData);
     };
@@ -143,61 +131,61 @@ export function KpiForm({ initialData, onSubmit, isLoading }: KpiFormProps) {
                     )}
                 />
 
-                <div className="flex gap-4">
+                {type === KpiType.SPRINT && (
                     <FormField
                         control={form.control}
-                        name="targetValue"
+                        name="sprint"
                         render={({ field }) => (
-                            <FormItem className="flex-1">
-                                <FormLabel>Target Value</FormLabel>
-                                <FormControl>
-                                    <Input type="number" placeholder="100" {...field} />
-                                </FormControl>
+                            <FormItem>
+                                <FormLabel>Sprint</FormLabel>
+                                <Select onValueChange={field.onChange} value={field.value?.id || ""}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a sprint" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="none">No Sprint</SelectItem>
+                                        {sprints?.data.map((sprint) => (
+                                            <SelectItem key={sprint.id} value={sprint.id}>
+                                                {sprint.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
+                )}
 
+                {type === KpiType.PROCESSUS && (
                     <FormField
                         control={form.control}
-                        name="actualValue"
+                        name="processus"
                         render={({ field }) => (
-                            <FormItem className="flex-1">
-                                <FormLabel>Actual Value</FormLabel>
-                                <FormControl>
-                                    <Input type="number" placeholder="50" {...field} />
-                                </FormControl>
+                            <FormItem>
+                                <FormLabel>Processus</FormLabel>
+                                <Select onValueChange={field.onChange} value={field.value?.id || ""}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a processus" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="none">No Processus</SelectItem>
+                                        {processus?.data.map((processus) => (
+                                            <SelectItem key={processus.id} value={processus.id}>
+                                                {processus.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-                </div>
-
-                <FormField
-                    control={form.control}
-                    name="sprintId"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Sprint</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value || "none"}>
-                                <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a sprint" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    <SelectItem value="none">No Sprint</SelectItem>
-                                    {sprintsData?.data.map((sprint) => (
-                                        <SelectItem key={sprint.id} value={sprint.id}>
-                                            {sprint.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                )}
 
                 <div className="flex justify-end pt-4">
                     <Button type="submit" disabled={isLoading}>

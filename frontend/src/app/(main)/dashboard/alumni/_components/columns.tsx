@@ -1,22 +1,39 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 
 import { User } from "@/features/users/types/users.types";
+import { DataTableRowActions } from "@/components/data-table/data-table-row-actions";
+import { useRouter } from "next/navigation";
+import { useNavigationStore } from "@/navigation/store/navigation.store";
+
+function OpenUserButton({ user }: { user: User }) {
+    const router = useRouter();
+    const { addSubNavItem } = useNavigationStore();
+
+    const handleOpenUser = () => {
+        addSubNavItem(2, "Alumni", {
+            title: user.firstName && user.lastName ? user.firstName + " " + user.lastName : "-",
+            url: `/dashboard/alumni/${user.id}`,
+        });
+        router.push(`/dashboard/alumni/${user.id}`);
+    };
+
+    return (
+        <Button
+            variant="outline"
+            size="sm"
+            onClick={handleOpenUser}
+        >
+            Open
+        </Button>
+    );
+}
 
 export const columns: ColumnDef<User>[] = [
     {
@@ -76,25 +93,12 @@ export const columns: ColumnDef<User>[] = [
             const user = row.original;
 
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(user.id.toString())}
-                        >
-                            Copy User ID
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>Edit User</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">Delete User</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="flex items-center gap-2">
+                    <OpenUserButton user={row.original} />
+                    <DataTableRowActions
+                        row={row}
+                    />
+                </div>
             );
         },
     },

@@ -17,14 +17,10 @@ function OpenRiskButton({ risk }: { risk: Risk }) {
     const { addSubNavItem } = useNavigationStore();
 
     const handleOpenRisk = () => {
-        // Add risk as subitem to "Risks" in the navigation
-        // Note: You might need to ensure "Risks" parent item exists in sidebar configuration
         addSubNavItem(2, "Risks", {
             title: risk.title || "Untitled Risk",
             url: `/dashboard/risks/${risk.id}`,
         });
-
-        // Navigate to risk detail page
         router.push(`/dashboard/risks/${risk.id}`);
     };
 
@@ -79,9 +75,21 @@ export const getColumns = (
             ),
         },
         {
-            accessorKey: "criticity",
+            accessorKey: "severity",
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Criticity" />
+                <DataTableColumnHeader column={column} title="Severity" />
+            ),
+        },
+        {
+            accessorKey: "occurrence",
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Occurrence" />
+            ),
+        },
+        {
+            accessorKey: "detection",
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Detection" />
             ),
         },
         {

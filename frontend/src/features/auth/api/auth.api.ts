@@ -21,15 +21,11 @@ import {
 } from '@/features/auth/schemas/auth.schemas';
 import { useAuthStore } from '../store/auth.store';
 
-/**
- * Service layer for communicating with the NestJS AuthController endpoints.
- */
 export const authApi = {
   /** POST /api/v1/auth/email/login */
   login: async (data: LoginRequest): Promise<LoginResponse> => {
     loginRequestSchema.parse(data);
     const res = await api.post('/api/v1/auth/email/login', data);
-    console.log('login response: ', res);
     return loginResponseSchema.parse(res.data);
   },
 

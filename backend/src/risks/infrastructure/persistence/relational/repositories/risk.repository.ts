@@ -13,7 +13,7 @@ export class RiskRelationalRepository implements RiskRepository {
   constructor(
     @InjectRepository(RiskEntity)
     private readonly riskRepository: Repository<RiskEntity>,
-  ) {}
+  ) { }
 
   async create(data: Risk): Promise<Risk> {
     const persistenceModel = RiskMapper.toPersistence(data);
@@ -39,6 +39,7 @@ export class RiskRelationalRepository implements RiskRepository {
   async findById(id: Risk['id']): Promise<NullableType<Risk>> {
     const entity = await this.riskRepository.findOne({
       where: { id },
+      relations: ['actions'],
     });
 
     return entity ? RiskMapper.toDomain(entity) : null;

@@ -9,7 +9,7 @@ export class StatusSeedService {
   constructor(
     @InjectRepository(StatusEntity)
     private repository: Repository<StatusEntity>,
-  ) {}
+  ) { }
 
   async run() {
     const count = await this.repository.count();
@@ -17,11 +17,11 @@ export class StatusSeedService {
     if (!count) {
       await this.repository.save([
         this.repository.create({
-          id: StatusEnum.active,
+          id: StatusEnum.ACTIVE,
           name: 'Active',
         }),
         this.repository.create({
-          id: StatusEnum.inactive,
+          id: StatusEnum.INACTIVE,
           name: 'Inactive',
         }),
       ]);

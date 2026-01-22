@@ -1,10 +1,6 @@
-
-
 import {
   // do not remove this comment
   Module,
-
-
 } from '@nestjs/common';
 import { ProcessusService } from './processus.service';
 import { ProcessusController } from './processus.controller';
@@ -12,10 +8,6 @@ import { RelationalProcessusPersistenceModule } from './infrastructure/persisten
 
 @Module({
   imports: [
-
-
-
-
     // do not remove this comment
     RelationalProcessusPersistenceModule,
   ],
@@ -23,4 +15,4 @@ import { RelationalProcessusPersistenceModule } from './infrastructure/persisten
   providers: [ProcessusService],
   exports: [ProcessusService, RelationalProcessusPersistenceModule],
 })
-export class ProcessusModule {}
+export class ProcessusModule { }

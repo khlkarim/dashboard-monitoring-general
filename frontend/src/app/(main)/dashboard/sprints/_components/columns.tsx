@@ -12,27 +12,17 @@ import { DataTableRowActions } from "@/components/data-table/data-table-row-acti
 
 import { Sprint } from "@/features/sprints/types/sprints.types";
 import { useNavigationStore } from "@/navigation/store/navigation.store";
+import { SprintStatus } from "@/features/sprints/schemas/sprints.schemas";
 
-export const sprintStatusMap: Record<number, string> = {
-    0: "Planned",
-    1: "Active",
-    2: "Completed",
-    3: "Closed",
-};
-
-// Separate component to properly use hooks
 function OpenSprintButton({ sprint }: { sprint: Sprint }) {
     const router = useRouter();
     const { addSubNavItem } = useNavigationStore();
 
     const handleOpenSprint = () => {
-        // Add sprint as subitem to "Sprints" in the navigation
         addSubNavItem(2, "Sprints", {
             title: sprint.name,
             url: `/dashboard/sprints/${sprint.id}`,
         });
-
-        // Navigate to sprint detail page
         router.push(`/dashboard/sprints/${sprint.id}`);
     };
 
@@ -86,8 +76,8 @@ export const getColumns = (
                 <DataTableColumnHeader column={column} title="Status" />
             ),
             cell: ({ row }) => {
-                const status = row.getValue("status") as number;
-                return <Badge variant="outline">{sprintStatusMap[status] || status}</Badge>;
+                const status = row.getValue("status") as SprintStatus;
+                return <Badge variant="outline">{status}</Badge>;
             },
         },
         {
@@ -112,6 +102,19 @@ export const getColumns = (
                 return (
                     <span className="text-muted-foreground">
                         {format(new Date(row.getValue("endDate")), "PPP")}
+                    </span>
+                );
+            },
+        },
+        {
+            accessorKey: "validationDate",
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Validation Date" />
+            ),
+            cell: ({ row }) => {
+                return (
+                    <span className="text-muted-foreground">
+                        {format(new Date(row.getValue("validationDate")), "PPP")}
                     </span>
                 );
             },

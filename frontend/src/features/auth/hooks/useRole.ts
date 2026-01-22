@@ -5,7 +5,6 @@ import { RoleEnum } from '../types/roles.types';
 export const useRole = () => {
     const user = useAuthStore((state) => state.user);
 
-    // Assuming the user object has a nested role object as per the schema: user.role.id
     const roleId = user?.role?.id;
     const roleName = user?.role?.name;
 
@@ -23,9 +22,9 @@ export const useRole = () => {
         roleName,
         hasRole,
         hasAnyRole,
-        isAdmin: roleId === RoleEnum.administrator,
-        isPresident: roleId === RoleEnum.president,
-        isMember: roleId === RoleEnum.member,
-        isAlumni: roleId === RoleEnum.alumni,
+        isAdmin: roleId === RoleEnum.ADMINISTRATOR,
+        isPresident: roleId === RoleEnum.PRESIDENT,
+        isMember: roleId === RoleEnum.MEMBER,
+        isAlumni: roleId === RoleEnum.ALUMNI,
     };
 };

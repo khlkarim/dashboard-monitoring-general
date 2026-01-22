@@ -25,6 +25,12 @@ export const actionsApi = {
         return actionListResponseSchema.parse(res.data);
     },
 
+    /** GET /api/v1/actions/risk/:riskId */
+    findAllByRiskId: async (riskId: string): Promise<ActionListResponse> => {
+        const res = await api.get(`/api/v1/actions/risk/${riskId}`);
+        return actionListResponseSchema.parse(res.data);
+    },
+
     /** GET /api/v1/actions/:id */
     findOne: async (id: string): Promise<ActionResponse> => {
         const res = await api.get(`/api/v1/actions/${id}`);

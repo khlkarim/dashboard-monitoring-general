@@ -11,6 +11,7 @@ import { UpdateActionDto } from './dto/update-action.dto';
 import { ActionRepository } from './infrastructure/persistence/action.repository';
 import { IPaginationOptions } from '../utils/types/pagination-options';
 import { Action } from './domain/action';
+import { isUUID } from 'class-validator';
 
 @Injectable()
 export class ActionsService {
@@ -26,6 +27,7 @@ export class ActionsService {
   ) {
     // Do not remove comment below.
     // <creating-property />
+
     const riskObject = await this.riskService.findById(
       createActionDto.risk.id,
     );
@@ -42,6 +44,8 @@ export class ActionsService {
     return this.actionRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+      type: createActionDto.type,
+
       risk,
 
       description: createActionDto.description,
@@ -64,6 +68,31 @@ export class ActionsService {
     });
   }
 
+  findAllByRiskIdWithPagination({
+    paginationOptions,
+    riskId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    riskId: string;
+  }) {
+    if (!isUUID(riskId)) {
+      throw new UnprocessableEntityException({
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        errors: {
+          riskId: 'invalid',
+        },
+      });
+    }
+
+    return this.actionRepository.findAllByRiskIdWithPagination({
+      paginationOptions: {
+        page: paginationOptions.page,
+        limit: paginationOptions.limit,
+      },
+      riskId,
+    });
+  }
+
   findById(id: Action['id']) {
     return this.actionRepository.findById(id);
   }
@@ -79,6 +108,7 @@ export class ActionsService {
   ) {
     // Do not remove comment below.
     // <updating-property />
+
     let risk: Risk | undefined = undefined;
 
     if (updateActionDto.risk) {
@@ -99,6 +129,8 @@ export class ActionsService {
     return this.actionRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+      type: updateActionDto.type,
+
       risk,
 
       description: updateActionDto.description,

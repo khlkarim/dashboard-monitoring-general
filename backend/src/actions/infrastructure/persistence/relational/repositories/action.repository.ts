@@ -7,13 +7,14 @@ import { Action } from '../../../../domain/action';
 import { ActionRepository } from '../../action.repository';
 import { ActionMapper } from '../mappers/action.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
+import { Risk } from 'src/risks/domain/risk';
 
 @Injectable()
 export class ActionRelationalRepository implements ActionRepository {
   constructor(
     @InjectRepository(ActionEntity)
     private readonly actionRepository: Repository<ActionEntity>,
-  ) {}
+  ) { }
 
   async create(data: Action): Promise<Action> {
     const persistenceModel = ActionMapper.toPersistence(data);
@@ -31,6 +32,22 @@ export class ActionRelationalRepository implements ActionRepository {
     const entities = await this.actionRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
+    });
+
+    return entities.map((entity) => ActionMapper.toDomain(entity));
+  }
+
+  async findAllByRiskIdWithPagination({
+    paginationOptions,
+    riskId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    riskId: Risk['id'];
+  }): Promise<Action[]> {
+    const entities = await this.actionRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      where: { risk: { id: riskId } },
     });
 
     return entities.map((entity) => ActionMapper.toDomain(entity));

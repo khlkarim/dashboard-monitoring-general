@@ -1,3 +1,4 @@
+import { ProcessusEntity } from '../../../../../processus/infrastructure/persistence/relational/entities/processus.entity';
 import {
   CreateDateColumn,
   Entity,
@@ -14,27 +15,30 @@ import { UserEntity } from '../../../../../users/infrastructure/persistence/rela
   name: 'kpi',
 })
 export class KpiEntity extends EntityRelationalHelper {
+  @Column({
+    nullable: true,
+    type: 'simple-array',
+  })
+  samples?: number[] | null;
+
+  @Column({
+    nullable: true,
+    type:
+      String,
+  })
+  samplingRate?: string | null;
+
+  @ManyToOne(
+    () => ProcessusEntity,
+    { eager: true, nullable: true }
+  )
+  processus?: ProcessusEntity | null;
+
   @ManyToOne(() => SprintEntity, { eager: true, nullable: true })
   sprint?: SprintEntity | null;
 
   @ManyToOne(() => UserEntity, { eager: true, nullable: false })
   createdBy: UserEntity;
-
-  @Column({
-    nullable: true,
-    type: 'decimal',
-    precision: 10,
-    scale: 2,
-  })
-  targetValue?: number | null;
-
-  @Column({
-    nullable: true,
-    type: 'decimal',
-    precision: 10,
-    scale: 2,
-  })
-  actualValue?: number | null;
 
   @Column({
     nullable: true,

@@ -36,7 +36,7 @@ import { FindAllActionsDto } from './dto/find-all-actions.dto';
   version: '1',
 })
 export class ActionsController {
-  constructor(private readonly actionsService: ActionsService) {}
+  constructor(private readonly actionsService: ActionsService) { }
 
   @Post()
   @ApiCreatedResponse({
@@ -65,6 +65,37 @@ export class ActionsController {
           page,
           limit,
         },
+      }),
+      { page, limit },
+    );
+  }
+
+  @Get('risk/:riskId')
+  @ApiParam({
+    name: 'riskId',
+    type: String,
+    required: true,
+  })
+  @ApiOkResponse({
+    type: InfinityPaginationResponse(Action),
+  })
+  async findAllByRiskId(
+    @Query() query: FindAllActionsDto,
+    @Param('riskId') riskId: string,
+  ): Promise<InfinityPaginationResponseDto<Action>> {
+    const page = query?.page ?? 1;
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+
+    return infinityPagination(
+      await this.actionsService.findAllByRiskIdWithPagination({
+        paginationOptions: {
+          page,
+          limit,
+        },
+        riskId,
       }),
       { page, limit },
     );

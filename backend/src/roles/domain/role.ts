@@ -1,14 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Allow } from 'class-validator';
 
-const idType = Number;
-
 export class Role {
   @Allow()
   @ApiProperty({
-    type: idType,
+    type: String,
   })
-  id: number | string;
+  id: string;
 
   @Allow()
   @ApiProperty({

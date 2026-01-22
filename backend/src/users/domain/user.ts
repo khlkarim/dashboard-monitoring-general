@@ -1,25 +1,15 @@
-import { Processus } from '../../processus/domain/processus';
 import { Exclude, Expose } from 'class-transformer';
 import { FileType } from '../../files/domain/file';
 import { Role } from '../../roles/domain/role';
 import { Status } from '../../statuses/domain/status';
 import { ApiProperty } from '@nestjs/swagger';
-
-const idType = Number;
+import { Task } from '../../tasks/domain/task';
 
 export class User {
   @ApiProperty({
-    type: () =>
-      Processus,
-    nullable: true,
+    type: String,
   })
-
-  processus?: Processus | null;
-
-  @ApiProperty({
-    type: idType,
-  })
-  id: number | string;
+  id: string;
 
   @ApiProperty({
     type: String,
@@ -69,7 +59,15 @@ export class User {
   @ApiProperty({
     type: () => Status,
   })
+  @ApiProperty({
+    type: () => Status,
+  })
   status?: Status;
+
+  @ApiProperty({
+    type: () => [Task],
+  })
+  assignedTasks?: Task[];
 
   @ApiProperty()
   createdAt: Date;

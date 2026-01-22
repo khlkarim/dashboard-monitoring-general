@@ -16,8 +16,11 @@ import { RisksSeedModule } from './risks/risks-seed.module';
 import databaseConfig from '../../config/database.config';
 import appConfig from '../../../config/app.config';
 
+import { CommentsSeedModule } from './comments/comments-seed.module';
+
 @Module({
   imports: [
+    CommentsSeedModule,
     RoleSeedModule,
     StatusSeedModule,
     UserSeedModule,

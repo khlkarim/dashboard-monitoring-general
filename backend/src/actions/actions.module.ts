@@ -1,13 +1,8 @@
 import { RisksModule } from '../risks/risks.module';
-
-
 import {
   // do not remove this comment
   Module,
-
-
-      forwardRef,
-  
+  forwardRef,
 } from '@nestjs/common';
 import { ActionsService } from './actions.service';
 import { ActionsController } from './actions.controller';
@@ -15,12 +10,7 @@ import { RelationalActionPersistenceModule } from './infrastructure/persistence/
 
 @Module({
   imports: [
-      forwardRef(() => RisksModule),
-  
-
-
-
-
+    forwardRef(() => RisksModule),
     // do not remove this comment
     RelationalActionPersistenceModule,
   ],
@@ -28,4 +18,4 @@ import { RelationalActionPersistenceModule } from './infrastructure/persistence/
   providers: [ActionsService],
   exports: [ActionsService, RelationalActionPersistenceModule],
 })
-export class ActionsModule {}
+export class ActionsModule { }

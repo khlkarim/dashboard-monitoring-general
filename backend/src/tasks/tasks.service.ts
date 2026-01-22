@@ -1,9 +1,7 @@
 import { UsersService } from '../users/users.service';
 import { User } from '../users/domain/user';
-
 import { SprintsService } from '../sprints/sprints.service';
 import { Sprint } from '../sprints/domain/sprint';
-
 import {
   // common
   Injectable,
@@ -20,17 +18,14 @@ import { Task } from './domain/task';
 export class TasksService {
   constructor(
     private readonly userService: UsersService,
-
     private readonly sprintService: SprintsService,
-
     // Dependencies here
     private readonly taskRepository: TaskRepository,
-  ) {}
+  ) { }
 
   async create(createTaskDto: CreateTaskDto) {
     // Do not remove comment below.
     // <creating-property />
-
     const reporterObject = await this.userService.findById(
       createTaskDto.reporter.id,
     );
@@ -73,7 +68,10 @@ export class TasksService {
     return this.taskRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
-      type: createTaskDto.type,
+      criticality: createTaskDto.criticality,
+      startDate: createTaskDto.startDate,
+
+      deliverable: createTaskDto.deliverable,
 
       status: createTaskDto.status,
 
@@ -104,6 +102,22 @@ export class TasksService {
     });
   }
 
+  findAllBySprintIdWithPagination({
+    paginationOptions,
+    sprintId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    sprintId: Sprint['id'];
+  }) {
+    return this.taskRepository.findAllBySprintIdWithPagination({
+      paginationOptions: {
+        page: paginationOptions.page,
+        limit: paginationOptions.limit,
+      },
+      sprintId,
+    });
+  }
+
   findById(id: Task['id']) {
     return this.taskRepository.findById(id);
   }
@@ -119,7 +133,6 @@ export class TasksService {
   ) {
     // Do not remove comment below.
     // <updating-property />
-
     let reporter: User | undefined = undefined;
 
     if (updateTaskDto.reporter) {
@@ -174,7 +187,11 @@ export class TasksService {
     return this.taskRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
-      type: updateTaskDto.type,
+      criticality: updateTaskDto.criticality,
+
+      startDate: updateTaskDto.startDate,
+
+      deliverable: updateTaskDto.deliverable,
 
       status: updateTaskDto.status,
 

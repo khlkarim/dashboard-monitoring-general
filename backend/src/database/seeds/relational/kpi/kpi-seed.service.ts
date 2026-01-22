@@ -5,6 +5,7 @@ import { KpiEntity } from '../../../../kpis/infrastructure/persistence/relationa
 import { UserEntity } from '../../../../users/infrastructure/persistence/relational/entities/user.entity';
 import { SprintEntity } from '../../../../sprints/infrastructure/persistence/relational/entities/sprint.entity';
 import { RoleEnum } from '../../../../roles/roles.enum';
+import { ProcessusEntity } from '../../../../processus/infrastructure/persistence/relational/entities/processus.entity';
 
 @Injectable()
 export class KpiSeedService {
@@ -15,11 +16,13 @@ export class KpiSeedService {
         private userRepository: Repository<UserEntity>,
         @InjectRepository(SprintEntity)
         private sprintRepository: Repository<SprintEntity>,
+        @InjectRepository(ProcessusEntity)
+        private processusRepository: Repository<ProcessusEntity>,
     ) { }
 
     async run() {
         const member = await this.userRepository.findOne({
-            where: { role: { id: RoleEnum.member } },
+            where: { role: { id: RoleEnum.MEMBER } },
         });
 
         if (!member) {
@@ -27,8 +30,8 @@ export class KpiSeedService {
             return;
         }
 
-        // Sprint is optional for KPIs, but let's link one for demonstration
         const sprint = await this.sprintRepository.findOne({ where: {} });
+        const processus = await this.processusRepository.findOne({ where: {} });
 
         const count = await this.repository.count();
 
@@ -37,26 +40,27 @@ export class KpiSeedService {
                 this.repository.create({
                     name: 'Response Time',
                     description: 'Average response time for API requests in ms',
-                    targetValue: 200,
-                    actualValue: 150,
-                    sprint: sprint || null, // Link if available
+                    sprint: sprint || null,
                     createdBy: member,
+                    samplingRate: "Every 10 days",
+                    samples: [1, 2, 3, 4, 5],
+
                 }),
                 this.repository.create({
                     name: 'Customer Satisfaction',
                     description: 'CSAT Score from 1 to 10',
-                    targetValue: 9.0,
-                    actualValue: 8.5,
-                    sprint: sprint || null,
+                    processus: processus || null,
                     createdBy: member,
+                    samplingRate: "Every month",
+                    samples: [1, 2, 3, 4, 5],
                 }),
                 this.repository.create({
                     name: 'Bug Fix Rate',
                     description: 'Number of bugs fixed per week',
-                    targetValue: 10,
-                    actualValue: 12,
-                    sprint: sprint || null,
+                    processus: processus || null,
                     createdBy: member,
+                    samplingRate: "Every week",
+                    samples: [1, 2, 3, 4, 5],
                 }),
             ]);
         }
