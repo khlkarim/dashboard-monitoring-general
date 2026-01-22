@@ -45,8 +45,11 @@ import { ActionsModule } from './actions/actions.module';
 
 import { CommentsModule } from './comments/comments.module';
 
+import { NotificationsModule } from './notifications/notifications.module';
+
 @Module({
   imports: [
+    NotificationsModule,
     CommentsModule,
     ActionsModule,
     RisksModule,

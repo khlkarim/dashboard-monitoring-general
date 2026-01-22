@@ -10,7 +10,13 @@ import { AllConfigType } from '../../config/config.type';
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(configService: ConfigService<AllConfigType>) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        // Support token from query parameter for SSE endpoints (EventSource limitation)
+        (request: any) => {
+          return request?.query?.token || null;
+        },
+      ]),
       secretOrKey: configService.getOrThrow('auth.secret', { infer: true }),
     });
   }
