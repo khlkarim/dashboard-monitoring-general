@@ -52,7 +52,7 @@ export class UsersController {
   @SerializeOptions({
     groups: ['admin'],
   })
-  @Roles(RoleEnum.administrator)
+  @Roles(RoleEnum.ADMINISTRATOR)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createProfileDto: CreateUserDto): Promise<User> {
@@ -65,7 +65,7 @@ export class UsersController {
   @SerializeOptions({
     groups: ['admin'],
   })
-  @Roles(RoleEnum.administrator)
+  @Roles(RoleEnum.ADMINISTRATOR)
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(
@@ -95,7 +95,7 @@ export class UsersController {
   })
   @Get('alumni')
   @HttpCode(HttpStatus.OK)
-  @Roles(RoleEnum.administrator, RoleEnum.president, RoleEnum.member, RoleEnum.alumni)
+  @Roles(RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT, RoleEnum.MEMBER, RoleEnum.ALUMNI)
   async getAlumni(
     @Query() query: QueryUserDto,
   ): Promise<InfinityPaginationResponseDto<User>> {
@@ -110,7 +110,7 @@ export class UsersController {
         filterOptions: {
           ...query?.filters,
           roles: [{
-            id: RoleEnum.alumni,
+            id: RoleEnum.ALUMNI,
           }],
         },
         sortOptions: query?.sort,
@@ -129,7 +129,7 @@ export class UsersController {
   @SerializeOptions({
     groups: ['admin'],
   })
-  @Roles(RoleEnum.administrator)
+  @Roles(RoleEnum.ADMINISTRATOR)
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @ApiParam({
@@ -147,7 +147,7 @@ export class UsersController {
   @SerializeOptions({
     groups: ['admin'],
   })
-  @Roles(RoleEnum.administrator)
+  @Roles(RoleEnum.ADMINISTRATOR)
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
   @ApiParam({
@@ -162,7 +162,7 @@ export class UsersController {
     return this.usersService.update(id, updateProfileDto);
   }
 
-  @Roles(RoleEnum.administrator)
+  @Roles(RoleEnum.ADMINISTRATOR)
   @Delete(':id')
   @ApiParam({
     name: 'id',

@@ -6,6 +6,32 @@ import { DataTableColumnHeader } from "@/components/data-table/data-table-column
 import { DataTableRowActions } from "@/components/data-table/data-table-row-actions";
 
 import { Kpi } from "@/features/kpis/types/kpis.types";
+import { useRouter } from "next/navigation";
+import { useNavigationStore } from "@/navigation/store/navigation.store";
+import { Button } from "@/components/ui/button";
+
+function OpenKpiButton({ kpi }: { kpi: Kpi }) {
+    const router = useRouter();
+    const { addSubNavItem } = useNavigationStore();
+
+    const handleOpenKpi = () => {
+        addSubNavItem(2, "KPIs", {
+            title: kpi.name,
+            url: `/dashboard/kpis/${kpi.id}`,
+        });
+        router.push(`/dashboard/kpis/${kpi.id}`);
+    };
+
+    return (
+        <Button
+            variant="outline"
+            size="sm"
+            onClick={handleOpenKpi}
+        >
+            Open
+        </Button>
+    );
+}
 
 export const getColumns = (
     onEdit: (kpi: Kpi) => void,
@@ -31,8 +57,6 @@ export const getColumns = (
                     />
                 </div>
             ),
-            enableSorting: false,
-            enableHiding: false,
         },
         {
             accessorKey: "name",
@@ -47,35 +71,24 @@ export const getColumns = (
             ),
         },
         {
-            accessorKey: "targetValue",
+            accessorKey: "samplingRate",
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Target Value" />
+                <DataTableColumnHeader column={column} title="Sampling Rate" />
             ),
-            cell: ({ row }) => {
-                const value = row.getValue("targetValue") as number | null;
-                return <div className="font-medium">{value ?? "-"}</div>;
-            },
-        },
-        {
-            accessorKey: "actualValue",
-            header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Actual Value" />
-            ),
-            cell: ({ row }) => {
-                const value = row.getValue("actualValue") as number | null;
-                return <div className="font-medium">{value ?? "-"}</div>;
-            },
         },
         {
             id: "actions",
             header: "Actions",
             cell: ({ row }) => {
                 return (
-                    <DataTableRowActions
-                        row={row}
-                        onEdit={onEdit}
-                        onDelete={onDelete}
-                    />
+                    <div className="flex items-center gap-2">
+                        <OpenKpiButton kpi={row.original} />
+                        <DataTableRowActions
+                            row={row}
+                            onEdit={onEdit}
+                            onDelete={onDelete}
+                        />
+                    </div>
                 );
             },
         },

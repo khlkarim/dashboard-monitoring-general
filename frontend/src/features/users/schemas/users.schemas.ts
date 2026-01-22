@@ -1,22 +1,12 @@
 import { z } from 'zod';
 
-// Shared schemas from other features or common defaults
-// Since we don't have direct access to import from 'features/auth' without circular dependency risks sometimes,
-// we might want to duplicate or import carefully. 
-// For now, I will define standard schemas here or check if I can reuse.
-// As per reference 'auth.schemas.ts', we can reuse concepts.
-
-// ---------------------------------------------------------
-// User Entity Schemas (Mirroring Backend)
-// ---------------------------------------------------------
-
 export const roleSchema = z.object({
-    id: z.number(),
+    id: z.string(),
     name: z.string().optional(),
 });
 
 export const statusSchema = z.object({
-    id: z.number(),
+    id: z.string(),
     name: z.string().optional(),
 });
 
@@ -25,14 +15,8 @@ export const fileSchema = z.object({
     path: z.string(),
 });
 
-export const processusSchema = z.object({
-    id: z.string(),
-    name: z.string(),
-    description: z.string().optional().nullable(),
-});
-
 export const userSchema = z.object({
-    id: z.string().or(z.number()),
+    id: z.string(),
     email: z.string().email().nullable(),
     firstName: z.string().nullable(),
     lastName: z.string().nullable(),
@@ -41,15 +25,10 @@ export const userSchema = z.object({
     status: statusSchema.nullable().optional(),
     provider: z.string().optional(),
     socialId: z.string().nullable().optional(),
-    processus: processusSchema.nullable().optional(),
     createdAt: z.string().datetime().optional(),
     updatedAt: z.string().datetime().optional(),
     deletedAt: z.string().datetime().nullable().optional(),
 });
-
-// ---------------------------------------------------------
-// API Request/Response Schemas
-// ---------------------------------------------------------
 
 export const createUserRequestSchema = z.object({
     email: z.string().email().nullable(),
@@ -59,29 +38,26 @@ export const createUserRequestSchema = z.object({
     photo: fileSchema.nullable().optional(),
     role: roleSchema.nullable().optional(),
     status: statusSchema.optional(),
-    processus: processusSchema.nullable().optional(),
 });
 
 export const updateUserRequestSchema = createUserRequestSchema.partial();
 
-export const usersResponseSchema = userSchema;
+export const userResponseSchema = userSchema;
 
 export const usersListResponseSchema = z.object({
     data: z.array(userSchema),
     hasNextPage: z.boolean(),
 });
 
-export const queryUserSchema = z.object({
+export const queryUsersSchema = z.object({
     page: z.number().optional(),
     limit: z.number().optional(),
-    filters: z.string().optional(), // Usually JSON string or complex object, simplified for query params
+    filters: z.string().optional(),
     sort: z.string().optional(),
 });
 
-// Types inferred
-export type User = z.infer<typeof userSchema>;
 export type CreateUserRequest = z.infer<typeof createUserRequestSchema>;
 export type UpdateUserRequest = z.infer<typeof updateUserRequestSchema>;
-export type UsersResponse = z.infer<typeof usersResponseSchema>;
+export type UserResponse = z.infer<typeof userResponseSchema>;
 export type UsersListResponse = z.infer<typeof usersListResponseSchema>;
-export type QueryUserDto = z.infer<typeof queryUserSchema>;
+export type QueryUsersDto = z.infer<typeof queryUsersSchema>;

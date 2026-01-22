@@ -5,25 +5,6 @@ import {
   UpdateDateColumn,
   Column,
   OneToMany,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 } from 'typeorm';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 import { ActionEntity } from 'src/actions/infrastructure/persistence/relational/entities/action.entity';
@@ -32,7 +13,28 @@ import { ActionEntity } from 'src/actions/infrastructure/persistence/relational/
   name: 'risk',
 })
 export class RiskEntity extends EntityRelationalHelper {
-  @OneToMany(() => ActionEntity, (action) => action.risk, { eager: true })
+  @Column({
+    nullable: true,
+    type:
+      Number,
+  })
+  detection?: number | null;
+
+  @Column({
+    nullable: true,
+    type:
+      Number,
+  })
+  occurrence?: number | null;
+
+  @Column({
+    nullable: true,
+    type:
+      Number,
+  })
+  severity?: number | null;
+
+  @OneToMany(() => ActionEntity, (action) => action.risk)
   actions: ActionEntity[];
 
   @Column({
@@ -40,33 +42,14 @@ export class RiskEntity extends EntityRelationalHelper {
     type:
       String,
   })
-
-
   description?: string | null;
-
-
-
-  @Column({
-    nullable: true,
-    type:
-      Number,
-  })
-
-
-  criticity?: number | null;
-
-
 
   @Column({
     nullable: true,
     type:
       String,
   })
-
-
   title?: string | null;
-
-
 
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -15,11 +15,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ActionResponse } from "../schemas/actions.schemas";
+import { ActionResponse, ActionType } from "../schemas/actions.schemas";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const formSchema = z.object({
     title: z.string().min(1, "Title is required"),
     description: z.string().optional(),
+    type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE]).default(ActionType.CORRECTIVE),
+    risk: z.object({ id: z.string() }),
 });
 
 type ActionFormValues = z.infer<typeof formSchema>;
@@ -28,14 +31,17 @@ interface ActionFormProps {
     initialData?: ActionResponse | null;
     onSubmit: (data: ActionFormValues) => void;
     isLoading?: boolean;
+    riskId: string;
 }
 
-export function ActionForm({ initialData, onSubmit, isLoading }: ActionFormProps) {
+export function ActionForm({ initialData, onSubmit, isLoading, riskId }: ActionFormProps) {
     const form = useForm<ActionFormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             title: initialData?.title || "",
             description: initialData?.description || "",
+            type: initialData?.type || ActionType.CORRECTIVE,
+            risk: { id: riskId },
         },
     });
 
@@ -68,6 +74,31 @@ export function ActionForm({ initialData, onSubmit, isLoading }: ActionFormProps
                             <FormLabel>Description</FormLabel>
                             <FormControl>
                                 <Textarea placeholder="Action description" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="type"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Type</FormLabel>
+                            <FormControl>
+                                <Select
+                                    onValueChange={field.onChange}
+                                    value={field.value}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="PREVENTIVE">Preventive</SelectItem>
+                                        <SelectItem value="CORRECTIVE">Corrective</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </FormControl>
                             <FormMessage />
                         </FormItem>

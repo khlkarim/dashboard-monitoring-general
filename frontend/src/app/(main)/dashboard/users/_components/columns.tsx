@@ -4,8 +4,33 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { DataTableRowActions } from "@/components/data-table/data-table-row-actions";
-
+import { useRouter } from "next/navigation";
+import { useNavigationStore } from "@/navigation/store/navigation.store";
+import { Button } from "@/components/ui/button";
 import { User } from "@/features/users/types/users.types";
+
+function OpenUserButton({ user }: { user: User }) {
+    const router = useRouter();
+    const { addSubNavItem } = useNavigationStore();
+
+    const handleOpenUser = () => {
+        addSubNavItem(2, "Users", {
+            title: user.firstName && user.lastName ? user.firstName + " " + user.lastName : "-",
+            url: `/dashboard/users/${user.id}`,
+        });
+        router.push(`/dashboard/users/${user.id}`);
+    };
+
+    return (
+        <Button
+            variant="outline"
+            size="sm"
+            onClick={handleOpenUser}
+        >
+            Open
+        </Button>
+    );
+}
 
 export const getColumns = (
     onEdit: (user: User) => void,
@@ -67,11 +92,14 @@ export const getColumns = (
             header: "Actions",
             cell: ({ row }) => {
                 return (
-                    <DataTableRowActions
-                        row={row}
-                        onEdit={onEdit}
-                        onDelete={onDelete}
-                    />
+                    <div className="flex items-center gap-2">
+                        <OpenUserButton user={row.original} />
+                        <DataTableRowActions
+                            row={row}
+                            onEdit={onEdit}
+                            onDelete={onDelete}
+                        />
+                    </div>
                 );
             },
         },

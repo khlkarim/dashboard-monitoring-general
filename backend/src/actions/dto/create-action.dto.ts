@@ -1,66 +1,40 @@
 import { RiskDto } from '../../risks/dto/risk.dto';
-
-
-
-
 import {
   // decorators here
-
-
   IsString,
-
-
-
-
   IsOptional,
-
-
-
-
-
-
-
-
-
-
-
   ValidateNested,
-
   IsNotEmptyObject,
-
-
-
-
-
-
 } from 'class-validator';
 
 import {
   // decorators here
   ApiProperty,
-
 } from '@nestjs/swagger';
-
 
 import {
   // decorators here
   Type,
-
-
-
 } from 'class-transformer';
+import { ActionType } from '../domain/action-type.enum';
 
 export class CreateActionDto {
+  @ApiProperty({
+    required: false,
+    enum: () => ActionType,
+  })
+  @IsOptional()
+  @IsString()
+  type?: ActionType | null;
+
   @ApiProperty({
     required: true,
     type: () =>
       RiskDto,
   })
-
   @ValidateNested()
   @Type(() => RiskDto)
   @IsNotEmptyObject()
-
   risk: RiskDto;
 
   @ApiProperty({
@@ -68,10 +42,8 @@ export class CreateActionDto {
     type: () =>
       String,
   })
-
   @IsOptional()
   @IsString()
-
   description?: string | null;
 
   @ApiProperty({
@@ -79,11 +51,7 @@ export class CreateActionDto {
     type: () =>
       String,
   })
-
   @IsOptional()
   @IsString()
-
   title?: string | null;
-
-  // Don't forget to use the class-validator decorators in the DTO properties.
 }

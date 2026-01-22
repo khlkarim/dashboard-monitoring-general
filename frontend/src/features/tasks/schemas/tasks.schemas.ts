@@ -2,16 +2,20 @@ import { z } from 'zod';
 import { userResponseSchema } from '@/features/auth/schemas/auth.schemas';
 import { sprintResponseSchema } from '@/features/sprints/schemas/sprints.schemas';
 
-/* ------------------------------------------------------------
-   REQUEST SCHEMAS
------------------------------------------------------------- */
+export enum TaskStatus {
+    TODO = 'TODO',
+    IN_PROGRESS = 'IN_PROGRESS',
+    DONE = 'DONE',
+}
 
 /** Create Task */
 export const createTaskRequestSchema = z.object({
-    type: z.number(),
-    status: z.number(),
-    reporter: z.object({ id: z.union([z.string(), z.number()]) }),
-    assignee: z.object({ id: z.union([z.string(), z.number()]) }),
+    status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.DONE]).default(TaskStatus.TODO),
+    criticality: z.number().optional().nullable(),
+    startDate: z.string().datetime().optional().nullable(),
+    deliverable: z.string().optional().nullable(),
+    reporter: z.object({ id: z.string() }).optional().nullable(),
+    assignee: z.object({ id: z.string() }).optional().nullable(),
     sprint: z.object({ id: z.string() }),
     dueDate: z.string().datetime(),
     description: z.string().optional().nullable(),
@@ -23,15 +27,13 @@ export type CreateTaskRequest = z.infer<typeof createTaskRequestSchema>;
 export const updateTaskRequestSchema = createTaskRequestSchema.partial();
 export type UpdateTaskRequest = z.infer<typeof updateTaskRequestSchema>;
 
-/* ------------------------------------------------------------
-   RESPONSE SCHEMAS
------------------------------------------------------------- */
-
 /** Task Entity */
 export const taskResponseSchema = z.object({
     id: z.string(),
-    type: z.number(),
-    status: z.number(),
+    status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.DONE]),
+    criticality: z.number().optional().nullable(),
+    startDate: z.string().datetime().optional().nullable(),
+    deliverable: z.string().optional().nullable(),
     reporter: userResponseSchema,
     assignee: userResponseSchema,
     sprint: sprintResponseSchema,

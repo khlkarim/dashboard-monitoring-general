@@ -10,7 +10,6 @@ import { RelationalSprintPersistenceModule } from './infrastructure/persistence/
 @Module({
   imports: [
     UsersModule,
-
     // do not remove this comment
     RelationalSprintPersistenceModule,
   ],
@@ -18,4 +17,4 @@ import { RelationalSprintPersistenceModule } from './infrastructure/persistence/
   providers: [SprintsService],
   exports: [SprintsService, RelationalSprintPersistenceModule],
 })
-export class SprintsModule {}
+export class SprintsModule { }

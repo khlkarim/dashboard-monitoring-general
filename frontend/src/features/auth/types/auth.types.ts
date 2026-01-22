@@ -9,7 +9,7 @@ export interface AuthState {
   refreshToken: string | null;
   tokenExpires?: number;
   isAuthenticated: boolean;
-  hasHydrated?: boolean; // ← flag to know when persisted (in localStorage) state is loaded
+  hasHydrated?: boolean; // flag to know when persisted (in localStorage) state is loaded
 }
 
 

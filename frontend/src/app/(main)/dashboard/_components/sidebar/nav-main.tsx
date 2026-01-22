@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-
 import { ChevronRight, X } from "lucide-react";
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -24,6 +23,7 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Badge } from "@/components/ui/badge";
 import { NavGroup, NavMainItem } from "@/navigation/types/navigation.types";
 import { useNavigationStore } from "@/navigation/store/navigation.store";
 
@@ -32,7 +32,7 @@ interface NavMainProps {
 }
 
 const IsComingSoon = () => (
-  <span className="ml-auto rounded-md bg-gray-200 px-2 py-1 text-xs dark:text-gray-800">Soon</span>
+  <Badge variant="secondary" className="ml-auto text-[10px] h-5 px-1.5">Soon</Badge>
 );
 
 const NavItemExpanded = ({
@@ -49,7 +49,6 @@ const NavItemExpanded = ({
   const router = useRouter();
   const pathname = usePathname();
   const { removeSubNavItem } = useNavigationStore();
-
   return (
     <Collapsible key={item.title} asChild defaultOpen={isSubmenuOpen(item.subItems)} className="group/collapsible">
       <SidebarMenuItem>
@@ -61,9 +60,7 @@ const NavItemExpanded = ({
               tooltip={item.title}
             >
               {item.icon && <item.icon />}
-              <Link className="flex items-center gap-2" href={item.url} target={item.newTab ? "_blank" : undefined}>
-                <span>{item.title}</span>
-              </Link>
+              <span className="truncate">{item.title}</span>
               {item.comingSoon && <IsComingSoon />}
               <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
             </SidebarMenuButton>
@@ -76,33 +73,42 @@ const NavItemExpanded = ({
             >
               <Link href={item.url} target={item.newTab ? "_blank" : undefined}>
                 {item.icon && <item.icon />}
-                <span>{item.title}</span>
+                <span className="truncate">{item.title}</span>
                 {item.comingSoon && <IsComingSoon />}
               </Link>
             </SidebarMenuButton>
           )}
         </CollapsibleTrigger>
-        {item.subItems && (
+        {item.subItems && item.subItems.length > 0 && (
           <CollapsibleContent>
             <SidebarMenuSub>
               {item.subItems.map((subItem) => (
                 <SidebarMenuSubItem key={subItem.title} className="group/subitem relative">
                   <SidebarMenuSubButton aria-disabled={subItem.comingSoon} isActive={isActive(subItem.url)} asChild>
-                    <Link href={subItem.url} target={subItem.newTab ? "_blank" : undefined}>
-                      {subItem.icon && <subItem.icon />}
-                      <span>{subItem.title}</span>
+                    <Link href={subItem.url} target={subItem.newTab ? "_blank" : undefined} className="flex items-center justify-between w-full">
+                      <div className="flex items-center gap-2 truncate">
+                        {subItem.icon && <subItem.icon />}
+                        <span className="truncate">{subItem.title}</span>
+                      </div>
                       {subItem.comingSoon && <IsComingSoon />}
-                      <X className="ml-auto" color="grey" size={14} onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        className="opacity-0 group-hover/subitem:opacity-100 transition-opacity p-1 hover:bg-destructive/10 rounded-full text-muted-foreground hover:text-destructive"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
 
-                        // If currently on this subitem's page, navigate to parent first
-                        if (pathname === subItem.url || pathname.startsWith(subItem.url + '/')) {
-                          router.push(item.url);
-                        }
+                          // If currently on this subitem's page, navigate to parent first
+                          if (pathname === subItem.url || pathname.startsWith(subItem.url + '/')) {
+                            router.push(item.url);
+                          }
 
-                        removeSubNavItem(groupId, item.title, subItem.title);
-                      }} />
+                          removeSubNavItem(groupId, item.title, subItem.title);
+                        }}
+                      >
+                        <X size={14} />
+                      </div>
                     </Link>
                   </SidebarMenuSubButton>
                 </SidebarMenuSubItem>
@@ -138,47 +144,37 @@ const NavItemCollapsed = ({
             isActive={isActive(item.url, item.subItems)}
           >
             {item.icon && <item.icon />}
-            <Link className="flex items-center gap-2" href={item.url} target={item.newTab ? "_blank" : undefined}>
-              <span>{item.title}</span>
-            </Link>
-            <ChevronRight />
+            <span className="truncate">{item.title}</span>
+            <ChevronRight className="ml-auto" />
           </SidebarMenuButton>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-50 space-y-1" side="right" align="start">
+        <DropdownMenuContent className="w-56" side="right" align="start">
           {item.subItems?.map((subItem) => (
-            <DropdownMenuItem key={subItem.title} asChild className="group/dropdown-item relative pr-8">
-              <SidebarMenuSubButton
-                key={subItem.title}
-                asChild
-                className="focus-visible:ring-0"
-                aria-disabled={subItem.comingSoon}
-                isActive={isActive(subItem.url)}
-              >
-                <>
-                  <Link href={subItem.url} target={subItem.newTab ? "_blank" : undefined} className="w-full">
-                    {subItem.icon && <subItem.icon className="[&>svg]:text-sidebar-foreground" />}
-                    <span>{subItem.title}</span>
-                    {subItem.comingSoon && <IsComingSoon />}
-                  </Link>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+            <DropdownMenuItem key={subItem.title} asChild className="group/dropdown-item relative pr-8 cursor-pointer">
+              <div className="flex items-center justify-between">
+                <Link href={subItem.url} target={subItem.newTab ? "_blank" : undefined} className="flex items-center gap-2 flex-grow">
+                  {subItem.icon && <subItem.icon className="h-4 w-4 text-muted-foreground" />}
+                  <span className="truncate">{subItem.title}</span>
+                  {subItem.comingSoon && <IsComingSoon />}
+                </Link>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-                      // If currently on this subitem's page, navigate to parent first
-                      if (pathname === subItem.url || pathname.startsWith(subItem.url + '/')) {
-                        router.push(item.url);
-                      }
+                    // If currently on this subitem's page, navigate to parent first
+                    if (pathname === subItem.url || pathname.startsWith(subItem.url + '/')) {
+                      router.push(item.url);
+                    }
 
-                      removeSubNavItem(groupId, item.title, subItem.title);
-                    }}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 transition-opacity group-hover/dropdown-item:opacity-100 focus:opacity-100 hover:text-destructive z-50 p-1"
-                    aria-label={`Remove ${subItem.title}`}
-                  >
-                    <X size={14} />
-                  </button>
-                </>
-              </SidebarMenuSubButton>
+                    removeSubNavItem(groupId, item.title, subItem.title);
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover/dropdown-item:opacity-100 focus:opacity-100 text-muted-foreground hover:text-destructive transition-all p-1 hover:bg-destructive/10 rounded-sm"
+                  aria-label={`Remove ${subItem.title}`}
+                >
+                  <X size={14} />
+                </button>
+              </div>
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>
@@ -207,7 +203,7 @@ export function NavMain({ items }: NavMainProps) {
       {items.map((group) => (
         <SidebarGroup key={group.id}>
           {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
-          <SidebarGroupContent className="flex flex-col gap-2">
+          <SidebarGroupContent className="flex flex-col gap-1">
             <SidebarMenu>
               {group.items.map((item) => {
                 if (state === "collapsed" && !isMobile) {
@@ -224,6 +220,7 @@ export function NavMain({ items }: NavMainProps) {
                           <Link href={item.url} target={item.newTab ? "_blank" : undefined}>
                             {item.icon && <item.icon />}
                             <span>{item.title}</span>
+                            {item.comingSoon && <IsComingSoon />}
                           </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>

@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { SprintEntity } from '../../../../sprints/infrastructure/persistence/relational/entities/sprint.entity';
 import { UserEntity } from '../../../../users/infrastructure/persistence/relational/entities/user.entity';
 import { RoleEnum } from '../../../../roles/roles.enum';
+import { SprintStatus } from 'src/sprints/domain/sprint-status.enum';
 
 @Injectable()
 export class SprintSeedService {
@@ -16,7 +17,7 @@ export class SprintSeedService {
 
     async run() {
         const admin = await this.userRepository.findOne({
-            where: { role: { id: RoleEnum.administrator } },
+            where: { role: { id: RoleEnum.ADMINISTRATOR } },
         });
 
         if (!admin) {
@@ -39,16 +40,18 @@ export class SprintSeedService {
                     name: 'Sprint 1',
                     goal: 'Initial MVP Release',
                     startDate: today,
-                    endDate: nextMonth,
-                    status: 1, // Active? Assuming 1 is active/open based on typical enum usage
+                    validationDate: nextMonth,
+                    endDate: twoMonthsLater,
+                    status: SprintStatus.ACTIVE,
                     createdBy: admin,
                 }),
                 this.repository.create({
                     name: 'Sprint 2',
                     goal: 'Feature Expansion',
                     startDate: nextMonth,
+                    validationDate: twoMonthsLater,
                     endDate: twoMonthsLater,
-                    status: 0, // Inactive/Draft?
+                    status: SprintStatus.PLANNED,
                     createdBy: admin,
                 }),
             ]);

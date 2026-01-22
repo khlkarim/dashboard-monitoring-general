@@ -1,9 +1,11 @@
+import { ProcessusDto } from '../../processus/dto/processus.dto';
 import {
   IsString,
   IsOptional,
   IsNumber,
   ValidateNested,
   IsNotEmptyObject,
+  IsArray,
 } from 'class-validator';
 
 import {
@@ -15,6 +17,36 @@ import { SprintDto } from '../../sprints/dto/sprint.dto';
 import { UserDto } from '../../users/dto/user.dto';
 
 export class CreateKpiDto {
+  @ApiProperty({
+    required: false,
+    type: () =>
+      Number,
+    isArray: true,
+  })
+  @IsOptional()
+  @IsArray()
+  samples?: number[] | null;
+
+  @ApiProperty({
+    required: false,
+    type: () =>
+      String,
+  })
+  @IsOptional()
+  @IsString()
+  samplingRate?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () =>
+      ProcessusDto,
+  })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ProcessusDto)
+  @IsNotEmptyObject()
+  processus?: ProcessusDto | null;
+
   @ApiProperty({
     required: false,
     type: () => SprintDto,
@@ -35,22 +67,6 @@ export class CreateKpiDto {
 
   @ApiProperty({
     required: false,
-    type: () => Number,
-  })
-  @IsOptional()
-  @IsNumber()
-  targetValue?: number | null;
-
-  @ApiProperty({
-    required: false,
-    type: () => Number,
-  })
-  @IsOptional()
-  @IsNumber()
-  actualValue?: number | null;
-
-  @ApiProperty({
-    required: false,
     type: () => String,
   })
   @IsOptional()
@@ -63,7 +79,4 @@ export class CreateKpiDto {
   })
   @IsString()
   name: string;
-
-  // Don't forget to use the class-validator decorators in the DTO properties.
 }
-

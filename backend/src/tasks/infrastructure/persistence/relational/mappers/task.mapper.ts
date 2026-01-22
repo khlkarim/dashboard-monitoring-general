@@ -1,16 +1,16 @@
 import { Task } from '../../../../domain/task';
-
 import { UserMapper } from '../../../../../users/infrastructure/persistence/relational/mappers/user.mapper';
-
 import { SprintMapper } from '../../../../../sprints/infrastructure/persistence/relational/mappers/sprint.mapper';
-
 import { TaskEntity } from '../entities/task.entity';
+import { CommentMapper } from '../../../../../comments/infrastructure/persistence/relational/mappers/comment.mapper';
 
 export class TaskMapper {
   static toDomain(raw: TaskEntity): Task {
     const domainEntity = new Task();
-    domainEntity.type = raw.type;
 
+    domainEntity.criticality = raw.criticality;
+    domainEntity.startDate = raw.startDate;
+    domainEntity.deliverable = raw.deliverable;
     domainEntity.status = raw.status;
 
     if (raw.reporter) {
@@ -25,12 +25,15 @@ export class TaskMapper {
       domainEntity.sprint = SprintMapper.toDomain(raw.sprint);
     }
 
+    if (raw.comments) {
+      domainEntity.comments = raw.comments.map((comment) =>
+        CommentMapper.toDomain(comment),
+      );
+    }
+
     domainEntity.dueDate = raw.dueDate;
-
     domainEntity.description = raw.description;
-
     domainEntity.title = raw.title;
-
     domainEntity.id = raw.id;
     domainEntity.createdAt = raw.createdAt;
     domainEntity.updatedAt = raw.updatedAt;
@@ -40,8 +43,10 @@ export class TaskMapper {
 
   static toPersistence(domainEntity: Task): TaskEntity {
     const persistenceEntity = new TaskEntity();
-    persistenceEntity.type = domainEntity.type;
 
+    persistenceEntity.criticality = domainEntity.criticality;
+    persistenceEntity.startDate = domainEntity.startDate;
+    persistenceEntity.deliverable = domainEntity.deliverable;
     persistenceEntity.status = domainEntity.status;
 
     if (domainEntity.reporter) {
@@ -62,10 +67,14 @@ export class TaskMapper {
       );
     }
 
+    if (domainEntity.comments) {
+      persistenceEntity.comments = domainEntity.comments.map((comment) =>
+        CommentMapper.toPersistence(comment),
+      );
+    }
+
     persistenceEntity.dueDate = domainEntity.dueDate;
-
     persistenceEntity.description = domainEntity.description;
-
     persistenceEntity.title = domainEntity.title;
 
     if (domainEntity.id) {

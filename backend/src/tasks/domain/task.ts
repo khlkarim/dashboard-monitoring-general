@@ -1,19 +1,36 @@
 import { User } from '../../users/domain/user';
 import { Sprint } from '../../sprints/domain/sprint';
 import { ApiProperty } from '@nestjs/swagger';
+import { Comment } from '../../comments/domain/comment';
+import { TaskStatusEnum } from './task-status.enum';
 
 export class Task {
   @ApiProperty({
-    type: () => Number,
-    nullable: false,
+    type: () =>
+      Number,
+    nullable: true,
   })
-  type: number;
+  criticality?: number | null;
 
   @ApiProperty({
-    type: () => Number,
+    type: () =>
+      Date,
+    nullable: true,
+  })
+  startDate?: Date | null;
+
+  @ApiProperty({
+    type: () =>
+      String,
+    nullable: true,
+  })
+  deliverable?: string | null;
+
+  @ApiProperty({
+    enum: TaskStatusEnum,
     nullable: false,
   })
-  status: number;
+  status: TaskStatusEnum;
 
   @ApiProperty({
     type: () => User,
@@ -32,6 +49,11 @@ export class Task {
     nullable: false,
   })
   sprint: Sprint;
+
+  @ApiProperty({
+    type: () => [Comment],
+  })
+  comments?: Comment[];
 
   @ApiProperty({
     type: () => Date,

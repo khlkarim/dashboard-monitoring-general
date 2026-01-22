@@ -1,3 +1,5 @@
+import { ProcessusService } from '../processus/processus.service';
+import { Processus } from '../processus/domain/processus';
 import { UsersService } from '../users/users.service';
 import { SprintsService } from '../sprints/sprints.service';
 import { User } from '../users/domain/user';
@@ -18,6 +20,7 @@ import { Kpi } from './domain/kpi';
 @Injectable()
 export class KpisService {
   constructor(
+    private readonly processusService: ProcessusService,
     private readonly usersService: UsersService,
     private readonly sprintsService: SprintsService,
     // Dependencies here
@@ -27,7 +30,25 @@ export class KpisService {
   async create(createKpiDto: CreateKpiDto) {
     // Do not remove comment below.
     // <creating-property />
+    let processus: Processus | null | undefined = undefined;
 
+    if (createKpiDto.processus) {
+      const processusObject = await this.processusService.findById(
+        createKpiDto.processus.id,
+      );
+      if (!processusObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            processus: 'notExists',
+          },
+        });
+      }
+      processus = processusObject;
+    }
+    else if (createKpiDto.processus === null) {
+      processus = null;
+    }
     // Validate and fetch createdBy user (required)
     const createdByObject = await this.usersService.findById(
       createKpiDto.createdBy.id,
@@ -62,10 +83,14 @@ export class KpisService {
     return this.kpiRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+      samples: createKpiDto.samples,
+
+      samplingRate: createKpiDto.samplingRate,
+
+      processus,
+
       sprint,
       createdBy,
-      targetValue: createKpiDto.targetValue,
-      actualValue: createKpiDto.actualValue,
       description: createKpiDto.description,
       name: createKpiDto.name,
     });
@@ -84,6 +109,38 @@ export class KpisService {
     });
   }
 
+  findAllBySprintIdWithPagination({
+    paginationOptions,
+    sprintId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    sprintId: Sprint['id'];
+  }) {
+    return this.kpiRepository.findAllBySprintIdWithPagination({
+      paginationOptions: {
+        page: paginationOptions.page,
+        limit: paginationOptions.limit,
+      },
+      sprintId,
+    });
+  }
+
+  findAllByProcessusIdWithPagination({
+    paginationOptions,
+    processusId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    processusId: Processus['id'];
+  }) {
+    return this.kpiRepository.findAllByProcessusIdWithPagination({
+      paginationOptions: {
+        page: paginationOptions.page,
+        limit: paginationOptions.limit,
+      },
+      processusId,
+    });
+  }
+
   findById(id: Kpi['id']) {
     return this.kpiRepository.findById(id);
   }
@@ -99,6 +156,26 @@ export class KpisService {
   ) {
     // Do not remove comment below.
     // <updating-property />
+    let processus: Processus | null | undefined = undefined;
+
+    if (updateKpiDto.processus) {
+      const processusObject = await this.processusService.findById(
+        updateKpiDto.processus.id,
+      );
+      if (!processusObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            processus: 'notExists',
+          },
+        });
+      }
+      processus = processusObject;
+    }
+    else if (updateKpiDto.processus === null) {
+      processus = null;
+    }
+
 
     let createdBy: User | undefined = undefined;
     if (updateKpiDto.createdBy) {
@@ -137,10 +214,14 @@ export class KpisService {
     return this.kpiRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+      samples: updateKpiDto.samples,
+
+      samplingRate: updateKpiDto.samplingRate,
+
+      processus,
+
       sprint,
       createdBy,
-      targetValue: updateKpiDto.targetValue,
-      actualValue: updateKpiDto.actualValue,
       description: updateKpiDto.description,
       name: updateKpiDto.name,
     });

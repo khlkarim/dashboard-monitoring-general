@@ -1,23 +1,25 @@
-
-
 import { ApiProperty } from '@nestjs/swagger';
+import { Kpi } from '../../kpis/domain/kpi';
 
 export class Processus {
-@ApiProperty({
-  type: () => 
-                  String,
-            nullable: true,
-})
+  @ApiProperty({
+    type: () =>
+      String,
+    nullable: true,
+  })
+  description?: string | null;
 
-  description?: string  | null;
+  @ApiProperty({
+    type: () =>
+      String,
+    nullable: false,
+  })
+  label: string;
 
-@ApiProperty({
-  type: () => 
-                  String,
-            nullable: false,
-})
-
-  label: string ;
+  @ApiProperty({
+    type: () => [Kpi],
+  })
+  kpis?: Kpi[];
 
   @ApiProperty({
     type: String,

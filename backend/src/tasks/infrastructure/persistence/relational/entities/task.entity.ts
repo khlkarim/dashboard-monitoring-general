@@ -1,6 +1,6 @@
 import { UserEntity } from '../../../../../users/infrastructure/persistence/relational/entities/user.entity';
-
 import { SprintEntity } from '../../../../../sprints/infrastructure/persistence/relational/entities/sprint.entity';
+import { CommentEntity } from '../../../../../comments/infrastructure/persistence/relational/entities/comment.entity';
 
 import {
   CreateDateColumn,
@@ -9,24 +9,43 @@ import {
   UpdateDateColumn,
   Column,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
+import { TaskStatusEnum } from '../../../../domain/task-status.enum';
 
 @Entity({
   name: 'task',
 })
 export class TaskEntity extends EntityRelationalHelper {
   @Column({
-    nullable: false,
-    type: Number,
+    nullable: true,
+    type:
+      Number,
   })
-  type: number;
+  criticality?: number | null;
+
+  @Column({
+    nullable: true,
+    type:
+      Date,
+  })
+  startDate?: Date | null;
+
+  @Column({
+    nullable: true,
+    type:
+      String,
+  })
+  deliverable?: string | null;
 
   @Column({
     nullable: false,
-    type: Number,
+    type: 'enum',
+    enum: TaskStatusEnum,
+    default: TaskStatusEnum.TODO,
   })
-  status: number;
+  status: TaskStatusEnum;
 
   @ManyToOne(() => UserEntity, { eager: true, nullable: false })
   reporter: UserEntity;
@@ -36,6 +55,9 @@ export class TaskEntity extends EntityRelationalHelper {
 
   @ManyToOne(() => SprintEntity, { eager: true, nullable: false })
   sprint: SprintEntity;
+
+  @OneToMany(() => CommentEntity, (comment) => comment.task)
+  comments: CommentEntity[];
 
   @Column({
     nullable: false,

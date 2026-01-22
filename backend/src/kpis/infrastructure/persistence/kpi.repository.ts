@@ -1,3 +1,5 @@
+import { Processus } from 'src/processus/domain/processus';
+import { Sprint } from 'src/sprints/domain/sprint';
 import { DeepPartial } from '../../../utils/types/deep-partial.type';
 import { NullableType } from '../../../utils/types/nullable.type';
 import { IPaginationOptions } from '../../../utils/types/pagination-options';
@@ -12,6 +14,22 @@ export abstract class KpiRepository {
     paginationOptions,
   }: {
     paginationOptions: IPaginationOptions;
+  }): Promise<Kpi[]>;
+
+  abstract findAllBySprintIdWithPagination({
+    paginationOptions,
+    sprintId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    sprintId: Sprint['id'];
+  }): Promise<Kpi[]>;
+
+  abstract findAllByProcessusIdWithPagination({
+    paginationOptions,
+    processusId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    processusId: Processus['id'];
   }): Promise<Kpi[]>;
 
   abstract findById(id: Kpi['id']): Promise<NullableType<Kpi>>;

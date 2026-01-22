@@ -14,6 +14,14 @@ export abstract class ActionRepository {
     paginationOptions: IPaginationOptions;
   }): Promise<Action[]>;
 
+  abstract findAllByRiskIdWithPagination({
+    paginationOptions,
+    riskId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    riskId: string;
+  }): Promise<Action[]>;
+
   abstract findById(id: Action['id']): Promise<NullableType<Action>>;
 
   abstract findByIds(ids: Action['id'][]): Promise<Action[]>;

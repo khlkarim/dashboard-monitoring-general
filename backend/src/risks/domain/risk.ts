@@ -4,6 +4,27 @@ import { Action } from 'src/actions/domain/action';
 export class Risk {
   @ApiProperty({
     type: () =>
+      Number,
+    nullable: true,
+  })
+  detection?: number | null;
+
+  @ApiProperty({
+    type: () =>
+      Number,
+    nullable: true,
+  })
+  occurrence?: number | null;
+
+  @ApiProperty({
+    type: () =>
+      Number,
+    nullable: true,
+  })
+  severity?: number | null;
+
+  @ApiProperty({
+    type: () =>
       Action,
   })
   actions?: Action[];
@@ -13,23 +34,13 @@ export class Risk {
       String,
     nullable: true,
   })
-
   description?: string | null;
-
-  @ApiProperty({
-    type: () =>
-      Number,
-    nullable: true,
-  })
-
-  criticity?: number | null;
 
   @ApiProperty({
     type: () =>
       String,
     nullable: true,
   })
-
   title?: string | null;
 
   @ApiProperty({

@@ -22,7 +22,9 @@ import {
 const formSchema = z.object({
     title: z.string().min(2, "Title must be at least 2 characters"),
     description: z.string().min(2, "Description must be at least 2 characters"),
-    criticity: z.number().min(1, "Criticity must be at least 1"),
+    severity: z.number().min(1, "Severity must be at least 1"),
+    occurrence: z.number().min(1, "Occurrence must be at least 1"),
+    detection: z.number().min(1, "Detection must be at least 1"),
 });
 
 type RiskFormValues = z.infer<typeof formSchema>;
@@ -41,7 +43,9 @@ export function RiskForm({ initialData, onSubmit, isLoading }: RiskFormProps) {
         defaultValues: {
             title: initialData?.title || "",
             description: initialData?.description || "",
-            criticity: initialData?.criticity || 1,
+            severity: initialData?.severity || 1,
+            occurrence: initialData?.occurrence || 1,
+            detection: initialData?.detection || 1,
         },
     });
 
@@ -71,7 +75,7 @@ export function RiskForm({ initialData, onSubmit, isLoading }: RiskFormProps) {
                     }
                 />
 
-                < FormField
+                <FormField
                     control={form.control}
                     name="description"
                     render={({ field }) => (
@@ -85,19 +89,49 @@ export function RiskForm({ initialData, onSubmit, isLoading }: RiskFormProps) {
                     )}
                 />
 
-                <FormField
-                    control={form.control}
-                    name="criticity"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Criticity </FormLabel>
-                            < FormControl >
-                                <Input placeholder="Risk criticity..." {...field} />
-                            </FormControl>
-                            < FormMessage />
-                        </FormItem>
-                    )}
-                />
+                <div className="grid grid-cols-3 gap-4" >
+                    <FormField
+                        control={form.control}
+                        name="severity"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Severity </FormLabel>
+                                < FormControl >
+                                    <Input placeholder="Risk severity..." {...field} onChange={(e) => field.onChange(Number(e.target.value) || field.value)} />
+                                </FormControl>
+                                < FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="occurrence"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Occurrence </FormLabel>
+                                < FormControl >
+                                    <Input placeholder="Risk occurrence..." {...field} onChange={(e) => field.onChange(Number(e.target.value) || field.value)} />
+                                </FormControl>
+                                < FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="detection"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Detection </FormLabel>
+                                < FormControl >
+                                    <Input placeholder="Risk detection..." {...field} onChange={(e) => field.onChange(Number(e.target.value) || field.value)} />
+                                </FormControl>
+                                < FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
 
                 <div className="flex justify-end pt-4" >
                     <Button type="submit" disabled={isLoading} >

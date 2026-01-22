@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { getColumns } from "./columns";
 import { EntityTable } from "@/components/common/entity-table";
 import { Sprint } from "@/features/sprints/types/sprints.types";
@@ -13,6 +13,7 @@ import { useGetSprints } from "@/features/sprints/hooks/use-get-sprints";
 import { useCreateSprint } from "@/features/sprints/hooks/use-create-sprint";
 import { useUpdateSprint } from "@/features/sprints/hooks/use-update-sprint";
 import { useDeleteSprint } from "@/features/sprints/hooks/use-delete-sprint";
+import { toast } from "sonner";
 
 export function SprintsTable() {
     const createMutation = useCreateSprint();
@@ -27,23 +28,23 @@ export function SprintsTable() {
     const [editingSprint, setEditingSprint] = useState<Sprint | null>(null);
     const [deletingSprint, setDeletingSprint] = useState<Sprint | null>(null);
 
-    // Handlers
-    const handleEdit = (sprint: Sprint) => {
+    // Handlers - wrapped in useCallback to maintain stable references
+    const handleEdit = useCallback((sprint: Sprint) => {
         setEditingSprint(sprint);
         setIsEditOpen(true);
-    };
+    }, []);
 
-    const handleDelete = (sprint: Sprint) => {
+    const handleDelete = useCallback((sprint: Sprint) => {
         setDeletingSprint(sprint);
         setIsDeleteOpen(true);
-    };
+    }, []);
 
     const handleCreateSubmit = (data: CreateSprintRequest, setOpen: (open: boolean) => void) => {
         try {
             createMutation.mutate(data);
             setOpen(false);
         } catch (error) {
-            // Error handled in hook
+            toast.error("Failed to create sprint.");
         }
     };
 
@@ -53,7 +54,7 @@ export function SprintsTable() {
                 updateMutation.mutate({ id: editingSprint.id, data });
                 setIsEditOpen(false);
             } catch (error) {
-                // Error handled in hook
+                toast.error("Failed to update sprint.");
             }
         }
     };
@@ -63,11 +64,11 @@ export function SprintsTable() {
             deleteMutation.mutate(sprint.id);
             setIsDeleteOpen(false);
         } catch (error) {
-            // Error handled in hook
+            toast.error("Failed to delete sprint.");
         }
     };
 
-    const columns = useMemo(() => getColumns(handleEdit, handleDelete), []);
+    const columns = useMemo(() => getColumns(handleEdit, handleDelete), [handleEdit, handleDelete]);
 
     return (
         <>

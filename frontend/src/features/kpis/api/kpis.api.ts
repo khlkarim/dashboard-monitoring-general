@@ -22,6 +22,19 @@ export const kpisApi = {
     /** GET /api/v1/kpis */
     findAll: async (query?: FindAllKpisQuery): Promise<KpiListResponse> => {
         const res = await api.get('/api/v1/kpis', { params: query });
+        console.log(res.data);
+        return kpiListResponseSchema.parse(res.data);
+    },
+
+    /** GET /api/v1/kpis/sprint/:sprintId */
+    findAllBySprintId: async (sprintId: string): Promise<KpiListResponse> => {
+        const res = await api.get(`/api/v1/kpis/sprint/${sprintId}`);
+        return kpiListResponseSchema.parse(res.data);
+    },
+
+    /** GET /api/v1/kpis/processus/:processusId */
+    findAllByProcessusId: async (processusId: string): Promise<KpiListResponse> => {
+        const res = await api.get(`/api/v1/kpis/processus/${processusId}`);
         return kpiListResponseSchema.parse(res.data);
     },
 

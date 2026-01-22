@@ -24,11 +24,9 @@ import {
 } from "@/components/ui/select";
 import { DatePicker } from "@/components/ui/date-picker";
 import {
-    createSprintRequestSchema,
-    UpdateSprintRequest,
     SprintResponse,
+    SprintStatus,
 } from "@/features/sprints/schemas/sprints.schemas";
-import { sprintStatusMap } from "@/app/(main)/dashboard/sprints/_components/columns"; // Reusing the map
 
 const formSchema = z.object({
     name: z.string().min(1, "Name is required"),
@@ -39,7 +37,8 @@ const formSchema = z.object({
     endDate: z.date({
         required_error: "End date is required",
     }),
-    status: z.string(), // Select returns string, we'll parse to number
+    validationDate: z.date().optional(),
+    status: z.enum([SprintStatus.PLANNED, SprintStatus.ACTIVE, SprintStatus.COMPLETED]),
 });
 
 type SprintFormValues = z.infer<typeof formSchema>;
@@ -60,7 +59,8 @@ export function SprintForm({ initialData, onSubmit, isLoading }: SprintFormProps
             goal: initialData?.goal || "",
             startDate: initialData?.startDate ? new Date(initialData.startDate) : undefined,
             endDate: initialData?.endDate ? new Date(initialData.endDate) : undefined,
-            status: initialData?.status !== undefined ? String(initialData.status) : "0",
+            validationDate: initialData?.validationDate ? new Date(initialData.validationDate) : undefined,
+            status: initialData?.status || SprintStatus.PLANNED,
         },
     });
 
@@ -70,14 +70,13 @@ export function SprintForm({ initialData, onSubmit, isLoading }: SprintFormProps
             ...values,
             startDate: values.startDate.toISOString(),
             endDate: values.endDate.toISOString(),
-            status: parseInt(values.status, 10),
+            validationDate: values.validationDate?.toISOString(),
+            status: values.status,
             createdBy: {
                 id: user?.id,
             },
-            // createdBy will be injected by the api call wrapper or ignored if backend handles it from token
-            // If strict schema validation fails on client before sending, we might need to fake it or fix schema.
-            // For now, let's pass it up.
         };
+
         onSubmit(apiData);
     };
 
@@ -152,6 +151,24 @@ export function SprintForm({ initialData, onSubmit, isLoading }: SprintFormProps
 
                 <FormField
                     control={form.control}
+                    name="validationDate"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Validation Date</FormLabel>
+                            <FormControl>
+                                <DatePicker
+                                    date={field.value}
+                                    setDate={field.onChange}
+                                    placeholder="Pick validation date"
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
                     name="status"
                     render={({ field }) => (
                         <FormItem>
@@ -163,9 +180,9 @@ export function SprintForm({ initialData, onSubmit, isLoading }: SprintFormProps
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    {Object.entries(sprintStatusMap).map(([key, value]) => (
+                                    {Object.entries(SprintStatus).map(([key, value]) => (
                                         <SelectItem key={key} value={key}>
-                                            {value}
+                                            {value.charAt(0).toUpperCase() + value.toLowerCase().slice(1)}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>

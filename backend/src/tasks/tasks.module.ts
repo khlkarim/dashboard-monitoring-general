@@ -11,9 +11,7 @@ import { RelationalTaskPersistenceModule } from './infrastructure/persistence/re
 @Module({
   imports: [
     UsersModule,
-
     SprintsModule,
-
     // do not remove this comment
     RelationalTaskPersistenceModule,
   ],
@@ -21,4 +19,4 @@ import { RelationalTaskPersistenceModule } from './infrastructure/persistence/re
   providers: [TasksService],
   exports: [TasksService, RelationalTaskPersistenceModule],
 })
-export class TasksModule {}
+export class TasksModule { }

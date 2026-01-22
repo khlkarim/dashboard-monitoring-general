@@ -1,13 +1,14 @@
 import {
-  Mail,
   Calendar,
   Kanban,
   Users,
-  Lock,
   LayoutDashboard,
   Gauge,
   Shield,
   ClipboardList,
+  CircleUser,
+  Archive,
+  Bell,
 } from "lucide-react";
 import { NavGroup } from "../types/navigation.types";
 
@@ -55,12 +56,12 @@ export const defaultSidebarItems: NavGroup[] = [
       {
         title: "Alumni",
         url: "/dashboard/alumni",
-        icon: Users, // alumni = group of users
+        icon: Archive,
       },
       {
         title: "Notifications",
         url: "/dashboard/notifications",
-        icon: Mail, // notification = mail/envelope
+        icon: Bell, // notification = mail/envelope
       },
       {
         title: "Users",
@@ -68,10 +69,10 @@ export const defaultSidebarItems: NavGroup[] = [
         icon: Users,
       },
       {
-        title: "Roles",
-        url: "/dashboard/roles",
-        icon: Lock,
-      },
+        title: "Account",
+        url: "/dashboard/account",
+        icon: CircleUser,
+      }
     ],
   }
 ];

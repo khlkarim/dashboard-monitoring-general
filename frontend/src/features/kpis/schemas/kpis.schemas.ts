@@ -1,17 +1,17 @@
 import { z } from 'zod';
-
-/* ------------------------------------------------------------
-   REQUEST SCHEMAS
------------------------------------------------------------- */
+import { userResponseSchema } from '@/features/auth/schemas/auth.schemas';
+import { sprintResponseSchema } from '@/features/sprints/schemas/sprints.schemas';
+import { processusResponseSchema } from '@/features/processus/schemas/processus.schemas';
 
 /** Create KPI */
 export const createKpiRequestSchema = z.object({
     sprint: z.object({ id: z.string() }).nullable().optional(),
-    createdBy: z.object({ id: z.union([z.string(), z.number()]) }),
-    targetValue: z.number().nullable().optional(),
-    actualValue: z.number().nullable().optional(),
+    processus: z.object({ id: z.string() }).nullable().optional(),
+    createdBy: z.object({ id: z.string() }),
     description: z.string().nullable().optional(),
     name: z.string().min(1),
+    samples: z.array(z.string()).nullable().optional(),
+    samplingRate: z.string().nullable().optional(),
 });
 export type CreateKpiRequest = z.infer<typeof createKpiRequestSchema>;
 
@@ -19,21 +19,18 @@ export type CreateKpiRequest = z.infer<typeof createKpiRequestSchema>;
 export const updateKpiRequestSchema = createKpiRequestSchema.partial();
 export type UpdateKpiRequest = z.infer<typeof updateKpiRequestSchema>;
 
-/* ------------------------------------------------------------
-   RESPONSE SCHEMAS
------------------------------------------------------------- */
-
 /** KPI Entity */
 export const kpiResponseSchema = z.object({
     id: z.string(),
-    sprint: z.object({ id: z.string() }).nullable().optional(),
-    createdBy: z.object({ id: z.union([z.string(), z.number()]) }),
-    targetValue: z.coerce.number().nullable().optional(),
-    actualValue: z.coerce.number().nullable().optional(),
+    sprint: sprintResponseSchema.nullable().optional(),
+    processus: processusResponseSchema.nullable().optional(),
+    createdBy: userResponseSchema,
     description: z.string().nullable().optional(),
     name: z.string(),
     createdAt: z.string().datetime(),
     updatedAt: z.string().datetime(),
+    samples: z.array(z.string()).nullable().optional(),
+    samplingRate: z.string().nullable().optional(),
 });
 export type KpiResponse = z.infer<typeof kpiResponseSchema>;
 

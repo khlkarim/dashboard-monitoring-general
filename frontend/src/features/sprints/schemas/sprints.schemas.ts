@@ -1,29 +1,27 @@
 import { z } from 'zod';
 import { userResponseSchema } from '@/features/auth/schemas/auth.schemas';
 
-/* ------------------------------------------------------------
-   REQUEST SCHEMAS
------------------------------------------------------------- */
+export enum SprintStatus {
+    PLANNED = 'PLANNED',
+    ACTIVE = 'ACTIVE',
+    COMPLETED = 'COMPLETED',
+}
 
 /** Create Sprint */
 export const createSprintRequestSchema = z.object({
     name: z.string().min(1),
     goal: z.string().optional().nullable(),
-    startDate: z.string().datetime(), // Expecting ISO string
-    endDate: z.string().datetime(),   // Expecting ISO string
-    status: z.number(),
-    createdBy: z.object({ id: z.union([z.string(), z.number()]) }),
+    startDate: z.string().datetime(),
+    endDate: z.string().datetime(),
+    validationDate: z.string().datetime().optional().nullable(),
+    status: z.enum([SprintStatus.PLANNED, SprintStatus.ACTIVE, SprintStatus.COMPLETED]).default(SprintStatus.PLANNED),
+    createdBy: z.object({ id: z.string() }),
 });
 export type CreateSprintRequest = z.infer<typeof createSprintRequestSchema>;
 
 /** Update Sprint */
-// Based on PartialType(CreateSprintDto)
 export const updateSprintRequestSchema = createSprintRequestSchema.partial();
 export type UpdateSprintRequest = z.infer<typeof updateSprintRequestSchema>;
-
-/* ------------------------------------------------------------
-   RESPONSE SCHEMAS
------------------------------------------------------------- */
 
 /** Sprint Entity */
 export const sprintResponseSchema = z.object({
@@ -32,7 +30,8 @@ export const sprintResponseSchema = z.object({
     goal: z.string().nullable().optional(),
     startDate: z.string().datetime(),
     endDate: z.string().datetime(),
-    status: z.number(),
+    validationDate: z.string().datetime().optional().nullable(),
+    status: z.enum([SprintStatus.PLANNED, SprintStatus.ACTIVE, SprintStatus.COMPLETED]),
     createdBy: userResponseSchema,
     createdAt: z.string().datetime(),
     updatedAt: z.string().datetime(),
@@ -45,8 +44,6 @@ export const findAllSprintsQuerySchema = z.object({
     limit: z.number().optional(),
 });
 export type FindAllSprintsQuery = z.infer<typeof findAllSprintsQuerySchema>;
-
-/** Cancel/Delete is generic, usually just ID needs validation which is done in path param */
 
 export const sprintListResponseSchema = z.object({
     data: z.array(sprintResponseSchema),

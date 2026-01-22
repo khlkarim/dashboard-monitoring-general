@@ -1,8 +1,30 @@
+import { Processus } from '../../processus/domain/processus';
 import { ApiProperty } from '@nestjs/swagger';
 import { Sprint } from '../../sprints/domain/sprint';
 import { User } from '../../users/domain/user';
 
 export class Kpi {
+  @ApiProperty({
+    type: () =>
+      Number,
+    nullable: true,
+  })
+  samples?: number[] | null;
+
+  @ApiProperty({
+    type: () =>
+      String,
+    nullable: true,
+  })
+  samplingRate?: string | null;
+
+  @ApiProperty({
+    type: () =>
+      Processus,
+    nullable: true,
+  })
+  processus?: Processus | null;
+
   @ApiProperty({
     type: () => Sprint,
     nullable: true,
@@ -14,18 +36,6 @@ export class Kpi {
     nullable: false,
   })
   createdBy: User;
-
-  @ApiProperty({
-    type: () => Number,
-    nullable: true,
-  })
-  targetValue?: number | null;
-
-  @ApiProperty({
-    type: () => Number,
-    nullable: true,
-  })
-  actualValue?: number | null;
 
   @ApiProperty({
     type: () => String,

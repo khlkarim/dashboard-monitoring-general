@@ -1,14 +1,12 @@
 import { z } from 'zod';
 
-/* ------------------------------------------------------------
-   REQUEST SCHEMAS
------------------------------------------------------------- */
-
 /** Create Risk */
 export const createRiskRequestSchema = z.object({
     title: z.string().min(1),
     description: z.string().optional().nullable(),
-    criticity: z.number().optional().nullable(),
+    severity: z.number().optional().nullable(),
+    occurrence: z.number().optional().nullable(),
+    detection: z.number().optional().nullable(),
 });
 export type CreateRiskRequest = z.infer<typeof createRiskRequestSchema>;
 
@@ -16,27 +14,14 @@ export type CreateRiskRequest = z.infer<typeof createRiskRequestSchema>;
 export const updateRiskRequestSchema = createRiskRequestSchema.partial();
 export type UpdateRiskRequest = z.infer<typeof updateRiskRequestSchema>;
 
-/* ------------------------------------------------------------
-   RESPONSE SCHEMAS
------------------------------------------------------------- */
-
-/** Action Entity (Circular dependency handling if needed, though here we just define it simply) */
-// We might need a separate schema file for actions if this gets complex, but inline is fine for now
-const actionSchema = z.object({
-    id: z.string(),
-    title: z.string().nullable().optional(),
-    description: z.string().nullable().optional(),
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
-});
-
 /** Risk Entity */
 export const riskResponseSchema = z.object({
     id: z.string(),
     title: z.string().nullable().optional(),
     description: z.string().nullable().optional(),
-    criticity: z.number().nullable().optional(),
-    actions: z.array(actionSchema).optional(),
+    severity: z.number().nullable().optional(),
+    occurrence: z.number().nullable().optional(),
+    detection: z.number().nullable().optional(),
     createdAt: z.string().datetime(),
     updatedAt: z.string().datetime(),
 });

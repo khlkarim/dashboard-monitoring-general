@@ -5,6 +5,7 @@ import { TaskEntity } from '../../../../tasks/infrastructure/persistence/relatio
 import { UserEntity } from '../../../../users/infrastructure/persistence/relational/entities/user.entity';
 import { SprintEntity } from '../../../../sprints/infrastructure/persistence/relational/entities/sprint.entity';
 import { RoleEnum } from '../../../../roles/roles.enum';
+import { TaskStatusEnum } from 'src/tasks/domain/task-status.enum';
 
 @Injectable()
 export class TaskSeedService {
@@ -20,9 +21,9 @@ export class TaskSeedService {
     async run() {
         // Determine admin, president, member to assign tasks
         const [admin, president, member] = await Promise.all([
-            this.userRepository.findOne({ where: { role: { id: RoleEnum.administrator } } }),
-            this.userRepository.findOne({ where: { role: { id: RoleEnum.president } } }),
-            this.userRepository.findOne({ where: { role: { id: RoleEnum.member } } }),
+            this.userRepository.findOne({ where: { role: { id: RoleEnum.ADMINISTRATOR } } }),
+            this.userRepository.findOne({ where: { role: { id: RoleEnum.PRESIDENT } } }),
+            this.userRepository.findOne({ where: { role: { id: RoleEnum.MEMBER } } }),
         ]);
 
         if (!admin || !president || !member) {
@@ -44,8 +45,7 @@ export class TaskSeedService {
                     title: 'Setup Project Structure',
                     description: 'Initialize the NestJS backend and React frontend.',
                     dueDate: new Date(),
-                    status: 0,
-                    type: 1,
+                    status: TaskStatusEnum.TODO,
                     sprint: sprint,
                     reporter: president,
                     assignee: member,
@@ -54,8 +54,7 @@ export class TaskSeedService {
                     title: 'Database Schema Design',
                     description: 'Design the initial ERD for the project.',
                     dueDate: new Date(),
-                    status: 1,
-                    type: 2,
+                    status: TaskStatusEnum.TODO,
                     sprint: sprint,
                     reporter: president,
                     assignee: admin,
@@ -64,8 +63,7 @@ export class TaskSeedService {
                     title: 'Frontend Component Library',
                     description: 'Create reusable UI components.',
                     dueDate: new Date(),
-                    status: 0,
-                    type: 1,
+                    status: TaskStatusEnum.TODO,
                     sprint: sprint,
                     reporter: admin,
                     assignee: member,

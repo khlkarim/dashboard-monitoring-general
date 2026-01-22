@@ -1,16 +1,15 @@
 import { UserDto } from '../../users/dto/user.dto';
-
 import { SprintDto } from '../../sprints/dto/sprint.dto';
 
 import {
   // decorators here
-
   IsString,
   IsOptional,
   IsDate,
   ValidateNested,
   IsNotEmptyObject,
   IsNumber,
+  IsEnum,
 } from 'class-validator';
 
 import {
@@ -20,25 +19,46 @@ import {
 
 import {
   // decorators here
-
   Transform,
   Type,
 } from 'class-transformer';
+import { TaskStatusEnum } from '../domain/task-status.enum';
 
 export class CreateTaskDto {
   @ApiProperty({
-    required: true,
-    type: () => Number,
+    required: false,
+    type: () =>
+      Number,
   })
+  @IsOptional()
   @IsNumber()
-  type: number;
+  criticality?: number | null;
+
+  @ApiProperty({
+    required: false,
+    type: () =>
+      Date,
+  })
+  @IsOptional()
+  @Transform(({ value }) => new Date(value))
+  @IsDate()
+  startDate?: Date | null;
+
+  @ApiProperty({
+    required: false,
+    type: () =>
+      String,
+  })
+  @IsOptional()
+  @IsString()
+  deliverable?: string | null;
 
   @ApiProperty({
     required: true,
-    type: () => Number,
+    enum: TaskStatusEnum,
   })
-  @IsNumber()
-  status: number;
+  @IsEnum(TaskStatusEnum)
+  status: TaskStatusEnum;
 
   @ApiProperty({
     required: true,
@@ -89,6 +109,4 @@ export class CreateTaskDto {
   })
   @IsString()
   title: string;
-
-  // Don't forget to use the class-validator decorators in the DTO properties.
 }

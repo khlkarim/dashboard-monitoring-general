@@ -1,74 +1,58 @@
-
-
-
-
-  import {
-    // decorators here
-
-
+import {
+  // decorators here
   IsString,
-
-
-
-
   IsOptional,
-
-
-
   IsNumber,
+} from 'class-validator';
 
-
-
-
-
-
-
-
-
-
-  } from 'class-validator';
-
-  import { 
-    // decorators here
+import {
+  // decorators here
   ApiProperty,
-
-  } from '@nestjs/swagger';
-
-
+} from '@nestjs/swagger';
 
 export class CreateRiskDto {
   @ApiProperty({
     required: false,
-    type: () => 
-                        String,
-                })
-
-      @IsOptional()
-              @IsString()
-      
-  description?: string  | null;
+    type: () =>
+      Number,
+  })
+  @IsOptional()
+  @IsNumber()
+  detection?: number | null;
 
   @ApiProperty({
     required: false,
-    type: () => 
-                        Number,
-                })
-
-      @IsOptional()
-              @IsNumber()
-      
-  criticity?: number  | null;
+    type: () =>
+      Number,
+  })
+  @IsOptional()
+  @IsNumber()
+  occurrence?: number | null;
 
   @ApiProperty({
     required: false,
-    type: () => 
-                        String,
-                })
+    type: () =>
+      Number,
+  })
+  @IsOptional()
+  @IsNumber()
+  severity?: number | null;
 
-      @IsOptional()
-              @IsString()
-      
-  title?: string  | null;
+  @ApiProperty({
+    required: false,
+    type: () =>
+      String,
+  })
+  @IsOptional()
+  @IsString()
+  description?: string | null;
 
-  // Don't forget to use the class-validator decorators in the DTO properties.
+  @ApiProperty({
+    required: false,
+    type: () =>
+      String,
+  })
+  @IsOptional()
+  @IsString()
+  title?: string | null;
 }

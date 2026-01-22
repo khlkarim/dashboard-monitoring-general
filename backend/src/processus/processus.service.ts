@@ -1,14 +1,6 @@
-
-
-
-
-import { 
+import {
   // common
   Injectable,
-
-
-
-
 } from '@nestjs/common';
 import { CreateProcessusDto } from './dto/create-processus.dto';
 import { UpdateProcessusDto } from './dto/update-processus.dto';
@@ -19,11 +11,9 @@ import { Processus } from './domain/processus';
 @Injectable()
 export class ProcessusService {
   constructor(
-
-
     // Dependencies here
     private readonly processusRepository: ProcessusRepository,
-  ) {}
+  ) { }
 
   async create(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -31,15 +21,12 @@ export class ProcessusService {
   ) {
     // Do not remove comment below.
     // <creating-property />
-  
-  
-
     return this.processusRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
-  description: createProcessusDto.description,
+      description: createProcessusDto.description,
 
-  label: createProcessusDto.label,
+      label: createProcessusDto.label,
 
     });
   }
@@ -78,9 +65,9 @@ export class ProcessusService {
     return this.processusRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
-  description: updateProcessusDto.description,
+      description: updateProcessusDto.description,
 
-  label: updateProcessusDto.label,
+      label: updateProcessusDto.label,
 
     });
   }

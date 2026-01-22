@@ -1,9 +1,5 @@
 import { z } from 'zod';
 
-/* ------------------------------------------------------------
-   REQUEST SCHEMAS
------------------------------------------------------------- */
-
 /** Login */
 export const loginRequestSchema = z.object({
   email: z.string().email(),
@@ -50,31 +46,26 @@ export const updateUserRequestSchema = z.object({
 });
 export type UpdateUserRequest = z.infer<typeof updateUserRequestSchema>;
 
-/* ------------------------------------------------------------
-   RESPONSE SCHEMAS
------------------------------------------------------------- */
-
 /** Role schema */
 export const roleSchema = z.object({
-  id: z.string().or(z.number()), // backend may return UUID or numeric ID
+  id: z.string(),
   name: z.string().optional(),
 });
 
 /** Status schema */
 export const statusSchema = z.object({
-  id: z.string().or(z.number()),
+  id: z.string(),
   name: z.string().optional(),
 });
 
 /** FileType schema */
 export const fileTypeSchema = z.object({
   id: z.string(),
-  path: z.string(), // transformed to a full URL or presigned URL by backend
+  path: z.string(),
 });
 
-/** mirror backend’s User entity fields you need */
 export const userResponseSchema = z.object({
-  id: z.string().or(z.number()), // backend may return UUID or numeric ID
+  id: z.string(),
   email: z.string().email().nullable(),
   firstName: z.string().nullable(),
   lastName: z.string().nullable(),

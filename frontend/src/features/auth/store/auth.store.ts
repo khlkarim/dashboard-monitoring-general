@@ -17,7 +17,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       /** Log in the user and update tokens */
       login: async (credentials: LoginRequest) => {
         const response = await authApi.login(credentials);
-        console.log("store response: ", response);
         set({
           user: response.user,
           accessToken: response.token,
@@ -30,7 +29,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       /** Log in the user and update tokens */
       register: async (credentials: RegisterRequest) => {
         const response = await authApi.register(credentials);
-        console.log("store response: ", response);
       },
 
       /** Refresh access token when it expires */

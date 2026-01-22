@@ -1,25 +1,14 @@
 import { FileEntity } from '../../../../../files/infrastructure/persistence/relational/entities/file.entity';
-  import { ProcessusMapper } from '../../../../../processus/infrastructure/persistence/relational/mappers/processus.mapper';
-
 import { FileMapper } from '../../../../../files/infrastructure/persistence/relational/mappers/file.mapper';
 import { RoleEntity } from '../../../../../roles/infrastructure/persistence/relational/entities/role.entity';
 import { StatusEntity } from '../../../../../statuses/infrastructure/persistence/relational/entities/status.entity';
 import { User } from '../../../../domain/user';
 import { UserEntity } from '../entities/user.entity';
+import { TaskMapper } from '../../../../../tasks/infrastructure/persistence/relational/mappers/task.mapper';
 
 export class UserMapper {
   static toDomain(raw: UserEntity): User {
     const domainEntity = new User();
-      if (raw.processus) {
-      domainEntity.processus = ProcessusMapper.toDomain(raw.processus);
-    }
-          else if (raw.processus === null) {
-        domainEntity.processus = null;
-      }
-      
-
-
-
     domainEntity.id = raw.id;
     domainEntity.email = raw.email;
     domainEntity.password = raw.password;
@@ -32,6 +21,11 @@ export class UserMapper {
     }
     domainEntity.role = raw.role;
     domainEntity.status = raw.status;
+    if (raw.assignedTasks) {
+      domainEntity.assignedTasks = raw.assignedTasks.map((task) =>
+        TaskMapper.toDomain(task),
+      );
+    }
     domainEntity.createdAt = raw.createdAt;
     domainEntity.updatedAt = raw.updatedAt;
     domainEntity.deletedAt = raw.deletedAt;
@@ -43,7 +37,7 @@ export class UserMapper {
 
     if (domainEntity.role) {
       role = new RoleEntity();
-      role.id = Number(domainEntity.role.id);
+      role.id = domainEntity.role.id;
     }
 
     let photo: FileEntity | undefined | null = undefined;
@@ -60,23 +54,12 @@ export class UserMapper {
 
     if (domainEntity.status) {
       status = new StatusEntity();
-      status.id = Number(domainEntity.status.id);
+      status.id = domainEntity.status.id;
     }
 
     const persistenceEntity = new UserEntity();
-      if (domainEntity.processus) {
-      persistenceEntity.processus = ProcessusMapper.toPersistence(domainEntity.processus);
-    }
-          else if (domainEntity.processus === null) {
-        persistenceEntity.processus = null;
-      }
-      
 
-
-
-    if (domainEntity.id && typeof domainEntity.id === 'number') {
-      persistenceEntity.id = domainEntity.id;
-    }
+    persistenceEntity.id = domainEntity.id;
     persistenceEntity.email = domainEntity.email;
     persistenceEntity.password = domainEntity.password;
     persistenceEntity.provider = domainEntity.provider;
@@ -86,6 +69,11 @@ export class UserMapper {
     persistenceEntity.photo = photo;
     persistenceEntity.role = role;
     persistenceEntity.status = status;
+    if (domainEntity.assignedTasks) {
+      persistenceEntity.assignedTasks = domainEntity.assignedTasks.map((task) =>
+        TaskMapper.toPersistence(task),
+      );
+    }
     persistenceEntity.createdAt = domainEntity.createdAt;
     persistenceEntity.updatedAt = domainEntity.updatedAt;
     persistenceEntity.deletedAt = domainEntity.deletedAt;

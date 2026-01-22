@@ -1,7 +1,4 @@
-// Don't forget to use the class-validator decorators in the DTO properties.
-// import { Allow } from 'class-validator';
-
 import { PartialType } from '@nestjs/swagger';
 import { CreateKpiDto } from './create-kpi.dto';
 
-export class UpdateKpiDto extends PartialType(CreateKpiDto) {}
+export class UpdateKpiDto extends PartialType(CreateKpiDto) { }

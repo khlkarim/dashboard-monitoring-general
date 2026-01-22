@@ -1,3 +1,4 @@
+import { ProcessusModule } from '../processus/processus.module';
 import {
   // do not remove this comment
   Module,
@@ -10,6 +11,7 @@ import { SprintsModule } from '../sprints/sprints.module';
 
 @Module({
   imports: [
+    ProcessusModule,
     // do not remove this comment
     RelationalKpiPersistenceModule,
     UsersModule,

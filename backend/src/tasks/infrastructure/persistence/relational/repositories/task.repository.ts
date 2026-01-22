@@ -7,13 +7,14 @@ import { Task } from '../../../../domain/task';
 import { TaskRepository } from '../../task.repository';
 import { TaskMapper } from '../mappers/task.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
+import { Sprint } from 'src/sprints/domain/sprint';
 
 @Injectable()
 export class TaskRelationalRepository implements TaskRepository {
   constructor(
     @InjectRepository(TaskEntity)
     private readonly taskRepository: Repository<TaskEntity>,
-  ) {}
+  ) { }
 
   async create(data: Task): Promise<Task> {
     const persistenceModel = TaskMapper.toPersistence(data);
@@ -29,6 +30,22 @@ export class TaskRelationalRepository implements TaskRepository {
     paginationOptions: IPaginationOptions;
   }): Promise<Task[]> {
     const entities = await this.taskRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+    });
+
+    return entities.map((entity) => TaskMapper.toDomain(entity));
+  }
+
+  async findAllBySprintIdWithPagination({
+    paginationOptions,
+    sprintId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    sprintId: Sprint['id'];
+  }): Promise<Task[]> {
+    const entities = await this.taskRepository.find({
+      where: { sprint: { id: sprintId } },
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
     });
