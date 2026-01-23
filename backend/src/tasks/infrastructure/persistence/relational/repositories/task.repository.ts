@@ -78,7 +78,7 @@ export class TaskRelationalRepository implements TaskRepository {
       throw new Error('Record not found');
     }
 
-    const updatedEntity = await this.taskRepository.save(
+    await this.taskRepository.save(
       this.taskRepository.create(
         TaskMapper.toPersistence({
           ...TaskMapper.toDomain(entity),
@@ -87,7 +87,13 @@ export class TaskRelationalRepository implements TaskRepository {
       ),
     );
 
-    return TaskMapper.toDomain(updatedEntity);
+    const reloadedEntity = await this.taskRepository.findOne({
+      where: { id },
+    });
+    if (!reloadedEntity) {
+      throw new Error('Record not found');
+    }
+    return TaskMapper.toDomain(reloadedEntity);
   }
 
   async remove(id: Task['id']): Promise<void> {

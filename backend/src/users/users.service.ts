@@ -266,7 +266,7 @@ export class UsersService {
       };
     }
 
-    return this.usersRepository.update(id, {
+    await this.usersRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
       firstName: updateUserDto.firstName,
@@ -279,6 +279,8 @@ export class UsersService {
       provider: updateUserDto.provider,
       socialId: updateUserDto.socialId,
     });
+
+    return this.usersRepository.findById(id);
   }
 
   async remove(id: User['id']): Promise<void> {

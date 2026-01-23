@@ -10,6 +10,7 @@ import {
     type UsersListResponse,
     type QueryUsersDto,
 } from '../schemas/users.schemas';
+import { filesApi } from '@/features/files/api/files.api';
 
 export const usersApi = {
     /** POST /api/v1/users */
@@ -39,8 +40,18 @@ export const usersApi = {
 
     /** PATCH /api/v1/users/:id */
     update: async (id: string, data: UpdateUserRequest): Promise<UserResponse> => {
+        console.log("Update user request: ", id, data);
+
         updateUserRequestSchema.parse(data);
-        const res = await api.patch(`/api/v1/users/${id}`, data);
+
+        const payload = { ...data };
+
+        if (data.photo instanceof File) {
+            const uploadResult = await filesApi.upload(data.photo);
+            payload.photo = uploadResult.file;
+        }
+
+        const res = await api.patch(`/api/v1/users/${id}`, payload);
         return userResponseSchema.parse(res.data);
     },
 

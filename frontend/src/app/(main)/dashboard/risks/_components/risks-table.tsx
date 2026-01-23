@@ -83,6 +83,7 @@ export function RisksTable() {
                 error={error}
                 onCreate={() => setIsCreateOpen(true)}
                 entityName="Risk"
+                searchColumn="title"
             />
 
             <CreateEntityDialog

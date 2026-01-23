@@ -13,22 +13,13 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-
-const searchItems = [
-  { group: "Dashboards", icon: LayoutDashboard, label: "Default" },
-  { group: "Dashboards", icon: ChartBar, label: "CRM", disabled: true },
-  { group: "Dashboards", icon: Gauge, label: "Analytics", disabled: true },
-  { group: "Dashboards", icon: ShoppingBag, label: "E-Commerce", disabled: true },
-  { group: "Dashboards", icon: GraduationCap, label: "Academy", disabled: true },
-  { group: "Dashboards", icon: Forklift, label: "Logistics", disabled: true },
-  { group: "Authentication", label: "Login v1" },
-  { group: "Authentication", label: "Login v2" },
-  { group: "Authentication", label: "Register v1" },
-  { group: "Authentication", label: "Register v2" },
-];
+import { useNavigationStore } from "@/navigation/store/navigation.store";
+import Link from "next/link";
 
 export function SearchDialog() {
+  const { sidebarItems } = useNavigationStore();
   const [open, setOpen] = React.useState(false);
+
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
@@ -57,18 +48,18 @@ export function SearchDialog() {
         <CommandInput placeholder="Search dashboards, users, and more…" />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-          {[...new Set(searchItems.map((item) => item.group))].map((group, i) => (
-            <React.Fragment key={group}>
+          {sidebarItems.map((navGroup, i) => (
+            <React.Fragment key={navGroup.label}>
               {i !== 0 && <CommandSeparator />}
-              <CommandGroup heading={group} key={group}>
-                {searchItems
-                  .filter((item) => item.group === group)
-                  .map((item) => (
-                    <CommandItem className="!py-1.5" key={item.label} onSelect={() => setOpen(false)}>
-                      {item.icon && <item.icon />}
-                      <span>{item.label}</span>
-                    </CommandItem>
-                  ))}
+              <CommandGroup heading={navGroup.label} key={navGroup.label}>
+                {navGroup.items.map((item) => (
+                  <CommandItem className="!py-1.5" key={item.title}>
+                    {item.icon && <item.icon />}
+                    <Link href={item.url} onClick={() => setOpen(false)}>
+                      <span>{item.title}</span>
+                    </Link>
+                  </CommandItem>
+                ))}
               </CommandGroup>
             </React.Fragment>
           ))}

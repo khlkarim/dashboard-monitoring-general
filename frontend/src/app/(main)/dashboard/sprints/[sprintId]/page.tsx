@@ -190,7 +190,7 @@ function SprintDetailPage() {
 
             {/* Kanban Board */}
             <div className="flex flex-col gap-4">
-                <KanbanBoardComponent />
+                <KanbanBoardComponent tasks={tasksData?.data || []} sprintId={sprintId} />
             </div>
         </div>
     );

@@ -81,6 +81,27 @@ export function UsersTable() {
                 error={error}
                 onCreate={() => setIsCreateOpen(true)}
                 entityName="User"
+                searchColumn="email"
+                filters={[
+                    {
+                        columnId: "role",
+                        title: "Role",
+                        options: [
+                            { label: "Administrator", value: "administrator" },
+                            { label: "President", value: "president" },
+                            { label: "Member", value: "member" },
+                            { label: "Alumni", value: "alumni" },
+                        ],
+                    },
+                    {
+                        columnId: "status",
+                        title: "Status",
+                        options: [
+                            { label: "Active", value: "active" },
+                            { label: "Inactive", value: "inactive" },
+                        ],
+                    },
+                ]}
             />
 
             <CreateEntityDialog

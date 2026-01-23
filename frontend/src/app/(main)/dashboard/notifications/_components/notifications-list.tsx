@@ -148,7 +148,7 @@ export function NotificationsList() {
                     </Card>
                 ) : (
                     <div className="space-y-4">
-                        {notifications.map((notification) => (
+                        {notifications.toReversed().map((notification) => (
                             <Card
                                 key={notification.id}
                                 className="transition-all hover:shadow-md"

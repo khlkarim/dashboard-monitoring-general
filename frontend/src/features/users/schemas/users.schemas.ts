@@ -1,13 +1,25 @@
 import { z } from 'zod';
 
+export enum RoleEnum {
+    ADMINISTRATOR = 'administrator',
+    PRESIDENT = 'president',
+    MEMBER = 'member',
+    ALUMNI = 'alumni',
+}
+
+export enum StatusEnum {
+    ACTIVE = 'active',
+    INACTIVE = 'inactive',
+}
+
 export const roleSchema = z.object({
-    id: z.string(),
-    name: z.string().optional(),
+    id: z.enum([RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT, RoleEnum.MEMBER, RoleEnum.ALUMNI]).optional(),
+    name: z.string()
 });
 
 export const statusSchema = z.object({
-    id: z.string(),
-    name: z.string().optional(),
+    id: z.enum([StatusEnum.ACTIVE, StatusEnum.INACTIVE]).optional(),
+    name: z.string()
 });
 
 export const fileSchema = z.object({
