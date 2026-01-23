@@ -1,4 +1,5 @@
 "use client";
+"use no memo";
 
 import { X } from "lucide-react";
 import { Table } from "@tanstack/react-table";

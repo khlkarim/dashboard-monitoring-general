@@ -59,6 +59,7 @@ function AccountPage() {
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            console.log("File selected: ", file);
             form.setValue("photo", file);
             const objectUrl = URL.createObjectURL(file);
             setPreviewApi(objectUrl);
@@ -66,6 +67,7 @@ function AccountPage() {
     };
 
     const onSubmit = (data: UpdateUserRequest) => {
+        console.log("Update user request: ", data);
         updateUserMutation.mutate({ data });
     };
 

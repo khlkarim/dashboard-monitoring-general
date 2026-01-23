@@ -1,4 +1,5 @@
 "use client";
+"use no memo";
 
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardAction } from "@/components/ui/card";
 import { DataTable } from "@/components/data-table/data-table";

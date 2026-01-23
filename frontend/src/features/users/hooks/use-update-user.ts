@@ -7,8 +7,7 @@ export const useUpdateUser = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({ id, data }: { id: string; data: UpdateUserRequest }) =>
-            usersApi.update(id, data),
+        mutationFn: ({ id, data }: { id: string; data: UpdateUserRequest }) => { console.log("Update user request: ", id, data); return usersApi.update(id, data); },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['users'] });
             toast.success('User updated successfully');
