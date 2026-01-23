@@ -39,8 +39,10 @@ export const tasksApi = {
 
     /** PATCH /api/v1/tasks/:id */
     update: async (id: string, data: UpdateTaskRequest): Promise<TaskResponse> => {
+        console.log('update request: ', id, 'data: ', data);
         updateTaskRequestSchema.parse(data);
         const res = await api.patch(`/api/v1/tasks/${id}`, data);
+        console.log('update response: ', res.data);
         return taskResponseSchema.parse(res.data);
     },
 

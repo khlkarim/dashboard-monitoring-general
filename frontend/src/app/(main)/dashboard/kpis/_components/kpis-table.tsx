@@ -100,6 +100,7 @@ export function KpisTable() {
                     isError={isError || isErrorProcessus}
                     error={error || errorProcessus}
                     entityName="KPI"
+                    searchColumn="name"
                 />
             ))}
 

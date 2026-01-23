@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardAction }
 import { DataTable } from "@/components/data-table/data-table";
 import { useDataTableInstance } from "@/hooks/use-data-table-instance";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
-import { DataTableViewOptions } from "@/components/data-table/data-table-view-options";
+import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { ColumnDef } from "@tanstack/react-table";
 import { ErrorDisplay } from "./error-display";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,16 @@ interface EntityTableProps<TData, TValue> {
     getRowId?: (row: TData) => string;
     onCreate?: () => void;
     entityName?: string;
+    searchColumn?: string;
+    filters?: {
+        columnId: string;
+        title: string;
+        options: {
+            label: string;
+            value: string;
+            icon?: React.ComponentType<{ className?: string }>;
+        }[];
+    }[];
 }
 
 export function EntityTable<TData, TValue>({
@@ -33,7 +43,9 @@ export function EntityTable<TData, TValue>({
     error,
     getRowId,
     onCreate,
-    entityName = "Entity"
+    entityName = "Entity",
+    searchColumn,
+    filters
 }: EntityTableProps<TData, TValue>) {
     const table = useDataTableInstance({
         data,
@@ -75,11 +87,11 @@ export function EntityTable<TData, TValue>({
                                     Create {entityName}
                                 </Button>
                             )}
-                            <DataTableViewOptions table={table} />
                         </div>
                     </div>
                 </CardHeader>
                 <CardContent className="flex size-full flex-col gap-4">
+                    <DataTableToolbar table={table} searchColumn={searchColumn} filters={filters} />
                     <div className="overflow-hidden rounded-md border">
                         <DataTable table={table} columns={columns} />
                     </div>

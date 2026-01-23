@@ -7,14 +7,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, UserCheck, Users } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { RoleEnum } from "@/features/users/schemas/users.schemas";
+import { StatusEnum } from "@/features/users/schemas/users.schemas";
 
 function UsersPage() {
   const { data: usersData, isLoading } = useGetUsers({ limit: 1000 });
 
   const stats = {
     total: usersData?.data.length || 0,
-    active: usersData?.data.filter(u => u.status?.name === 'Active').length || 0,
-    admins: usersData?.data.filter(u => u.role?.name === 'Administrator').length || 0,
+    active: usersData?.data.filter(u => u.status?.id === StatusEnum.ACTIVE).length || 0,
+    admins: usersData?.data.filter(u => u.role?.id === RoleEnum.ADMINISTRATOR).length || 0,
   };
 
   return (

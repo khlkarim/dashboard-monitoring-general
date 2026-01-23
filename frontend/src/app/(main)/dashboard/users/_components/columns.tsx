@@ -88,6 +88,16 @@ export const getColumns = (
             },
         },
         {
+            accessorKey: "status",
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Status" />
+            ),
+            cell: ({ row }) => {
+                const status = row.original.status;
+                return <div className="font-medium">{status?.name ?? "-"}</div>;
+            },
+        },
+        {
             id: "actions",
             header: "Actions",
             cell: ({ row }) => {

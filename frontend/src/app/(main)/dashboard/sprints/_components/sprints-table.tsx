@@ -82,6 +82,18 @@ export function SprintsTable() {
                 error={error}
                 onCreate={() => setIsCreateOpen(true)}
                 entityName="Sprint"
+                searchColumn="name"
+                filters={[
+                    {
+                        columnId: "status",
+                        title: "Status",
+                        options: [
+                            { label: "Planned", value: "PLANNED" },
+                            { label: "Active", value: "ACTIVE" },
+                            { label: "Completed", value: "COMPLETED" },
+                        ],
+                    },
+                ]}
             />
 
             <CreateEntityDialog

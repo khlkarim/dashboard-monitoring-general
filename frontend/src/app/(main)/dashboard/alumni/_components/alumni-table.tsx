@@ -20,6 +20,7 @@ export function AlumniTable() {
             isLoading={isLoading}
             isError={isError}
             error={error}
+            searchColumn="email"
         />
     );
 }

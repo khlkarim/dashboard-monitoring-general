@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { DatePicker } from "@/components/ui/date-picker";
 
 import { TaskStatus } from "@/features/tasks/schemas/tasks.schemas";
 import { useAuthStore } from "@/features/auth/store/auth.store";
@@ -26,9 +27,11 @@ const formSchema = z.object({
     status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.DONE]).default(TaskStatus.TODO),
     criticality: z.number().optional().nullable(),
     deliverable: z.string().optional().nullable(),
-    dueDate: z.string().datetime(),
+    dueDate: z.date({
+        required_error: "Due date is required",
+    }),
     description: z.string().optional().nullable(),
-    title: z.string().min(1),
+    title: z.string().min(1, "Title is required"),
     reporter: z.object({ id: z.string() }).optional().nullable(),
     assignee: z.object({ id: z.string() }).optional().nullable(),
 });
@@ -36,7 +39,16 @@ const formSchema = z.object({
 type TaskFormValues = z.infer<typeof formSchema>;
 
 interface TaskFormProps {
-    initialData?: TaskFormValues | null;
+    initialData?: {
+        title?: string;
+        description?: string | null;
+        status?: TaskStatus;
+        criticality?: number | null;
+        deliverable?: string | null;
+        dueDate?: string;
+        assignee?: { id: string } | null;
+        reporter?: { id: string } | null;
+    } | null;
     onSubmit: (data: any) => void;
     isLoading?: boolean;
     sprintId?: string;
@@ -52,7 +64,7 @@ export function TaskForm({ initialData, onSubmit, isLoading, sprintId }: TaskFor
             status: initialData?.status || TaskStatus.TODO,
             criticality: initialData?.criticality || null,
             deliverable: initialData?.deliverable || null,
-            dueDate: initialData?.dueDate || "",
+            dueDate: initialData?.dueDate ? new Date(initialData.dueDate) : new Date(),
             description: initialData?.description || "",
             title: initialData?.title || "",
             assignee: initialData?.assignee || null,
@@ -63,12 +75,12 @@ export function TaskForm({ initialData, onSubmit, isLoading, sprintId }: TaskFor
     useEffect(() => {
         if (initialData) {
             form.reset({
-                status: initialData.status,
+                status: initialData.status || TaskStatus.TODO,
                 criticality: initialData.criticality || null,
                 deliverable: initialData.deliverable || null,
                 assignee: initialData.assignee || null,
                 reporter: initialData.reporter || null,
-                dueDate: initialData.dueDate || "",
+                dueDate: initialData.dueDate ? new Date(initialData.dueDate) : new Date(),
                 description: initialData.description || "",
                 title: initialData.title || "",
             });
@@ -78,7 +90,7 @@ export function TaskForm({ initialData, onSubmit, isLoading, sprintId }: TaskFor
                 criticality: null,
                 deliverable: null,
                 assignee: null,
-                dueDate: "",
+                dueDate: new Date(),
                 description: "",
                 title: "",
             });
@@ -88,12 +100,16 @@ export function TaskForm({ initialData, onSubmit, isLoading, sprintId }: TaskFor
     const handleSubmit = (values: TaskFormValues) => {
         const apiData = {
             ...values,
+            dueDate: values.dueDate.toISOString(),
             sprint: sprintId ? { id: sprintId } : undefined,
             reporter: values.reporter ? {
                 id: values.reporter.id,
             } : {
                 id: user?.id,
             },
+            assignee: values.assignee ? {
+                id: values.assignee.id,
+            } : undefined,
         };
 
         onSubmit(apiData);
@@ -123,7 +139,55 @@ export function TaskForm({ initialData, onSubmit, isLoading, sprintId }: TaskFor
                         <FormItem>
                             <FormLabel>Description</FormLabel>
                             <FormControl>
-                                <Textarea placeholder="Task Description" value={field.value || ""} onChange={(e) => field.onChange(e.target.value)} />
+                                <Textarea 
+                                    placeholder="Task Description" 
+                                    value={field.value || ""} 
+                                    onChange={(e) => field.onChange(e.target.value)} 
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="dueDate"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Due Date</FormLabel>
+                            <FormControl>
+                                <DatePicker
+                                    date={field.value}
+                                    setDate={field.onChange}
+                                    placeholder="Pick due date"
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Status</FormLabel>
+                            <FormControl>
+                                <Select
+                                    value={field.value}
+                                    onValueChange={(value) => field.onChange(value as TaskStatus)}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value={TaskStatus.TODO}>Planned</SelectItem>
+                                        <SelectItem value={TaskStatus.IN_PROGRESS}>In Progress</SelectItem>
+                                        <SelectItem value={TaskStatus.DONE}>Done</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -138,16 +202,19 @@ export function TaskForm({ initialData, onSubmit, isLoading, sprintId }: TaskFor
                             <FormLabel>Assignee</FormLabel>
                             <FormControl>
                                 <Select
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value?.id}
+                                    value={field.value?.id || ""}
+                                    onValueChange={(value) => {
+                                        const selectedUser = users?.data.find((u) => u.id === value);
+                                        field.onChange(selectedUser ? { id: selectedUser.id } : null);
+                                    }}
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select an assignee" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {users?.data.map((user) => (
-                                            <SelectItem key={user.id} value={user.id.toString()}>
-                                                {user.firstName + " " + user.lastName}
+                                            <SelectItem key={user.id} value={user.id}>
+                                                {user.firstName} {user.lastName}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>

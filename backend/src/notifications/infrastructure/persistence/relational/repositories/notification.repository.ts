@@ -18,9 +18,18 @@ export class NotificationRelationalRepository implements NotificationRepository 
 
   async create(data: Notification): Promise<Notification> {
     const persistenceModel = NotificationMapper.toPersistence(data);
-    const newEntity = await this.notificationRepository.save(
+    await this.notificationRepository.save(
       this.notificationRepository.create(persistenceModel),
     );
+
+    const newEntity = await this.notificationRepository.findOne({
+      where: { id: persistenceModel.id },
+      relations: ['recipients'],
+    });
+
+    if (!newEntity) {
+      throw new Error('Record not found');
+    }
     return NotificationMapper.toDomain(newEntity);
   }
 

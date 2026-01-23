@@ -24,11 +24,10 @@ export class SprintsService {
   async create(createSprintDto: CreateSprintDto) {
     // Do not remove comment below.
     // <creating-property />
-
-
     const createdByObject = await this.userService.findById(
       createSprintDto.createdBy.id,
     );
+
     if (!createdByObject) {
       throw new UnprocessableEntityException({
         status: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -37,23 +36,18 @@ export class SprintsService {
         },
       });
     }
+
     const createdBy = createdByObject;
 
     return this.sprintRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
       validationDate: createSprintDto.validationDate,
-
       status: createSprintDto.status,
-
       createdBy,
-
       endDate: createSprintDto.endDate,
-
       startDate: createSprintDto.startDate,
-
       goal: createSprintDto.goal,
-
       name: createSprintDto.name,
     });
   }
@@ -86,8 +80,6 @@ export class SprintsService {
   ) {
     // Do not remove comment below.
     // <updating-property />
-
-
     let createdBy: User | undefined = undefined;
 
     if (updateSprintDto.createdBy) {
@@ -109,17 +101,11 @@ export class SprintsService {
       // Do not remove comment below.
       // <updating-property-payload />
       validationDate: updateSprintDto.validationDate,
-
       status: updateSprintDto.status,
-
       createdBy,
-
       endDate: updateSprintDto.endDate,
-
       startDate: updateSprintDto.startDate,
-
       goal: updateSprintDto.goal,
-
       name: updateSprintDto.name,
     });
   }
