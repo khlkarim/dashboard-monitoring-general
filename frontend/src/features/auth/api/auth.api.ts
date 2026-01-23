@@ -20,6 +20,7 @@ import {
   RefreshResponse,
 } from '@/features/auth/schemas/auth.schemas';
 import { useAuthStore } from '../store/auth.store';
+import { filesApi } from '@/features/files/api/files.api';
 
 export const authApi = {
   /** POST /api/v1/auth/email/login */
@@ -68,7 +69,15 @@ export const authApi = {
   /** PATCH /api/v1/auth/me */
   update: async (data: UpdateUserRequest): Promise<UserResponse> => {
     updateUserRequestSchema.parse(data);
-    const res = await api.patch('/api/v1/auth/me', data);
+
+    const payload = { ...data };
+
+    if (data.photo instanceof File) {
+      const uploadResult = await filesApi.upload(data.photo);
+      payload.photo = uploadResult.file;
+    }
+
+    const res = await api.patch('/api/v1/auth/me', payload);
     return userResponseSchema.parse(res.data);
   },
 

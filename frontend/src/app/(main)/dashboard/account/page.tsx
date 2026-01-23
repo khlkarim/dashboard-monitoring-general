@@ -22,8 +22,28 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, UploadCloud, User } from "lucide-react";
+import { Loader2, UploadCloud, User, KeyRound } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { z } from "zod";
+
+const profileFormSchema = updateUserRequestSchema.pick({
+    firstName: true,
+    lastName: true,
+    email: true,
+    photo: true,
+});
+
+const passwordFormSchema = z.object({
+    oldPassword: z.string().min(1, "Current password is required"),
+    password: z.string().min(6, "New password must be at least 6 characters"),
+    confirmPassword: z.string().min(1, "Please confirm your new password"),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+});
+
+type ProfileFormValues = z.infer<typeof profileFormSchema>;
+type PasswordFormValues = z.infer<typeof passwordFormSchema>;
 
 function AccountPage() {
     const user = useAuthStore((state) => state.user);
@@ -31,8 +51,8 @@ function AccountPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [previewApi, setPreviewApi] = useState<string | null>(null);
 
-    const form = useForm<UpdateUserRequest>({
-        resolver: zodResolver(updateUserRequestSchema),
+    const profileForm = useForm<ProfileFormValues>({
+        resolver: zodResolver(profileFormSchema),
         defaultValues: {
             firstName: user?.firstName ?? "",
             lastName: user?.lastName ?? "",
@@ -40,35 +60,50 @@ function AccountPage() {
         },
     });
 
-    // Reset form when user data is loaded
+    const passwordForm = useForm<PasswordFormValues>({
+        resolver: zodResolver(passwordFormSchema),
+        defaultValues: {
+            password: "",
+            oldPassword: "",
+            confirmPassword: "",
+        },
+    });
+
+    // Reset forms when user data is loaded
     useEffect(() => {
         if (user) {
-            form.reset({
+            profileForm.reset({
                 firstName: user.firstName ?? "",
                 lastName: user.lastName ?? "",
                 email: user.email ?? "",
             });
             if (user.photo?.path) {
-                // Construct absolute URL if needed, depending on backend config
-                // Assuming path is a full URL or relative to public
                 setPreviewApi(user.photo.path);
             }
         }
-    }, [user, form]);
+    }, [user, profileForm]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            console.log("File selected: ", file);
-            form.setValue("photo", file);
+            profileForm.setValue("photo", file);
+
+            if (previewApi && previewApi.startsWith('blob:')) {
+                URL.revokeObjectURL(previewApi);
+            }
+
             const objectUrl = URL.createObjectURL(file);
             setPreviewApi(objectUrl);
         }
     };
 
-    const onSubmit = (data: UpdateUserRequest) => {
-        console.log("Update user request: ", data);
+    const onProfileSubmit = (data: ProfileFormValues) => {
         updateUserMutation.mutate({ data });
+    };
+
+    const onPasswordSubmit = (data: PasswordFormValues) => {
+        const { confirmPassword, ...updateData } = data;
+        updateUserMutation.mutate({ data: updateData });
     };
 
     return (
@@ -82,16 +117,16 @@ function AccountPage() {
 
             <Separator />
 
-            <div>
-                <div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-8 space-y-6">
                     <Card>
                         <CardHeader>
                             <CardTitle>Profile Information</CardTitle>
                             <CardDescription>Update your photo and personal details here.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Form {...form}>
-                                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                            <Form {...profileForm}>
+                                <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-6">
 
                                     {/* Photo Upload Section */}
                                     <div className="flex items-center gap-6">
@@ -129,7 +164,7 @@ function AccountPage() {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <FormField
-                                            control={form.control}
+                                            control={profileForm.control}
                                             name="firstName"
                                             render={({ field }) => (
                                                 <FormItem>
@@ -142,7 +177,7 @@ function AccountPage() {
                                             )}
                                         />
                                         <FormField
-                                            control={form.control}
+                                            control={profileForm.control}
                                             name="lastName"
                                             render={({ field }) => (
                                                 <FormItem>
@@ -157,7 +192,7 @@ function AccountPage() {
                                     </div>
 
                                     <FormField
-                                        control={form.control}
+                                        control={profileForm.control}
                                         name="email"
                                         render={({ field }) => (
                                             <FormItem>
@@ -170,26 +205,79 @@ function AccountPage() {
                                         )}
                                     />
 
+                                    <div className="flex justify-end">
+                                        <Button type="submit" disabled={updateUserMutation.isPending}>
+                                            {updateUserMutation.isPending && (
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            )}
+                                            Save Profile
+                                        </Button>
+                                    </div>
+                                </form>
+                            </Form>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <div className="flex items-center gap-2">
+                                <KeyRound className="h-5 w-5 text-primary" />
+                                <CardTitle>Security</CardTitle>
+                            </div>
+                            <CardDescription>Change your password to keep your account secure.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Form {...passwordForm}>
+                                <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4">
                                     <FormField
-                                        control={form.control}
-                                        name="password"
+                                        control={passwordForm.control}
+                                        name="oldPassword"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>New Password (Optional)</FormLabel>
+                                                <FormLabel>Current Password</FormLabel>
                                                 <FormControl>
-                                                    <Input type="password" placeholder="Leave blank to keep current" {...field} value={field.value || ""} />
+                                                    <Input type="password" placeholder="••••••••" {...field} value={field.value || ""} />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
 
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <FormField
+                                            control={passwordForm.control}
+                                            name="password"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>New Password</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="password" placeholder="••••••••" {...field} value={field.value || ""} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={passwordForm.control}
+                                            name="confirmPassword"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Confirm New Password</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="password" placeholder="••••••••" {...field} value={field.value || ""} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+
                                     <div className="flex justify-end">
                                         <Button type="submit" disabled={updateUserMutation.isPending}>
                                             {updateUserMutation.isPending && (
                                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                             )}
-                                            Save Changes
+                                            Update Password
                                         </Button>
                                     </div>
                                 </form>
@@ -198,8 +286,18 @@ function AccountPage() {
                     </Card>
                 </div>
 
-                <div className="lg:col-span-4">
-                    {/* Side info or stats can go here if needed later */}
+                <div className="lg:col-span-4 space-y-6">
+                    <Card className="bg-muted/50 border-none shadow-none">
+                        <CardHeader>
+                            <CardTitle className="text-lg">Security Tips</CardTitle>
+                        </CardHeader>
+                        <CardContent className="text-sm space-y-4 text-muted-foreground">
+                            <p>• Use at least 8 characters</p>
+                            <p>• Mix uppercase and lowercase letters</p>
+                            <p>• Include numbers and symbols</p>
+                            <p>• Don't use common words or birthdays</p>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </div>

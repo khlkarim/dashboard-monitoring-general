@@ -1,6 +1,7 @@
-import { TrendingUp, Package, CheckCircle2, AlertTriangle, BarChart3 } from "lucide-react";
+import { TrendingUp, Package, CheckCircle2, AlertTriangle, BarChart3, Target } from "lucide-react";
 
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 
 interface SectionCardsProps {
   data: {
@@ -12,51 +13,73 @@ interface SectionCardsProps {
 }
 
 export function SectionCards({ data }: SectionCardsProps) {
+  const completedTasks = data.tasks.filter(t => t.status === "DONE").length;
+  const taskCompletionRate = data.tasks.length > 0 ? Math.round((completedTasks / data.tasks.length) * 100) : 0;
+
+  const highSeverityRisks = data.risks.filter(r => (r.severity || 0) >= 4).length;
+  const activeSprints = data.sprints.filter(s => s.status === "ACTIVE").length;
+
   return (
-    <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
-      <Card className="@container/card">
-        <CardHeader>
+    <div className="grid grid-cols-1 gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+      <Card className="relative overflow-hidden transition-all duration-300 hover:shadow-md">
+        <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <CardDescription>Total Sprints</CardDescription>
-            <Package className="size-4 text-muted-foreground" />
+            <CardDescription className="font-medium text-muted-foreground">Active Sprints</CardDescription>
+            <Package className="size-4 text-blue-500" />
           </div>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {data.sprints.length}
+          <CardTitle className="text-3xl font-bold tracking-tight">
+            {activeSprints}
           </CardTitle>
         </CardHeader>
+        <CardContent>
+          <p className="text-xs text-muted-foreground">Out of {data.sprints.length} total sprints</p>
+        </CardContent>
       </Card>
-      <Card className="@container/card">
-        <CardHeader>
+
+      <Card className="relative overflow-hidden transition-all duration-300 hover:shadow-md">
+        <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <CardDescription>Active Tasks</CardDescription>
-            <CheckCircle2 className="size-4 text-muted-foreground" />
+            <CardDescription className="font-medium text-muted-foreground">Task Completion</CardDescription>
+            <CheckCircle2 className="size-4 text-emerald-500" />
           </div>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {data.tasks.length}
+          <CardTitle className="text-3xl font-bold tracking-tight">
+            {taskCompletionRate}%
           </CardTitle>
         </CardHeader>
+        <CardContent className="space-y-2">
+          <Progress value={taskCompletionRate} className="h-1.5" />
+          <p className="text-xs text-muted-foreground">{completedTasks} of {data.tasks.length} tasks done</p>
+        </CardContent>
       </Card>
-      <Card className="@container/card">
-        <CardHeader>
+
+      <Card className="relative overflow-hidden transition-all duration-300 hover:shadow-md">
+        <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <CardDescription>Open Risks</CardDescription>
-            <AlertTriangle className="size-4 text-muted-foreground" />
+            <CardDescription className="font-medium text-muted-foreground">Critical Risks</CardDescription>
+            <AlertTriangle className="size-4 text-destructive" />
           </div>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {data.risks.length}
+          <CardTitle className="text-3xl font-bold tracking-tight">
+            {highSeverityRisks}
           </CardTitle>
         </CardHeader>
+        <CardContent>
+          <p className="text-xs text-muted-foreground">Severity Level ≥ 4</p>
+        </CardContent>
       </Card>
-      <Card className="@container/card">
-        <CardHeader>
+
+      <Card className="relative overflow-hidden transition-all duration-300 hover:shadow-md">
+        <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <CardDescription>Active KPIs</CardDescription>
-            <BarChart3 className="size-4 text-muted-foreground" />
+            <CardDescription className="font-medium text-muted-foreground">Active KPIs</CardDescription>
+            <Target className="size-4 text-orange-500" />
           </div>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+          <CardTitle className="text-3xl font-bold tracking-tight">
             {data.kpis.length}
           </CardTitle>
         </CardHeader>
+        <CardContent>
+          <p className="text-xs text-muted-foreground">Monitoring key metrics</p>
+        </CardContent>
       </Card>
     </div>
   );

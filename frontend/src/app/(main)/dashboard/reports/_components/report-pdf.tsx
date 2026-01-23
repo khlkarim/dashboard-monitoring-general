@@ -113,11 +113,43 @@ export const ReportPDF = ({ data }: ReportPDFProps) => (
                     <Text style={[styles.tableColHeader, { width: '30%' }]}>Status</Text>
                     <Text style={[styles.tableColHeader, { width: '30%' }]}>Timeline</Text>
                 </View>
-                {data.sprints.slice(0, 10).map((sprint, index) => (
+                {data.sprints.map((sprint, index) => (
                     <View key={index} style={styles.tableRow}>
                         <Text style={[styles.tableCol, { width: '40%' }]}>{sprint.name}</Text>
                         <Text style={[styles.tableCol, { width: '30%' }]}>{sprint.status}</Text>
-                        <Text style={[styles.tableCol, { width: '30%' }]}>{new Date(sprint.startDate).toLocaleDateString()}</Text>
+                        <Text style={[styles.tableCol, { width: '30%' }]}>{sprint.startDate ? new Date(sprint.startDate).toLocaleDateString() : '-'}</Text>
+                    </View>
+                ))}
+            </View>
+
+            <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Tasks</Text>
+                <View style={[styles.tableRow, styles.tableHeader]}>
+                    <Text style={[styles.tableColHeader, { width: '40%' }]}>Title</Text>
+                    <Text style={[styles.tableColHeader, { width: '30%' }]}>Status</Text>
+                    <Text style={[styles.tableColHeader, { width: '30%' }]}>Due Date</Text>
+                </View>
+                {data.tasks.slice(0, 20).map((task, index) => (
+                    <View key={index} style={styles.tableRow}>
+                        <Text style={[styles.tableCol, { width: '40%' }]}>{task.title}</Text>
+                        <Text style={[styles.tableCol, { width: '30%' }]}>{task.status}</Text>
+                        <Text style={[styles.tableCol, { width: '30%' }]}>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '-'}</Text>
+                    </View>
+                ))}
+            </View>
+
+            <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Risks</Text>
+                <View style={[styles.tableRow, styles.tableHeader]}>
+                    <Text style={[styles.tableColHeader, { width: '50%' }]}>Title</Text>
+                    <Text style={[styles.tableColHeader, { width: '25%' }]}>Severity</Text>
+                    <Text style={[styles.tableColHeader, { width: '25%' }]}>Occurrence</Text>
+                </View>
+                {data.risks.map((risk, index) => (
+                    <View key={index} style={styles.tableRow}>
+                        <Text style={[styles.tableCol, { width: '50%' }]}>{risk.title || 'Untitled'}</Text>
+                        <Text style={[styles.tableCol, { width: '25%' }]}>{risk.severity || 0}</Text>
+                        <Text style={[styles.tableCol, { width: '25%' }]}>{risk.occurrence || 0}</Text>
                     </View>
                 ))}
             </View>
@@ -125,15 +157,13 @@ export const ReportPDF = ({ data }: ReportPDFProps) => (
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Key KPIs</Text>
                 <View style={[styles.tableRow, styles.tableHeader]}>
-                    <Text style={[styles.tableColHeader, { width: '50%' }]}>Title</Text>
-                    <Text style={[styles.tableColHeader, { width: '25%' }]}>Target</Text>
-                    <Text style={[styles.tableColHeader, { width: '25%' }]}>Status</Text>
+                    <Text style={[styles.tableColHeader, { width: '50%' }]}>Name</Text>
+                    <Text style={[styles.tableColHeader, { width: '50%' }]}>Sampling Rate</Text>
                 </View>
-                {data.kpis.slice(0, 5).map((kpi, index) => (
+                {data.kpis.map((kpi, index) => (
                     <View key={index} style={styles.tableRow}>
-                        <Text style={[styles.tableCol, { width: '50%' }]}>{kpi.title}</Text>
-                        <Text style={[styles.tableCol, { width: '25%' }]}>{kpi.targetValue}</Text>
-                        <Text style={[styles.tableCol, { width: '25%' }]}>{kpi.status}</Text>
+                        <Text style={[styles.tableCol, { width: '50%' }]}>{kpi.name}</Text>
+                        <Text style={[styles.tableCol, { width: '50%' }]}>{kpi.samplingRate || '-'}</Text>
                     </View>
                 ))}
             </View>

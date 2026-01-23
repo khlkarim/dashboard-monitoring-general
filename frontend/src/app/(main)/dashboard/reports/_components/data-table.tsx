@@ -1,26 +1,19 @@
 import * as React from "react";
-import { Plus, Download, FileJson, FileSpreadsheet } from "lucide-react";
-// @ts-ignore
-import { CSVLink } from "react-csv";
+import { FileJson, FileSpreadsheet } from "lucide-react";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDataTableInstance } from "@/hooks/use-data-table-instance";
 
 import { DataTable as DataTableNew } from "../../../../../components/data-table/data-table";
 import { DataTablePagination } from "../../../../../components/data-table/data-table-pagination";
 import { DataTableViewOptions } from "../../../../../components/data-table/data-table-view-options";
-import { withDndColumn } from "../../../../../components/data-table/table-utils";
 
-import { dashboardColumns } from "./columns";
+import { sprintColumns, taskColumns, riskColumns, userColumns, kpiColumns } from "./columns";
 import { ReportPDF } from "./report-pdf";
 
 interface DataTableProps {
-  data: any[];
   fullData: {
     sprints: any[];
     tasks: any[];
@@ -30,82 +23,94 @@ interface DataTableProps {
   };
 }
 
-export function DataTable({ data: initialData, fullData }: DataTableProps) {
-  const [data, setData] = React.useState(() => initialData);
-  const columns = withDndColumn(dashboardColumns);
-  const table = useDataTableInstance({ data, columns, getRowId: (row) => row.id.toString() });
+export function DataTable({ fullData }: DataTableProps) {
+  const [activeTab, setActiveTab] = React.useState("sprints");
 
-  const csvData = [
-    ["Type", "Count"],
-    ["Sprints", fullData.sprints.length],
-    ["Tasks", fullData.tasks.length],
-    ["Risks", fullData.risks.length],
-    ["KPIs", fullData.kpis.length],
-    ["Users", fullData.users.length],
-  ];
+  const getTableData = () => {
+    switch (activeTab) {
+      case "sprints": return fullData.sprints;
+      case "tasks": return fullData.tasks;
+      case "risks": return fullData.risks;
+      case "users": return fullData.users;
+      case "kpis": return fullData.kpis;
+      default: return [];
+    }
+  };
+
+  const getColumns = () => {
+    switch (activeTab) {
+      case "sprints": return sprintColumns;
+      case "tasks": return taskColumns;
+      case "risks": return riskColumns;
+      case "users": return userColumns;
+      case "kpis": return kpiColumns;
+      default: return [];
+    }
+  };
+
+  const data = getTableData();
+  const columns = getColumns() as any;
+  const table = useDataTableInstance({ data, columns, getRowId: (row) => row.id });
+
+  const exportToCSV = () => {
+    const currentData = getTableData();
+    if (currentData.length === 0) return;
+
+    const headers = Object.keys(currentData[0]).join(",");
+    const rows = currentData.map(row =>
+      Object.values(row).map(value =>
+        typeof value === 'object' ? JSON.stringify(value) : String(value)
+      ).join(",")
+    ).join("\n");
+
+    const csvContent = "data:text/csv;charset=utf-8," + headers + "\n" + rows;
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `${activeTab}-report.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Select defaultValue="outline">
-            <SelectTrigger className="flex w-fit @4xl/main:hidden" size="sm" id="view-selector">
-              <SelectValue placeholder="Select a view" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="outline">Outline</SelectItem>
-              <SelectItem value="past-performance">Past Performance</SelectItem>
-              <SelectItem value="key-personnel">Key Personnel</SelectItem>
-              <SelectItem value="focus-documents">Focus Documents</SelectItem>
-            </SelectContent>
-          </Select>
-          <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
-            <TabsTrigger value="outline">Outline</TabsTrigger>
-            <TabsTrigger value="past-performance">
-              Past Performance <Badge variant="secondary">3</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="key-personnel">
-              Key Personnel <Badge variant="secondary">2</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="focus-documents">Focus Documents</TabsTrigger>
+    <div className="w-full flex flex-col gap-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <div className="flex items-center justify-between mb-4">
+          <TabsList>
+            <TabsTrigger value="sprints">Sprints</TabsTrigger>
+            <TabsTrigger value="tasks">Tasks</TabsTrigger>
+            <TabsTrigger value="risks">Risks</TabsTrigger>
+            <TabsTrigger value="users">Users</TabsTrigger>
+            <TabsTrigger value="kpis">KPIs</TabsTrigger>
           </TabsList>
-        </div>
 
-        <div className="flex items-center gap-2">
-          <CSVLink data={csvData} filename="dashboard-report.csv">
-            <Button variant="outline" size="sm">
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={exportToCSV}>
               <FileSpreadsheet className="size-4 mr-2" />
               Export CSV
             </Button>
-          </CSVLink>
 
-          <PDFDownloadLink document={<ReportPDF data={fullData} />} fileName="dashboard-report.pdf">
-            {({ loading }) => (
-              <Button variant="outline" size="sm" disabled={loading}>
-                <FileJson className="size-4 mr-2" />
-                {loading ? "Loading..." : "Export PDF"}
-              </Button>
-            )}
-          </PDFDownloadLink>
+            <PDFDownloadLink document={<ReportPDF data={fullData} />} fileName="project-report.pdf">
+              {({ loading }) => (
+                <Button variant="outline" size="sm" disabled={loading}>
+                  <FileJson className="size-4 mr-2" />
+                  {loading ? "Loading..." : "Export PDF"}
+                </Button>
+              )}
+            </PDFDownloadLink>
 
-          <DataTableViewOptions table={table} />
+            <DataTableViewOptions table={table} />
+          </div>
         </div>
-      </div>
-      <TabsContent value="outline" className="relative flex flex-col gap-4 overflow-auto">
-        <div className="overflow-hidden rounded-lg border">
-          <DataTableNew dndEnabled table={table} columns={columns} onReorder={setData} />
-        </div>
-        <DataTablePagination table={table} />
-      </TabsContent>
-      <TabsContent value="past-performance" className="flex flex-col">
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-      </TabsContent>
-      <TabsContent value="key-personnel" className="flex flex-col">
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-      </TabsContent>
-      <TabsContent value="focus-documents" className="flex flex-col">
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-      </TabsContent>
-    </Tabs>
+
+        <TabsContent value={activeTab} className="relative flex flex-col gap-4">
+          <div className="overflow-hidden rounded-lg border">
+            <DataTableNew table={table} columns={columns} />
+          </div>
+          <DataTablePagination table={table} />
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }
