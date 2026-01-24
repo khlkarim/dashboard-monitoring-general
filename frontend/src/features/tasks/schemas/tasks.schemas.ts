@@ -45,6 +45,19 @@ export const taskResponseSchema = z.object({
 });
 export type TaskResponse = z.infer<typeof taskResponseSchema>;
 
+/** Task Form Schema */
+export const taskFormSchema = z.object({
+    status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.DONE]).default(TaskStatus.TODO),
+    criticality: z.number().optional().nullable(),
+    deliverable: z.string().optional().nullable(),
+    dueDate: z.date({ required_error: "Due date is required" }),
+    description: z.string().optional().nullable(),
+    title: z.string().min(1, "Title is required"),
+    reporter: z.object({ id: z.string() }).optional().nullable(),
+    assignee: z.object({ id: z.string() }).optional().nullable(),
+});
+export type TaskFormValues = z.infer<typeof taskFormSchema>;
+
 /** Find All Query */
 export const findAllTasksQuerySchema = z.object({
     page: z.number().optional(),

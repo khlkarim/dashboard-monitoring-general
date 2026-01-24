@@ -14,10 +14,11 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { RiskFormValues, PartialRiskFormSchema, riskFormSchema } from "@/features/risks/schemas/risks.schemas";
+import { RiskFormValues, riskFormSchema } from "@/features/risks/schemas/risks.schemas";
+import { Risk } from "../types/risks.types";
 
 interface RiskFormProps {
-    initialData?: PartialRiskFormSchema | null;
+    initialData?: Risk | null;
     onSubmit: (data: RiskFormValues) => void;
     isLoading?: boolean;
 }
@@ -39,7 +40,9 @@ export function RiskForm({ initialData, onSubmit, isLoading }: RiskFormProps) {
     const handleSubmit = (values: RiskFormValues) => {
         const apiData = {
             ...values,
-            createdBy: user?.id,
+            createdBy: { 
+                id: user?.id
+            },
         };
         onSubmit(apiData);
     };

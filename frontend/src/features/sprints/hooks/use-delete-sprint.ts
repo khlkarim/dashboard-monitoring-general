@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { sprintsApi } from '../api/sprints.api';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useDeleteSprint = () => {
     const queryClient = useQueryClient();
@@ -11,8 +11,7 @@ export const useDeleteSprint = () => {
             queryClient.invalidateQueries({ queryKey: ['sprints'] });
             toast.success('Sprint deleted successfully');
         },
-        onError: (error) => {
-            console.error(error);
+        onError: () => {
             toast.error('Failed to delete sprint');
         },
     });

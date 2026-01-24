@@ -29,7 +29,7 @@ export type RiskResponse = z.infer<typeof riskResponseSchema>;
 
 /** Risk Form Schema **/
 export const riskFormSchema = z.object({
-    title: z.string().optional().nullable(),
+    title: z.string().min(1, "Name is required"),
     description: z.string().optional().nullable(),
     severity: z.number().optional().nullable(),
     occurrence: z.number().optional().nullable(),

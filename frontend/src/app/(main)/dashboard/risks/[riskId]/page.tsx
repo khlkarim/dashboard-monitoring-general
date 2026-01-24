@@ -105,8 +105,8 @@ function RiskDetailPage() {
             <BaseDialog 
                 open={isCreateActionOpen}
                 onOpenChange={setIsCreateActionOpen}
-                title="Edit Action"
-                description="Create the mitigation action details."
+                title="Create Action"
+                description="Create a mitigation action."
             >
                 <ActionForm
                     onSubmit={handleCreateActionSubmit}

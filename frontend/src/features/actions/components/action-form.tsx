@@ -16,9 +16,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { actionFormSchema, ActionFormValues, ActionType, PartialActionFormValues } from "../schemas/actions.schemas";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Action } from "../types/actions.types";
 
 interface ActionFormProps {
-    initialData?: PartialActionFormValues | null;
+    initialData?: Action | null;
     onSubmit: (data: ActionFormValues) => void;
     isLoading?: boolean;
 }

@@ -1,8 +1,7 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/features/auth/store/auth.store";
@@ -15,6 +14,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+
 import {
     Select,
     SelectContent,
@@ -22,29 +22,18 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+
 import { DatePicker } from "@/components/ui/date-picker";
 import {
-    SprintResponse,
     SprintStatus,
+    SprintFormValues,
+    sprintFormSchema,
+    SprintResponse,
 } from "@/features/sprints/schemas/sprints.schemas";
-
-const formSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    goal: z.string().optional(),
-    startDate: z.date({
-        required_error: "Start date is required",
-    }),
-    endDate: z.date({
-        required_error: "End date is required",
-    }),
-    validationDate: z.date().optional(),
-    status: z.enum([SprintStatus.PLANNED, SprintStatus.ACTIVE, SprintStatus.COMPLETED]),
-});
-
-type SprintFormValues = z.infer<typeof formSchema>;
+import { Sprint } from "../types/sprints.types";
 
 interface SprintFormProps {
-    initialData?: SprintResponse | null;
+    initialData?: Sprint | null;
     onSubmit: (data: any) => void;
     isLoading?: boolean;
 }
@@ -53,7 +42,7 @@ export function SprintForm({ initialData, onSubmit, isLoading }: SprintFormProps
     const user = useAuthStore((state) => state.user);
 
     const form = useForm<SprintFormValues>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(sprintFormSchema),
         defaultValues: {
             name: initialData?.name || "",
             goal: initialData?.goal || "",

@@ -38,6 +38,17 @@ export const sprintResponseSchema = z.object({
 });
 export type SprintResponse = z.infer<typeof sprintResponseSchema>;
 
+/** Sprint Form Schema */
+export const sprintFormSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    goal: z.string().optional(),
+    startDate: z.date({ required_error: "Start date is required" }),
+    endDate: z.date({ required_error: "End date is required" }),
+    validationDate: z.date().optional(),
+    status: z.enum([SprintStatus.PLANNED, SprintStatus.ACTIVE, SprintStatus.COMPLETED]),
+});
+export type SprintFormValues = z.infer<typeof sprintFormSchema>;
+
 /** Find All Query */
 export const findAllSprintsQuerySchema = z.object({
     page: z.number().optional(),

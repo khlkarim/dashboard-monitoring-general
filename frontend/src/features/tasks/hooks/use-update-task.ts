@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { tasksApi } from '../api/tasks.api';
 import { UpdateTaskRequest } from '../schemas/tasks.schemas';
-import { toast } from 'sonner';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCreateNotification } from '@/features/notifications/hooks/use-create-notification';
 
 export const useUpdateTask = () => {
@@ -21,8 +21,7 @@ export const useUpdateTask = () => {
                 recipientIds: [data.assignee?.id, data.reporter?.id],
             });
         },
-        onError: (error) => {
-            console.error(error);
+        onError: () => {
             toast.error('Failed to update task');
         },
     });
