@@ -21,7 +21,7 @@ export function PageHeader({
     description,
     actions,
     breadcrumbs,
-    maxTitleWidth = 240,
+    maxTitleWidth = 400,
 }: PageHeaderProps) {
     return (
         <div className="flex flex-col gap-2">

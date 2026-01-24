@@ -12,43 +12,45 @@ export function RiskStats({ risk }: RiskStatsProps) {
     const [stats, setStats] = useState<StatCardProps[]>([]);
 
     useEffect(() => {
-        setStats([
-            {
-                title: "Risk Priority Number",
-                value: calculateRPN(risk),
-                description: "Calculated (S x O x D)",
-            },
-            {
-                title: "Severity",
-                value: risk.severity,
-                description: (
-                    <>
-                        <Progress value={(risk.severity || 0) * 10} className="h-2" />                
-                        <p className="text-xs text-muted-foreground mt-2">Impact of the failure</p>
-                    </>
-                ),
-            },
-            {
-                title: "Occurrence",
-                value: risk.occurrence,
-                description: (
-                    <>
-                        <Progress value={(risk.occurrence || 0) * 10} className="h-2" />                
-                        <p className="text-xs text-muted-foreground mt-2">Likelihood of cause</p>
-                    </>
-                ),
-            },
-            {
-                title: "Detection",
-                value: risk.detection,
-                description: (
-                    <>
-                        <Progress value={(risk.detection || 0) * 10} className="h-2" />                
-                        <p className="text-xs text-muted-foreground mt-2">Ability to detect</p>
-                    </>
-                ),
-            }
-        ]);
+        if(risk) {
+            setStats([
+                {
+                    title: "Risk Priority Number",
+                    value: calculateRPN(risk),
+                    description: "Calculated (S x O x D)",
+                },
+                {
+                    title: "Severity",
+                    value: risk.severity,
+                    description: (
+                        <>
+                            <Progress value={(risk.severity || 0) * 10} className="h-2" />                
+                            <p className="text-xs text-muted-foreground mt-2">Impact of the failure</p>
+                        </>
+                    ),
+                },
+                {
+                    title: "Occurrence",
+                    value: risk.occurrence,
+                    description: (
+                        <>
+                            <Progress value={(risk.occurrence || 0) * 10} className="h-2" />                
+                            <p className="text-xs text-muted-foreground mt-2">Likelihood of cause</p>
+                        </>
+                    ),
+                },
+                {
+                    title: "Detection",
+                    value: risk.detection,
+                    description: (
+                        <>
+                            <Progress value={(risk.detection || 0) * 10} className="h-2" />                
+                            <p className="text-xs text-muted-foreground mt-2">Ability to detect</p>
+                        </>
+                    ),
+                }
+            ]);
+        }
     }, [risk]);
 
     return (

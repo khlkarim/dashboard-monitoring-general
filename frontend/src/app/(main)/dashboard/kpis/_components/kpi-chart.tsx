@@ -64,7 +64,7 @@ export function KpiChart({ samples, kpiName }: KpiChartProps) {
     const chartConfig = {
         value: {
             label: kpiName,
-            color: "hsl(var(--primary))",
+            color: "var(--chart-1)",
         },
     } satisfies ChartConfig;
 

@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { kpisApi } from '../api/kpis.api';
 import { toast } from 'sonner';
+import { kpisApi } from '../api/kpis.api';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useDeleteKpi = () => {
     const queryClient = useQueryClient();
@@ -11,8 +11,7 @@ export const useDeleteKpi = () => {
             queryClient.invalidateQueries({ queryKey: ['kpis'] });
             toast.success('KPI deleted successfully');
         },
-        onError: (error) => {
-            console.error(error);
+        onError: () => {
             toast.error('Failed to delete KPI');
         },
     });

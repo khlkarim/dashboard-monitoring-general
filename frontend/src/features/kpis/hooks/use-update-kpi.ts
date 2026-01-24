@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { kpisApi } from '../api/kpis.api';
-import { UpdateKpiRequest } from '../schemas/kpis.schemas';
 import { toast } from 'sonner';
+import { kpisApi } from '../api/kpis.api';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { UpdateKpiRequest } from '../schemas/kpis.schemas';
 
 export const useUpdateKpi = () => {
     const queryClient = useQueryClient();
@@ -13,8 +13,7 @@ export const useUpdateKpi = () => {
             queryClient.invalidateQueries({ queryKey: ['kpis'] });
             toast.success('KPI updated successfully');
         },
-        onError: (error) => {
-            console.error(error);
+        onError: () => {
             toast.error('Failed to update KPI');
         },
     });

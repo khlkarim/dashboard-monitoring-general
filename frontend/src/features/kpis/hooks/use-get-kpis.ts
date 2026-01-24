@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
 import { kpisApi } from '../api/kpis.api';
+import { useQuery } from '@tanstack/react-query';
 
 export const useGetKpis = ({
     sprintId,
