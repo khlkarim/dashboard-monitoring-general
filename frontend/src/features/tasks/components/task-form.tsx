@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,48 +17,24 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DatePicker } from "@/components/ui/date-picker";
 
-import { TaskStatus } from "@/features/tasks/schemas/tasks.schemas";
+import { taskFormSchema, TaskFormValues, TaskStatus } from "@/features/tasks/schemas/tasks.schemas";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useGetUsers } from "@/features/users/hooks/use-get-users";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-
-const formSchema = z.object({
-    status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.DONE]).default(TaskStatus.TODO),
-    criticality: z.number().optional().nullable(),
-    deliverable: z.string().optional().nullable(),
-    dueDate: z.date({
-        required_error: "Due date is required",
-    }),
-    description: z.string().optional().nullable(),
-    title: z.string().min(1, "Title is required"),
-    reporter: z.object({ id: z.string() }).optional().nullable(),
-    assignee: z.object({ id: z.string() }).optional().nullable(),
-});
-
-type TaskFormValues = z.infer<typeof formSchema>;
+import { Task } from "../types/tasks.types";
 
 interface TaskFormProps {
-    initialData?: {
-        title?: string;
-        description?: string | null;
-        status?: TaskStatus;
-        criticality?: number | null;
-        deliverable?: string | null;
-        dueDate?: string;
-        assignee?: { id: string } | null;
-        reporter?: { id: string } | null;
-    } | null;
+    initialData?: Task | null;
     onSubmit: (data: any) => void;
     isLoading?: boolean;
-    sprintId?: string;
 }
 
-export function TaskForm({ initialData, onSubmit, isLoading, sprintId }: TaskFormProps) {
+export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
     const user = useAuthStore((state) => state.user);
     const { data: users } = useGetUsers();
 
     const form = useForm<TaskFormValues>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(taskFormSchema),
         defaultValues: {
             status: initialData?.status || TaskStatus.TODO,
             criticality: initialData?.criticality || null,
@@ -72,36 +47,10 @@ export function TaskForm({ initialData, onSubmit, isLoading, sprintId }: TaskFor
         },
     });
 
-    useEffect(() => {
-        if (initialData) {
-            form.reset({
-                status: initialData.status || TaskStatus.TODO,
-                criticality: initialData.criticality || null,
-                deliverable: initialData.deliverable || null,
-                assignee: initialData.assignee || null,
-                reporter: initialData.reporter || null,
-                dueDate: initialData.dueDate ? new Date(initialData.dueDate) : new Date(),
-                description: initialData.description || "",
-                title: initialData.title || "",
-            });
-        } else {
-            form.reset({
-                status: TaskStatus.TODO,
-                criticality: null,
-                deliverable: null,
-                assignee: null,
-                dueDate: new Date(),
-                description: "",
-                title: "",
-            });
-        }
-    }, [initialData, form]);
-
     const handleSubmit = (values: TaskFormValues) => {
         const apiData = {
             ...values,
             dueDate: values.dueDate.toISOString(),
-            sprint: sprintId ? { id: sprintId } : undefined,
             reporter: values.reporter ? {
                 id: values.reporter.id,
             } : {

@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { CreateTaskRequest } from '../schemas/tasks.schemas';
 import { toast } from 'sonner';
 import { tasksApi } from '../api/tasks.api';
+import { CreateTaskRequest } from '../schemas/tasks.schemas';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCreateNotification } from '@/features/notifications/hooks/use-create-notification';
 
 export const useCreateTask = () => {
@@ -20,8 +20,7 @@ export const useCreateTask = () => {
                 recipientIds: [data.assignee?.id],
             });
         },
-        onError: (error) => {
-            console.error(error);
+        onError: () => {
             toast.error('Failed to create task');
         },
     });

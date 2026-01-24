@@ -17,7 +17,7 @@ import { Separator } from "@/components/ui/separator";
 function Page() {
   const { user } = useAuthStore();
   const { data: sprints } = useGetSprints();
-  const { data: tasks } = useGetTasks({});
+  const { data: tasks } = useGetTasks();
   const { data: users } = useGetUsers();
   const { data: risks } = useGetRisks();
   const { data: notifications } = useGetNotifications(user?.id || "");

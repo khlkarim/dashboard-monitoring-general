@@ -8,8 +8,8 @@ export enum ActionType {
 
 /** Create Action */
 export const createActionRequestSchema = z.object({
-    title: z.string().min(1),
     risk: z.object({ id: z.string() }),
+    title: z.string().optional().nullable(),
     description: z.string().optional().nullable(),
     type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE]).default(ActionType.CORRECTIVE),
 });
@@ -30,6 +30,19 @@ export const actionResponseSchema = z.object({
     updatedAt: z.string().datetime(),
 });
 export type ActionResponse = z.infer<typeof actionResponseSchema>;
+
+/** Action Form Schema **/
+export const actionFormSchema = z.object({
+    risk: z.object({ id: z.string() }),
+    title: z.string().nullable().optional(),
+    description: z.string().nullable().optional(),
+    type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE]).default(ActionType.CORRECTIVE),
+});
+export type ActionFormValues = z.infer<typeof actionFormSchema>;
+
+export const partialActionFormSchema = actionFormSchema.partial();
+export type PartialActionFormValues = z.infer<typeof partialActionFormSchema>;
+
 
 /** Find All Query */
 export const findAllActionsQuerySchema = z.object({

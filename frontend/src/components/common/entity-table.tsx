@@ -1,7 +1,7 @@
 "use client";
 "use no memo";
 
-import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardAction } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { DataTable } from "@/components/data-table/data-table";
 import { useDataTableInstance } from "@/hooks/use-data-table-instance";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";

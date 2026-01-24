@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import { risksApi } from "../api/risks.api";
+import { useQuery } from "@tanstack/react-query";
 
 export const useGetRisks = () => {
     return useQuery({

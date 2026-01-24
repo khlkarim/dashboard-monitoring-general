@@ -95,7 +95,7 @@ export class KpiRelationalRepository implements KpiRepository {
       throw new Error('Record not found');
     }
 
-    const updatedEntity = await this.kpiRepository.save(
+    await this.kpiRepository.save(
       this.kpiRepository.create(
         KpiMapper.toPersistence({
           ...KpiMapper.toDomain(entity),
@@ -103,6 +103,14 @@ export class KpiRelationalRepository implements KpiRepository {
         }),
       ),
     );
+
+    const updatedEntity = await this.kpiRepository.findOne({
+      where: { id },
+    });
+
+    if (!updatedEntity) {
+      throw new Error('Record not found');
+    }
 
     return KpiMapper.toDomain(updatedEntity);
   }

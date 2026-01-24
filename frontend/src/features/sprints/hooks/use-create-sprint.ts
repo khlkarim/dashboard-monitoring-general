@@ -1,9 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { sprintsApi } from '../api/sprints.api';
 import { CreateSprintRequest } from '../schemas/sprints.schemas';
-import { useCreateNotification } from '@/features/notifications/hooks/use-create-notification';
 import { useGetUsers } from '@/features/users/hooks/use-get-users';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCreateNotification } from '@/features/notifications/hooks/use-create-notification';
 
 export const useCreateSprint = () => {
     const queryClient = useQueryClient();
@@ -22,8 +22,7 @@ export const useCreateSprint = () => {
                 recipientIds: users?.data.map((user) => user.id) || [],
             });
         },
-        onError: (error) => {
-            console.error(error);
+        onError: () => {
             toast.error('Failed to create sprint');
         },
     });

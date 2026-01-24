@@ -1,8 +1,7 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/features/auth/store/auth.store";
@@ -15,23 +14,12 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-    RiskResponse,
-} from "@/features/risks/schemas/risks.schemas";
-
-const formSchema = z.object({
-    title: z.string().min(2, "Title must be at least 2 characters"),
-    description: z.string().min(2, "Description must be at least 2 characters"),
-    severity: z.number().min(1, "Severity must be at least 1"),
-    occurrence: z.number().min(1, "Occurrence must be at least 1"),
-    detection: z.number().min(1, "Detection must be at least 1"),
-});
-
-type RiskFormValues = z.infer<typeof formSchema>;
+import { RiskFormValues, riskFormSchema } from "@/features/risks/schemas/risks.schemas";
+import { Risk } from "../types/risks.types";
 
 interface RiskFormProps {
-    initialData?: RiskResponse | null;
-    onSubmit: (data: any) => void;
+    initialData?: Risk | null;
+    onSubmit: (data: RiskFormValues) => void;
     isLoading?: boolean;
 }
 
@@ -39,7 +27,7 @@ export function RiskForm({ initialData, onSubmit, isLoading }: RiskFormProps) {
     const user = useAuthStore((state) => state.user);
 
     const form = useForm<RiskFormValues>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(riskFormSchema),
         defaultValues: {
             title: initialData?.title || "",
             description: initialData?.description || "",
@@ -52,7 +40,9 @@ export function RiskForm({ initialData, onSubmit, isLoading }: RiskFormProps) {
     const handleSubmit = (values: RiskFormValues) => {
         const apiData = {
             ...values,
-            createdBy: user?.id,
+            createdBy: { 
+                id: user?.id
+            },
         };
         onSubmit(apiData);
     };
@@ -67,7 +57,7 @@ export function RiskForm({ initialData, onSubmit, isLoading }: RiskFormProps) {
                         <FormItem>
                             <FormLabel>Title </FormLabel>
                             < FormControl >
-                                <Input placeholder="Risk title..." {...field} />
+                                <Input placeholder="Risk title..." {...field} value={field.value ?? ""} />
                             </FormControl>
                             < FormMessage />
                         </FormItem>
@@ -82,7 +72,7 @@ export function RiskForm({ initialData, onSubmit, isLoading }: RiskFormProps) {
                         <FormItem>
                             <FormLabel>Description </FormLabel>
                             < FormControl >
-                                <Input placeholder="Detailed description of the risk..." {...field} />
+                                <Input placeholder="Detailed description of the risk..." {...field} value={field.value ?? ""} />
                             </FormControl>
                             < FormMessage />
                         </FormItem>
@@ -97,7 +87,7 @@ export function RiskForm({ initialData, onSubmit, isLoading }: RiskFormProps) {
                             <FormItem>
                                 <FormLabel>Severity </FormLabel>
                                 < FormControl >
-                                    <Input placeholder="Risk severity..." {...field} onChange={(e) => field.onChange(Number(e.target.value) || field.value)} />
+                                    <Input placeholder="Risk severity..." {...field} value={field.value ?? ""} />
                                 </FormControl>
                                 < FormMessage />
                             </FormItem>
@@ -111,7 +101,7 @@ export function RiskForm({ initialData, onSubmit, isLoading }: RiskFormProps) {
                             <FormItem>
                                 <FormLabel>Occurrence </FormLabel>
                                 < FormControl >
-                                    <Input placeholder="Risk occurrence..." {...field} onChange={(e) => field.onChange(Number(e.target.value) || field.value)} />
+                                    <Input placeholder="Risk occurrence..." {...field} value={field.value ?? ""} />
                                 </FormControl>
                                 < FormMessage />
                             </FormItem>
@@ -124,8 +114,8 @@ export function RiskForm({ initialData, onSubmit, isLoading }: RiskFormProps) {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Detection </FormLabel>
-                                < FormControl >
-                                    <Input placeholder="Risk detection..." {...field} onChange={(e) => field.onChange(Number(e.target.value) || field.value)} />
+                                <FormControl >
+                                    <Input placeholder="Risk detection..." {...field} value={field.value ?? ""} />
                                 </FormControl>
                                 < FormMessage />
                             </FormItem>

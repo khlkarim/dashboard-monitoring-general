@@ -1,14 +1,14 @@
 import { toast } from 'sonner';
 import { sprintsApi } from '../api/sprints.api';
 import { UpdateSprintRequest } from '../schemas/sprints.schemas';
+import { useGetUsers } from '@/features/users/hooks/use-get-users';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCreateNotification } from '@/features/notifications/hooks/use-create-notification';
-import { useGetUsers } from '@/features/users/hooks/use-get-users';
 
 export const useUpdateSprint = () => {
     const queryClient = useQueryClient();
-    const CreateNotificationMutation = useCreateNotification();
     const { data: users } = useGetUsers();
+    const CreateNotificationMutation = useCreateNotification();
     
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateSprintRequest }) =>
@@ -23,8 +23,7 @@ export const useUpdateSprint = () => {
                 recipientIds: users?.data.map((user) => user.id) || [],
             });
         },
-        onError: (error) => {
-            console.error(error);
+        onError: () => {
             toast.error('Failed to update sprint');
         },
     });

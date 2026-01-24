@@ -1,3 +1,4 @@
+import { Risk } from "@/features/risks/types/risks.types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -39,4 +40,17 @@ export function formatCurrency(
   };
 
   return new Intl.NumberFormat(locale, formatOptions).format(amount);
+}
+
+export function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+}
+
+/* Calculate the Risk Priority Number for an AMDEC risk. */
+export function calculateRPN(risk: Risk): number {
+  const severity = risk.severity ?? 0;
+  const detection = risk.detection ?? 0;
+  const occurrence = risk.occurrence ?? 0;
+
+  return severity * detection * occurrence;
 }

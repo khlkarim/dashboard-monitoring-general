@@ -1,7 +1,6 @@
-import { TrendingUp, Package, CheckCircle2, AlertTriangle, BarChart3, Target } from "lucide-react";
-
-import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Package, CheckCircle2, AlertTriangle, Target } from "lucide-react";
+import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface SectionCardsProps {
   data: {

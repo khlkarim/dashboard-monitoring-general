@@ -13,8 +13,7 @@ export const useUpdateRisk = () => {
             queryClient.invalidateQueries({ queryKey: ['risks'] });
             toast.success('Risk updated successfully');
         },
-        onError: (error) => {
-            console.error(error);
+        onError: () => {
             toast.error('Failed to update risk');
         },
     });

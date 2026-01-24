@@ -1,7 +1,7 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
+import { ColumnDef } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -35,12 +35,15 @@ function OpenRiskButton({ risk }: { risk: Risk }) {
     );
 }
 
-export const getColumns = (
+export function getColumns(
     onEdit: (risk: Risk) => void,
     onDelete: (risk: Risk) => void
-): ColumnDef<Risk>[] => [
+): ColumnDef<Risk>[] {
+    return [
         {
             id: "select",
+            enableHiding: false,
+            enableSorting: false,
             header: ({ table }) => (
                 <div className="flex items-center justify-center">
                     <Checkbox
@@ -59,11 +62,10 @@ export const getColumns = (
                     />
                 </div>
             ),
-            enableSorting: false,
-            enableHiding: false,
         },
         {
             accessorKey: "title",
+            filterFn: "includesString",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Title" />
             ),
@@ -109,3 +111,4 @@ export const getColumns = (
             },
         },
     ];
+}

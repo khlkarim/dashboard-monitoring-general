@@ -48,10 +48,10 @@ interface KpiFormProps {
     initialData?: KpiResponse | null;
     onSubmit: (data: any) => void;
     isLoading?: boolean;
-    type: KpiType;
+    type?: KpiType;
 }
 
-export function KpiForm({ initialData, onSubmit, isLoading, type }: KpiFormProps) {
+export function KpiForm({ initialData, onSubmit, isLoading, type = KpiType.PROCESSUS }: KpiFormProps) {
     const user = useAuthStore((state) => state.user);
     const { data: sprints } = useGetSprints();
     const { data: processus } = useGetProcessus();
