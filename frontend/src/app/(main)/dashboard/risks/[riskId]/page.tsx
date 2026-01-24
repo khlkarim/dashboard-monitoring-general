@@ -27,6 +27,7 @@ function RiskDetailPage() {
     const { 
         data: risk,
         isPending,
+        isFetching,
         isError,
         error,
     } = useGetRiskById(riskId);
@@ -60,7 +61,7 @@ function RiskDetailPage() {
         );
     }
 
-    if (isPending) {
+    if (isPending || isFetching) {
         return (
             <LoadingPage />
         );

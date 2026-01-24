@@ -1,16 +1,13 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-
-import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
-
-import { User } from "@/features/users/types/users.types";
-import { DataTableRowActions } from "@/components/data-table/data-table-row-actions";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { ColumnDef } from "@tanstack/react-table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { User } from "@/features/users/types/users.types";
 import { useNavigationStore } from "@/navigation/store/navigation.store";
+import { DataTableRowActions } from "@/components/data-table/data-table-row-actions";
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 
 function OpenUserButton({ user }: { user: User }) {
     const router = useRouter();
@@ -35,7 +32,10 @@ function OpenUserButton({ user }: { user: User }) {
     );
 }
 
-export const columns: ColumnDef<User>[] = [
+export const getColumns = (
+    onEdit: (user: User) => void,
+    onDelete: (user: User) => void
+): ColumnDef<User>[] => [
     {
         id: "select",
         header: ({ table }) => (

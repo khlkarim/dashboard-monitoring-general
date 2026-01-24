@@ -1,7 +1,6 @@
 import * as React from "react";
 import { FileJson, FileSpreadsheet } from "lucide-react";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDataTableInstance } from "@/hooks/use-data-table-instance";

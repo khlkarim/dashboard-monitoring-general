@@ -1,147 +1,159 @@
 "use client";
+"use no memo";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { Plus, X } from "lucide-react";
 import { getColumns } from "./columns";
-import { EntityTable } from "@/components/common/entity-table";
+import { Button } from "@/components/ui/button";
 import { User } from "@/features/users/types/users.types";
-import { CreateEntityDialog } from "@/components/common/create-entity-dialog";
-import { EditEntityDialog } from "@/components/common/edit-entity-dialog";
-import { DeleteEntityDialog } from "@/components/common/delete-entity-dialog";
+import { TableCard } from "@/components/common/table-card";
+import { BaseDialog } from "@/components/common/form-dialog";
+import { TextSearch } from "@/components/common/table-toolbar";
+import { DataTable } from "@/components/data-table/data-table";
 import { UserForm } from "@/features/users/components/user-form";
-import { CreateUserRequest, UpdateUserRequest } from "@/features/users/schemas/users.schemas";
-import { useGetUsers } from "@/features/users/hooks/use-get-users";
+import { ConfirmDialog } from "@/components/common/confirm-dialog";
 import { useCreateUser } from "@/features/users/hooks/use-create-user";
 import { useUpdateUser } from "@/features/users/hooks/use-update-user";
 import { useDeleteUser } from "@/features/users/hooks/use-delete-user";
+import { useDataTableInstance } from "@/hooks/use-data-table-instance";
+import { CreateUserRequest } from "@/features/users/schemas/users.schemas";
+import { UpdateUserRequest } from "@/features/users/schemas/users.schemas";
+import { DataTablePagination } from "@/components/data-table/data-table-pagination";
+import { DataTableViewOptions } from "@/components/data-table/data-table-view-options";
 
-export function UsersTable() {
+interface UsersTableProps {
+    users: User[];
+}
+
+export function UsersTable({ users } : UsersTableProps) {
     const createMutation = useCreateUser();
     const updateMutation = useUpdateUser();
     const deleteMutation = useDeleteUser();
-    const { data, isLoading, isError, error, isFetching } = useGetUsers();
 
-    // State for actions
     const [isCreateOpen, setIsCreateOpen] = useState(false);
-    const [editingUser, setEditingUser] = useState<User | null>(null);
-    const [deletingUser, setDeletingUser] = useState<User | null>(null);
-    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isUpdateOpen, setIsUpdateOpen] = useState(false);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-    // Handlers
-    const handleEdit = (user: User) => {
-        setEditingUser(user);
-        setIsEditOpen(true);
-    };
+    const [updatingUser, setUpdatingUser] = useState<User | null>(null);
+    const [deletingUser, setDeletingUser] = useState<User | null>(null);
 
-    const handleDelete = (user: User) => {
+    const columns = getColumns(handleUpdate, handleDelete);
+    const table = useDataTableInstance({
+        data: users,
+        columns,
+    })
+
+    function handleCreate() {
+        setIsCreateOpen(true);
+    }
+
+    function handleUpdate(user: User) {
+        setUpdatingUser(user);
+        setIsUpdateOpen(true);
+    }
+
+    function handleDelete(user: User) {
         setDeletingUser(user);
         setIsDeleteOpen(true);
+    }
+
+    async function handleCreateSubmit(data: CreateUserRequest) {
+        await createMutation.mutateAsync(data);
+        setIsCreateOpen(false);
     };
 
-    const handleCreateSubmit = (data: CreateUserRequest, setOpen: (open: boolean) => void) => {
-        try {
-            createMutation.mutate(data);
-            setOpen(false);
-        } catch (error) {
-            // Error handled in hook
+    async function handleUpdateSubmit(data: UpdateUserRequest) {
+        if (updatingUser) {
+            await updateMutation.mutateAsync({ id: updatingUser.id, data });
+            setIsUpdateOpen(false);
         }
     };
 
-    const handleUpdateSubmit = (data: UpdateUserRequest) => {
-        if (editingUser) {
-            try {
-                updateMutation.mutate({ id: String(editingUser.id), data });
-                setIsEditOpen(false);
-            } catch (error) {
-                // Error handled in hook
-            }
-        }
-    };
-
-    const handleDeleteConfirm = (user: User) => {
-        try {
-            deleteMutation.mutate(String(user.id));
+    async function handleDeleteConfirm() {
+        if(deletingUser) {
+            await deleteMutation.mutateAsync(deletingUser.id);
             setIsDeleteOpen(false);
-        } catch (error) {
-            // Error handled in hook
         }
-    };
-
-    const columns = useMemo(() => getColumns(handleEdit, handleDelete), [handleEdit, handleDelete]);
+    }
 
     return (
         <>
-            <EntityTable
-                data={data?.data ?? []}
-                columns={columns}
+            <TableCard 
                 title="Users"
-                description="Manage users and their roles."
-                isLoading={isLoading || isFetching}
-                isError={isError}
-                error={error}
-                onCreate={() => setIsCreateOpen(true)}
-                entityName="User"
-                searchColumn="email"
-                filters={[
-                    {
-                        columnId: "role",
-                        title: "Role",
-                        options: [
-                            { label: "Administrator", value: "administrator" },
-                            { label: "President", value: "president" },
-                            { label: "Member", value: "member" },
-                            { label: "Alumni", value: "alumni" },
-                        ],
-                    },
-                    {
-                        columnId: "status",
-                        title: "Status",
-                        options: [
-                            { label: "Active", value: "active" },
-                            { label: "Inactive", value: "inactive" },
-                        ],
-                    },
-                ]}
-            />
+                description="Track and manage all the users."
+                actions={
+                    <>
+                        <Button onClick={handleCreate} size="sm">
+                            <Plus className="h-4 w-4" />
+                            Create User
+                        </Button>
+                    </>
+                }
+            >
+                <div className="flex items-center justify-between gap-4">
+                    <div className="flex flex-1 items-center gap-2">
+                        <TextSearch
+                            table={table}
+                            columnId={"firstName"}
+                            placeholder={"Search by first name..."}
+                        />
 
-            <CreateEntityDialog
+                        {table.getState().columnFilters.length > 0 && 
+                            <Button
+                                variant="ghost"
+                                onClick={() => table.resetColumnFilters()}
+                                className="h-8 px-2 lg:px-3"
+                            >
+                                Reset
+                                <X className="ml-2 h-4 w-4" />
+                            </Button>
+                        }
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <DataTableViewOptions table={table} />
+                    </div>
+                </div>
+                <div className="overflow-hidden rounded-md border">
+                    <DataTable table={table} columns={columns} />
+                </div>
+                <DataTablePagination table={table} />
+            </TableCard>
+
+            <BaseDialog
                 open={isCreateOpen}
                 onOpenChange={setIsCreateOpen}
                 title="Create User"
-                description="Add a new user to the system."
-                buttonLabel="Create User"
+                description="Add a new user to your timeline."
             >
-                {({ setOpen }) => (
-                    <UserForm
-                        onSubmit={(data) => handleCreateSubmit(data, setOpen)}
-                        isLoading={createMutation.isPending}
-                    />
-                )}
-            </CreateEntityDialog>
+                <UserForm 
+                    onSubmit={handleCreateSubmit}
+                    isLoading={createMutation.isPending}
+                />
+            </BaseDialog>
 
-            <EditEntityDialog
-                open={isEditOpen}
-                onOpenChange={setIsEditOpen}
-                entity={editingUser}
-                title="Edit User"
+            <BaseDialog
+                open={isUpdateOpen}
+                onOpenChange={setIsUpdateOpen}
+                title="Update User"
                 description="Make changes to the user details."
             >
-                {({ entity }) => (
-                    <UserForm
-                        initialData={entity}
-                        onSubmit={handleUpdateSubmit}
-                        isLoading={updateMutation.isPending}
-                    />
-                )}
-            </EditEntityDialog>
+                <UserForm
+                    initialData={updatingUser}
+                    onSubmit={handleUpdateSubmit}
+                    isLoading={updateMutation.isPending}
+                />
+            </BaseDialog>
 
-            <DeleteEntityDialog
+            <ConfirmDialog
                 open={isDeleteOpen}
                 onOpenChange={setIsDeleteOpen}
-                entity={deletingUser}
-                entityName="user"
                 onConfirm={handleDeleteConfirm}
-                isDeleting={deleteMutation.isPending}
+                isLoading={deleteMutation.isPending}
+                confirmLabel="Delete"
+                confirmVariant="destructive"
+                title="Are you absolutely sure?"
+                description="This action cannot be undone. This will permanently delete the User."
             />
         </>
     );
