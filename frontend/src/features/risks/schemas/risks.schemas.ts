@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 /** Create Risk */
 export const createRiskRequestSchema = z.object({
-    title: z.string().min(1),
+    title: z.string().optional().nullable(),
     description: z.string().optional().nullable(),
     severity: z.number().optional().nullable(),
     occurrence: z.number().optional().nullable(),
@@ -26,6 +26,19 @@ export const riskResponseSchema = z.object({
     updatedAt: z.string().datetime(),
 });
 export type RiskResponse = z.infer<typeof riskResponseSchema>;
+
+/** Risk Form Schema **/
+export const riskFormSchema = z.object({
+    title: z.string().optional().nullable(),
+    description: z.string().optional().nullable(),
+    severity: z.number().optional().nullable(),
+    occurrence: z.number().optional().nullable(),
+    detection: z.number().optional().nullable(),
+});
+export type RiskFormValues = z.infer<typeof riskFormSchema>;
+
+export const partialRiskFormSchema = riskFormSchema.partial();
+export type PartialRiskFormSchema = z.infer<typeof partialRiskFormSchema>;
 
 /** Find All Query */
 export const findAllRisksQuerySchema = z.object({

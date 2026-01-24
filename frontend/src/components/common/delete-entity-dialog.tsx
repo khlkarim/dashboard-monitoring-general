@@ -14,9 +14,9 @@ import {
 } from "@/components/ui/alert-dialog";
 
 interface DeleteEntityDialogProps<T> {
+    entity: T | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    entity: T | null;
     entityName: string;
     onConfirm: (entity: T) => void | Promise<void>;
     isDeleting?: boolean;

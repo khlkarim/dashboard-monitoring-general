@@ -1,129 +1,159 @@
 "use client";
+"use no memo";
 
-import { useCallback, useMemo, useState } from "react";
+import { useState } from "react";
+import { Plus, X } from "lucide-react";
 import { getColumns } from "./columns";
-import { EntityTable } from "@/components/common/entity-table";
+import { Button } from "@/components/ui/button";
 import { Risk } from "@/features/risks/types/risks.types";
-import { CreateEntityDialog } from "@/components/common/create-entity-dialog";
-import { EditEntityDialog } from "@/components/common/edit-entity-dialog";
-import { DeleteEntityDialog } from "@/components/common/delete-entity-dialog";
+import { TableCard } from "@/components/common/table-card";
+import { BaseDialog } from "@/components/common/form-dialog";
+import { TextSearch } from "@/components/common/table-toolbar";
+import { DataTable } from "@/components/data-table/data-table";
 import { RiskForm } from "@/features/risks/components/risk-form";
-import { useGetRisks } from "@/features/risks/hooks/use-get-risks";
+import { ConfirmDialog } from "@/components/common/confirm-dialog";
 import { useCreateRisk } from "@/features/risks/hooks/use-create-risk";
 import { useUpdateRisk } from "@/features/risks/hooks/use-update-risk";
 import { useDeleteRisk } from "@/features/risks/hooks/use-delete-risk";
+import { useDataTableInstance } from "@/hooks/use-data-table-instance";
 import { CreateRiskRequest } from "@/features/risks/schemas/risks.schemas";
 import { UpdateRiskRequest } from "@/features/risks/schemas/risks.schemas";
-import { toast } from "sonner";
+import { DataTablePagination } from "@/components/data-table/data-table-pagination";
+import { DataTableViewOptions } from "@/components/data-table/data-table-view-options";
 
-export function RisksTable() {
+interface RisksTableProps {
+    risks: Risk[];
+}
+
+export function RisksTable({ risks } : RisksTableProps) {
     const createMutation = useCreateRisk();
     const updateMutation = useUpdateRisk();
     const deleteMutation = useDeleteRisk();
-    const { data, isLoading, isError, error, isFetching } = useGetRisks();
 
-    // State for actions
     const [isCreateOpen, setIsCreateOpen] = useState(false);
-    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isUpdateOpen, setIsUpdateOpen] = useState(false);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-    const [editingRisk, setEditingRisk] = useState<Risk | null>(null);
+
+    const [updatingRisk, setUpdatingRisk] = useState<Risk | null>(null);
     const [deletingRisk, setDeletingRisk] = useState<Risk | null>(null);
 
-    // Handlers - wrapped in useCallback to maintain stable references
-    const handleEdit = useCallback((risk: Risk) => {
-        setEditingRisk(risk);
-        setIsEditOpen(true);
-    }, []);
+    const columns = getColumns(handleUpdate, handleDelete);
+    const table = useDataTableInstance({
+        data: risks,
+        columns,
+    })
 
-    const handleDelete = useCallback((risk: Risk) => {
+    function handleCreate() {
+        setIsCreateOpen(true);
+    }
+
+    function handleUpdate(risk: Risk) {
+        setUpdatingRisk(risk);
+        setIsUpdateOpen(true);
+    }
+
+    function handleDelete(risk: Risk) {
         setDeletingRisk(risk);
         setIsDeleteOpen(true);
-    }, []);
+    }
 
-    const handleCreateSubmit = (data: CreateRiskRequest, setOpen: (open: boolean) => void) => {
-        try {
-            createMutation.mutate(data);
-            setOpen(false);
-        } catch (error) {
-            toast.error("Failed to create risk");
+    async function handleCreateSubmit(data: CreateRiskRequest) {
+        await createMutation.mutateAsync(data);
+        setIsCreateOpen(false);
+    };
+
+    async function handleUpdateSubmit(data: UpdateRiskRequest) {
+        if (updatingRisk) {
+            await updateMutation.mutateAsync({ id: updatingRisk.id, data });
+            setIsUpdateOpen(false);
         }
     };
 
-    const handleUpdateSubmit = (data: UpdateRiskRequest) => {
-        if (editingRisk) {
-            try {
-                updateMutation.mutate({ id: editingRisk.id, data });
-                setIsEditOpen(false);
-            } catch (error) {
-                toast.error("Failed to update risk");
-            }
-        }
-    };
-
-    const handleDeleteConfirm = (risk: Risk) => {
-        try {
-            deleteMutation.mutate(risk.id);
+    async function handleDeleteConfirm() {
+        if(deletingRisk) {
+            await deleteMutation.mutateAsync(deletingRisk.id);
             setIsDeleteOpen(false);
-        } catch (error) {
-            toast.error("Failed to delete risk");
         }
-    };
-
-    const columns = useMemo(() => getColumns(handleEdit, handleDelete), [handleEdit, handleDelete]);
+    }
 
     return (
         <>
-            <EntityTable
-                data={data?.data ?? []}
-                columns={columns}
+            <TableCard 
                 title="Risks"
                 description="Track and manage all the risks."
-                isLoading={isLoading || isFetching}
-                isError={isError}
-                error={error}
-                onCreate={() => setIsCreateOpen(true)}
-                entityName="Risk"
-                searchColumn="title"
-            />
+                actions={
+                    <>
+                        <Button onClick={handleCreate} size="sm">
+                            <Plus className="h-4 w-4" />
+                            Create Risk
+                        </Button>
+                    </>
+                }
+            >
+                <div className="flex items-center justify-between gap-4">
+                    <div className="flex flex-1 items-center gap-2">
+                        <TextSearch
+                            table={table}
+                            columnId={"title"}
+                            placeholder={"Search by title..."}
+                        />
 
-            <CreateEntityDialog
+                        {table.getState().columnFilters.length > 0 && 
+                            <Button
+                                variant="ghost"
+                                onClick={() => table.resetColumnFilters()}
+                                className="h-8 px-2 lg:px-3"
+                            >
+                                Reset
+                                <X className="ml-2 h-4 w-4" />
+                            </Button>
+                        }
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <DataTableViewOptions table={table} />
+                    </div>
+                </div>
+                <div className="overflow-hidden rounded-md border">
+                    <DataTable table={table} columns={columns} />
+                </div>
+                <DataTablePagination table={table} />
+            </TableCard>
+
+            <BaseDialog
                 open={isCreateOpen}
                 onOpenChange={setIsCreateOpen}
                 title="Create Risk"
                 description="Add a new risk to your timeline."
-                buttonLabel="Create Risk"
             >
-                {({ setOpen }) => (
-                    <RiskForm
-                        onSubmit={(data) => handleCreateSubmit(data, setOpen)}
-                        isLoading={createMutation.isPending}
-                    />
-                )}
-            </CreateEntityDialog>
+                <RiskForm 
+                    onSubmit={handleCreateSubmit}
+                    isLoading={createMutation.isPending}
+                />
+            </BaseDialog>
 
-            <EditEntityDialog
-                open={isEditOpen}
-                onOpenChange={setIsEditOpen}
-                entity={editingRisk}
-                title="Edit Risk"
+            <BaseDialog
+                open={isUpdateOpen}
+                onOpenChange={setIsUpdateOpen}
+                title="Update Risk"
                 description="Make changes to the risk details."
             >
-                {({ entity }) => (
-                    <RiskForm
-                        initialData={entity}
-                        onSubmit={handleUpdateSubmit}
-                        isLoading={updateMutation.isPending}
-                    />
-                )}
-            </EditEntityDialog>
+                <RiskForm
+                    initialData={updatingRisk}
+                    onSubmit={handleUpdateSubmit}
+                    isLoading={updateMutation.isPending}
+                />
+            </BaseDialog>
 
-            <DeleteEntityDialog
+            <ConfirmDialog
                 open={isDeleteOpen}
                 onOpenChange={setIsDeleteOpen}
-                entity={deletingRisk}
-                entityName="risk"
                 onConfirm={handleDeleteConfirm}
-                isDeleting={deleteMutation.isPending}
+                isLoading={deleteMutation.isPending}
+                confirmLabel="Delete"
+                confirmVariant="destructive"
+                title="Are you absolutely sure?"
+                description="This action cannot be undone. This will permanently delete the risk."
             />
         </>
     );
