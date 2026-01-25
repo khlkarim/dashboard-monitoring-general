@@ -31,7 +31,6 @@ export function ActionForm({ initialData, onSubmit, isLoading }: ActionFormProps
             title: initialData?.title || "",
             description: initialData?.description || "",
             type: initialData?.type || ActionType.CORRECTIVE,
-            risk: initialData?.risk,
         },
     });
 
