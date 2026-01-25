@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { NavGroup, NavMainItem, NavSubItem } from "../types/navigation.types";
 import { defaultSidebarItems } from "../sidebar/sidebar-items";
+import { NavGroup, NavMainItem, NavSubItem } from "../types/navigation.types";
 
 interface NavigationState {
     sidebarItems: NavGroup[];

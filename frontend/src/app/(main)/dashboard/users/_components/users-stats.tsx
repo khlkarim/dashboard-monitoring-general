@@ -19,17 +19,22 @@ export function UsersStats({ users } : UsersStatsProps) {
                     title: "Total Users",
                     value: users.length,
                     description: "All registered users",
-                    icon: <Users />
+                    icon: <Users className="text-blue-500" />,
+                    className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-blue-500/10 bg-gradient-to-br from-blue-500/5 to-transparent"
                 },
                 {
                     title: "Active Users",
                     value: users.filter(u => u.status?.name === StatusEnum.ACTIVE).length.toString(),
                     description: "Currently active accounts",
+                    icon: <Users className="text-emerald-500" />,
+                    className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-emerald-500/10 bg-gradient-to-br from-emerald-500/5 to-transparent"
                 },
                 {
                     title: "Administrators",
                     value: users.filter(u => u.role?.name === RoleEnum.ADMINISTRATOR).length.toString(),
                     description: "With full system access",
+                    icon: <Users className="text-orange-500" />,
+                    className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-orange-500/10 bg-gradient-to-br from-orange-500/5 to-transparent"
                 },
             ]);
         }
@@ -41,8 +46,10 @@ export function UsersStats({ users } : UsersStatsProps) {
                 return (
                     <StatCard 
                         key={i}
+                        icon={stat.icon}
                         title={stat.title}          
                         value={stat.value}
+                        className={stat.className}
                         description={stat.description}     
                     />
                 );

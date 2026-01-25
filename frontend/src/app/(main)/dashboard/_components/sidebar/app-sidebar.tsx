@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 
-import { Command } from "lucide-react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -19,6 +17,7 @@ import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
 import { withAuth } from "@/features/auth/components/with-auth";
 import { useAuthStore } from "@/features/auth/store/auth.store";
+import Image from 'next/image'
 import { useNavigationStore } from "@/navigation/store/navigation.store";
 
 export const AppSidebar = withAuth(({ ...props }: React.ComponentProps<typeof Sidebar>) => {
@@ -34,7 +33,7 @@ export const AppSidebar = withAuth(({ ...props }: React.ComponentProps<typeof Si
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
               <Link href="/dashboard/default">
-                <Command />
+                <Image alt="JE" src="/logo.png" width={25} height={25} />
                 <span className="text-base font-semibold">{APP_CONFIG.name}</span>
               </Link>
             </SidebarMenuButton>

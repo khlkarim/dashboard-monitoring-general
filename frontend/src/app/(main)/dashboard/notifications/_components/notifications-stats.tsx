@@ -17,13 +17,15 @@ export function NotificationStats({ notifications }: NotificationStatsProps) {
                     title: "Total Notifications",
                     value: notifications.length,
                     description: "All notifications",
-                    icon: <Bell />
+                    icon: <Bell className="text-blue-500" />,
+                    className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-blue-500/10 bg-gradient-to-br from-blue-500/5 to-transparent"
                 },
                 {
                     title: "With Recipients",
                     value: notifications.filter(n => n.recipients && n.recipients.length > 0).length.toString(),
                     description: "Targeted notifications",
-                    icon: <Users />
+                    icon: <Users className="text-emerald-500" />,
+                    className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-emerald-500/10 bg-gradient-to-br from-emerald-500/5 to-transparent"
                 }
             ]);
         }
@@ -35,8 +37,10 @@ export function NotificationStats({ notifications }: NotificationStatsProps) {
                 return (
                     <StatCard 
                         key={i}
+                        icon={stat.icon}
                         title={stat.title}          
                         value={stat.value}
+                        className={stat.className}
                         description={stat.description}     
                     />
                 );

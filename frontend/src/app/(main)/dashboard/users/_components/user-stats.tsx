@@ -18,19 +18,22 @@ export function UserStats({ user }: UserStatsProps) {
                     title: "Role",
                     value: user.role?.name || "--",
                     description: "System Access Level",
-                    icon: <Shield />
+                    icon: <Shield className="text-blue-500" />,
+                    className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-blue-500/10 bg-gradient-to-br from-blue-500/5 to-transparent"
                 },
                 {
                     title: "Account Status",
                     value: user.status?.name || "--",
                     description: "Current Account State",
-                    icon: <UserIcon />
+                    icon: <UserIcon className="text-emerald-500" />,
+                    className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-emerald-500/10 bg-gradient-to-br from-emerald-500/5 to-transparent"
                 },
                 {
                     title: "Joined On",
                     value: user.createdAt ? format(new Date(user.createdAt), "MMM d, yyyy") : "--",
                     description: "Registration Date",
-                    icon: <Calendar />
+                    icon: <Calendar className="text-orange-500" />,
+                    className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-orange-500/10 bg-gradient-to-br from-orange-500/5 to-transparent"
                 }
             ]);
         }
@@ -42,8 +45,10 @@ export function UserStats({ user }: UserStatsProps) {
                 return (
                     <StatCard 
                         key={i}
+                        icon={stat.icon}
                         title={stat.title}          
                         value={stat.value}
+                        className={stat.className}
                         description={stat.description}     
                     />
                 );

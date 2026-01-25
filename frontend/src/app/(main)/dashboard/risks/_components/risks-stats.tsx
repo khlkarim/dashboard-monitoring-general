@@ -18,13 +18,15 @@ export function RisksStats({ risks }: RisksStatsProps) {
                     title: "Total Risks",
                     value: risks.length.toString(),
                     description: "Identified risks",
-                    icon: <Activity />
+                    icon: <Activity className="text-blue-500" />,
+                    className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-blue-500/10 bg-gradient-to-br from-blue-500/5 to-transparent"
                 },
                 {
                     title: "Critical Risks",
                     value: risks.filter(r => calculateRPN(r) >= 200).length.toString(),
                     description: <>RPN &ge; 200</>,
-                    icon: <AlertOctagon />
+                    icon: <AlertOctagon className="text-emerald-500" />,
+                    className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-emerald-500/10 bg-gradient-to-br from-emerald-500/5 to-transparent"
                 },
                 {
                     title: "High Priority",
@@ -33,13 +35,15 @@ export function RisksStats({ risks }: RisksStatsProps) {
                         return rpn >= 100 && rpn < 200;
                     }).length.toString() ?? "",
                     description: "RPN 100 - 199",
-                    icon: <AlertTriangle />
+                    icon: <AlertTriangle className="text-orange-500" />,
+                    className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-orange-500/10 bg-gradient-to-br from-orange-500/5 to-transparent"
                 },
                 {
                     title: "Manageable",
                     value: risks.filter(r => calculateRPN(r) < 100).length.toString(),
                     description: <>RPN &lt; 100</>,
-                    icon: <ShieldCheck />
+                    icon: <ShieldCheck className="text-destructive" />,
+                    className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-destructive/10 bg-gradient-to-br from-destructive/5 to-transparent"
                 }
             ]);
         }
@@ -51,10 +55,11 @@ export function RisksStats({ risks }: RisksStatsProps) {
                 return (
                     <StatCard 
                         key={i}
+                        icon={stat.icon}
                         title={stat.title}          
                         value={stat.value}
+                        className={stat.className}
                         description={stat.description}     
-                        icon={stat.icon}
                     />
                 );
             })}
