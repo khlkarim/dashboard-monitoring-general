@@ -7,14 +7,14 @@ import { Separator } from "@/components/ui/separator";
 import { useParams, useRouter } from "next/navigation";
 import { AlumniInfo } from "../_components/alumni-info";
 import { AlumniStats } from "../_components/alumni-stats";
+import { AlumniSkills } from "../_components/alumni-skills";
 import { PageHeader } from "@/components/common/page-header";
 import { LoadingPage } from "@/components/common/loading-page";
-import { ErrorDisplay } from "@/components/common/error-display";
 import { withAuth } from "@/features/auth/components/with-auth";
+import { StatusEnum } from "@/features/users/types/status.types";
+import { ErrorDisplay } from "@/components/common/error-display";
 import { useNavigationStore } from "@/navigation/store/navigation.store";
 import { useGetUserById } from "@/features/users/hooks/use-get-user-by-id";
-import { StatusEnum } from "@/features/users/types/status.types";
-import { AlumniSkills } from "../_components/alumni-skills";
 
 /** 
  * currently this is just the same code as UserDetailPage 

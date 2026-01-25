@@ -65,7 +65,7 @@ export class UsersController {
   @SerializeOptions({
     groups: ['admin'],
   })
-  @Roles(RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
+  @Roles(RoleEnum.ALUMNI, RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(
@@ -95,7 +95,7 @@ export class UsersController {
   })
   @Get('alumni')
   @HttpCode(HttpStatus.OK)
-  @Roles(RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT, RoleEnum.MEMBER)
+  @Roles(RoleEnum.ALUMNI, RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT, RoleEnum.MEMBER)
   async getAlumni(
     @Query() query: QueryUserDto,
   ): Promise<InfinityPaginationResponseDto<User>> {

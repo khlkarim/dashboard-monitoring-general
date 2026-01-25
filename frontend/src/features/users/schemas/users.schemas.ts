@@ -6,12 +6,12 @@ import { skillSchema } from '@/features/skills/schemas/skills.schemas';
 
 export const roleSchema = z.object({
     id: z.enum([RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT, RoleEnum.MEMBER, RoleEnum.ALUMNI]).optional(),
-    name: z.string()
+    name: z.string().nullable().optional(),
 });
 
 export const statusSchema = z.object({
     id: z.enum([StatusEnum.ACTIVE, StatusEnum.INACTIVE]).optional(),
-    name: z.string()
+    name: z.string().nullable().optional(),
 });
 
 export const userResponseSchema = z.object({

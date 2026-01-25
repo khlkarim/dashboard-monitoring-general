@@ -86,9 +86,13 @@ export const AlumniSkills = ({ user }: AlumniSkillsProps) => {
                     <CardTitle className="text-xl font-semibold w-full">
                         Skills
                     </CardTitle>
-                    <Button onClick={() => setIsAddSkillsOpen(true)}>
-                        Add Skills
-                    </Button>
+                    <Protect
+                        allowedRoles={[RoleEnum.ADMINISTRATOR]}
+                    >
+                        <Button onClick={() => setIsAddSkillsOpen(true)}>
+                            Add Skills
+                        </Button>
+                    </Protect>
                 </CardHeader>
 
                 <CardContent>
