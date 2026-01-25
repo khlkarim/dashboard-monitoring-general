@@ -6,15 +6,20 @@ import bcrypt from 'bcryptjs';
 import { RoleEnum } from '../../../../roles/roles.enum';
 import { StatusEnum } from '../../../../statuses/statuses.enum';
 import { UserEntity } from '../../../../users/infrastructure/persistence/relational/entities/user.entity';
+import { SkillEntity } from '../../../../skills/infrastructure/persistence/relational/entities/skill.entity';
 
 @Injectable()
 export class UserSeedService {
   constructor(
     @InjectRepository(UserEntity)
     private repository: Repository<UserEntity>,
+    @InjectRepository(SkillEntity)
+    private skillRepository: Repository<SkillEntity>,
   ) { }
 
   async run() {
+    const allSkills = await this.skillRepository.find();
+
     const countAdmin = await this.repository.count({
       where: {
         role: {
@@ -131,6 +136,7 @@ export class UserSeedService {
             id: StatusEnum.ACTIVE,
             name: 'Active',
           },
+          skills: allSkills.map(s => ({ id: s.id })),
         }),
       );
     }

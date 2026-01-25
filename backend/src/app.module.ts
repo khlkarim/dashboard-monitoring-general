@@ -48,8 +48,11 @@ import { CommentsModule } from './comments/comments.module';
 
 import { NotificationsModule } from './notifications/notifications.module';
 
+import { SkillsModule } from './skills/skills.module';
+
 @Module({
   imports: [
+    SkillsModule,
     NotificationsModule,
     CommentsModule,
     ActionsModule,

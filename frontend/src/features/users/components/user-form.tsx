@@ -20,6 +20,7 @@ import { User } from "@/features/users/types/users.types";
 import { RoleEnum } from "../types/roles.types";
 import { Loader2, UploadCloud, User as UserIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const profileFormSchema = z.object({
     photo: z.any().optional(), // File or Blob
@@ -149,6 +150,29 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
                                 <FormControl>
                                     <Input placeholder="Doe" {...field} value={field.value || ""} />
                                 </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={profileForm.control}
+                        name="role"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Role</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a role" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value={RoleEnum.ADMINISTRATOR}>Administrator</SelectItem>
+                                        <SelectItem value={RoleEnum.PRESIDENT}>President</SelectItem>
+                                        <SelectItem value={RoleEnum.MEMBER}>Member</SelectItem>
+                                        <SelectItem value={RoleEnum.ALUMNI}>Alumni</SelectItem>
+                                    </SelectContent>
+                                </Select>
                                 <FormMessage />
                             </FormItem>
                         )}

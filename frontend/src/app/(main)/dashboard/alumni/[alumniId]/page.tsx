@@ -14,6 +14,7 @@ import { withAuth } from "@/features/auth/components/with-auth";
 import { useNavigationStore } from "@/navigation/store/navigation.store";
 import { useGetUserById } from "@/features/users/hooks/use-get-user-by-id";
 import { StatusEnum } from "@/features/users/types/status.types";
+import { AlumniSkills } from "../_components/alumni-skills";
 
 /** 
  * currently this is just the same code as UserDetailPage 
@@ -120,6 +121,7 @@ function AlumniDetailPage() {
             <Separator />
             <AlumniStats user={user} />
             <AlumniInfo user={user} />
+            <AlumniSkills user={user} />
         </div>
     );
 }

@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { RoleEnum } from '../types/roles.types';
 import { StatusEnum } from '../types/status.types';
 import { fileTypeSchema } from '@/features/files/schemas/files.schemas';
+import { skillSchema } from '@/features/skills/schemas/skills.schemas';
 
 export const roleSchema = z.object({
     id: z.enum([RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT, RoleEnum.MEMBER, RoleEnum.ALUMNI]).optional(),
@@ -21,6 +22,7 @@ export const userResponseSchema = z.object({
     photo: fileTypeSchema.nullable().optional(),
     role: roleSchema.nullable().optional(),
     status: statusSchema.nullable().optional(),
+    skills: z.array(skillSchema),
     provider: z.string().optional(),
     socialId: z.string().nullable().optional(),
     createdAt: z.string().datetime().optional(),
@@ -40,12 +42,14 @@ export const createUserRequestSchema = z.object({
 
 /** Update User */
 export const updateUserRequestSchema = z.object({
-  photo: z.any().nullable().optional(), // File or null
-  firstName: z.string().min(1).optional(),
-  lastName: z.string().min(1).optional(),
-  email: z.string().email().optional(),
-  password: z.string().min(6).optional(),
-  oldPassword: z.string().min(1).optional(),
+    photo: z.any().nullable().optional(), // File or null
+    firstName: z.string().min(1).optional().nullable(),
+    lastName: z.string().min(1).optional().nullable(),
+    email: z.string().email().optional().nullable(),
+    password: z.string().min(6).optional().nullable(),
+    oldPassword: z.string().min(1).optional().nullable(),
+    role: roleSchema.nullable().optional().nullable(),
+    skills: z.array(skillSchema).optional().nullable(),
 });
 export type UpdateUserRequest = z.infer<typeof updateUserRequestSchema>;
 

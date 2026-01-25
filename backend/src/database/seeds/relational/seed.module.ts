@@ -18,8 +18,11 @@ import appConfig from '../../../config/app.config';
 
 import { CommentsSeedModule } from './comments/comments-seed.module';
 
+import { SkillSeedModule } from './skill/skill-seed.module';
+
 @Module({
   imports: [
+    SkillSeedModule,
     CommentsSeedModule,
     RoleSeedModule,
     StatusSeedModule,
