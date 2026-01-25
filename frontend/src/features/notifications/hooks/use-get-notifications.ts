@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { notificationsApi } from "../api/notifications.api";
-import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { notificationsApi } from "../api/notifications.api";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 
 export const useGetNotifications = (userId: string) => {

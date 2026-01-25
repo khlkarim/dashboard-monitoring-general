@@ -1,5 +1,5 @@
+import { userResponseSchema } from '@/features/users/schemas/users.schemas';
 import { z } from 'zod';
-import { userResponseSchema } from '@/features/auth/schemas/auth.schemas';
 
 export enum SprintStatus {
     PLANNED = 'PLANNED',

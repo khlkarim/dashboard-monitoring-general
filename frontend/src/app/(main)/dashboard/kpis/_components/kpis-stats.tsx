@@ -17,19 +17,22 @@ export function KpisStats({ kpis }: KpisStatsProps) {
                     title: "Total Kpis",
                     value: kpis.length.toString(),
                     description: "Defined metrics",
-                    icon: <BarChart3 />
+                    icon: <BarChart3 className="text-blue-500" />,
+                    className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-blue-500/10 bg-gradient-to-br from-blue-500/5 to-transparent"
                 },
                 {
                     title: "With Data",
                     value: kpis.filter((k) => k.samples && k.samples.length > 0).length.toString(),
                     description: "KPIs collecting samples",
-                    icon: <Database />
+                    icon: <Database className="text-emerald-500" />,
+                    className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-emerald-500/10 bg-gradient-to-br from-emerald-500/5 to-transparent"
                 },
                 {
                     title: "Defined Rates",
                     value: kpis.filter((k) => k.samplingRate).length.toString(),
                     description: "Sampling rates configured",
-                    icon: <FileSpreadsheet />
+                    icon: <FileSpreadsheet className="text-orange-500" />,
+                    className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-orange-500/10 bg-gradient-to-br from-orange-500/5 to-transparent"
                 },
             ]);
         }
@@ -41,10 +44,11 @@ export function KpisStats({ kpis }: KpisStatsProps) {
                 return (
                     <StatCard 
                         key={i}
+                        icon={stat.icon}  
                         title={stat.title}          
                         value={stat.value}
+                        className={stat.className}
                         description={stat.description}     
-                        icon={stat.icon}
                     />
                 );
             })}

@@ -19,12 +19,15 @@ import { FileType } from '../files/domain/file';
 import { Role } from '../roles/domain/role';
 import { Status } from '../statuses/domain/status';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { SkillsService } from '../skills/skills.service';
+import { Skill } from '../skills/domain/skill';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepository: UserRepository,
     private readonly filesService: FilesService,
+    private readonly skillsService: SkillsService,
   ) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -113,6 +116,14 @@ export class UsersService {
       };
     }
 
+    let skills: Skill[] | undefined = undefined;
+
+    if (createUserDto.skills) {
+      skills = await this.skillsService.findByIds(
+        createUserDto.skills.map((skill) => skill.id),
+      );
+    }
+
     return this.usersRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
@@ -123,6 +134,7 @@ export class UsersService {
       photo: photo,
       role: role,
       status: status,
+      skills: skills,
       provider: createUserDto.provider ?? AuthProvidersEnum.email,
       socialId: createUserDto.socialId,
     });
@@ -266,6 +278,14 @@ export class UsersService {
       };
     }
 
+    let skills: Skill[] | undefined = undefined;
+
+    if (updateUserDto.skills) {
+      skills = await this.skillsService.findByIds(
+        updateUserDto.skills.map((skill) => skill.id),
+      );
+    }
+
     await this.usersRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
@@ -276,6 +296,7 @@ export class UsersService {
       photo,
       role,
       status,
+      skills,
       provider: updateUserDto.provider,
       socialId: updateUserDto.socialId,
     });

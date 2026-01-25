@@ -8,6 +8,7 @@ import { User } from "@/features/users/types/users.types";
 import { useNavigationStore } from "@/navigation/store/navigation.store";
 import { DataTableRowActions } from "@/components/data-table/data-table-row-actions";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import { Protect, RoleEnum } from "@/features/auth";
 
 function OpenUserButton({ user }: { user: User }) {
     const router = useRouter();
@@ -95,9 +96,15 @@ export const getColumns = (
             return (
                 <div className="flex items-center gap-2">
                     <OpenUserButton user={row.original} />
-                    <DataTableRowActions
-                        row={row}
-                    />
+                    <Protect
+                        allowedRoles={[RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT]}
+                    >
+                        <DataTableRowActions
+                            row={row}
+                            onEdit={onEdit}
+                            onDelete={onDelete}
+                        />
+                    </Protect>
                 </div>
             );
         },

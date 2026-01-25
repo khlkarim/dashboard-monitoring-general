@@ -10,6 +10,7 @@ import fileConfig from './files/config/file.config';
 import facebookConfig from './auth-facebook/config/facebook.config';
 import googleConfig from './auth-google/config/google.config';
 import appleConfig from './auth-apple/config/apple.config';
+import llmConfig from './llm/config/llm.config';
 import path from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -47,8 +48,11 @@ import { CommentsModule } from './comments/comments.module';
 
 import { NotificationsModule } from './notifications/notifications.module';
 
+import { SkillsModule } from './skills/skills.module';
+
 @Module({
   imports: [
+    SkillsModule,
     NotificationsModule,
     CommentsModule,
     ActionsModule,
@@ -69,6 +73,7 @@ import { NotificationsModule } from './notifications/notifications.module';
         googleConfig,
         clerkConfig,
         appleConfig,
+        llmConfig,
       ],
       envFilePath: ['.env'],
     }),

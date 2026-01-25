@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { userResponseSchema } from '@/features/auth/schemas/auth.schemas';
 import { sprintResponseSchema } from '@/features/sprints/schemas/sprints.schemas';
 import { processusResponseSchema } from '@/features/processus/schemas/processus.schemas';
+import { userResponseSchema } from '@/features/users/schemas/users.schemas';
 
 /** Create KPI */
 export const createKpiRequestSchema = z.object({

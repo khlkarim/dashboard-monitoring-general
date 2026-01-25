@@ -6,7 +6,7 @@ import { LoadingPage } from "@/components/common/loading-page";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { ErrorDisplay } from "@/components/common/error-display";
 import { NotificationsList } from "./_components/notifications-list";
-import { withAuth } from "@/features/auth/components/guards/withAuth";
+import { withAuth } from "@/features/auth/components/with-auth";
 import { useGetNotifications } from "@/features/notifications/hooks/use-get-notifications";
 import { NotificationStats } from "./_components/notifications-stats";
 

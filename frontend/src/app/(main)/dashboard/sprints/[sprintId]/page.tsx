@@ -13,10 +13,11 @@ import { LoadingPage } from "@/components/common/loading-page";
 import { ErrorDisplay } from "@/components/common/error-display";
 import { TaskForm } from "@/features/tasks/components/task-form";
 import { useGetTasks } from "@/features/tasks/hooks/use-get-tasks";
-import { withAuth } from "@/features/auth/components/guards/withAuth";
+import { withAuth } from "@/features/auth/components/with-auth";
 import { useCreateTask } from "@/features/tasks/hooks/use-create-task";
 import { useNavigationStore } from "@/navigation/store/navigation.store";
 import { useGetSprintById } from "@/features/sprints/hooks/use-get-sprint-by-id";
+import { Protect, RoleEnum } from "@/features/auth";
 
 function SprintDetailPage() {
     const params = useParams();
@@ -93,10 +94,14 @@ function SprintDetailPage() {
                         <Button onClick={handleClose} variant="ghost">
                             Close
                         </Button>
-                        <Button onClick={() => setIsCreateTaskOpen(true)}>
-                            <Plus className="h-4 w-4" />
-                            Add Task
-                        </Button>
+                        <Protect
+                            allowedRoles={[RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT]}    
+                        >
+                            <Button onClick={() => setIsCreateTaskOpen(true)}>
+                                <Plus className="h-4 w-4" />
+                                Add Task
+                            </Button>
+                        </Protect>
                     </>
                 }
             />

@@ -5,6 +5,7 @@ import { Status } from '../../statuses/domain/status';
 import { ApiProperty } from '@nestjs/swagger';
 import { Task } from '../../tasks/domain/task';
 import { Notification } from '../../notifications/domain/notification';
+import { Skill } from '../../skills/domain/skill';
 
 export class User {
   @ApiProperty({
@@ -80,4 +81,9 @@ export class User {
 
   @ApiProperty()
   deletedAt: Date;
+
+  @ApiProperty({
+    type: () => [Skill],
+  })
+  skills?: Skill[];
 }

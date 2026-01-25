@@ -33,7 +33,6 @@ export type ActionResponse = z.infer<typeof actionResponseSchema>;
 
 /** Action Form Schema **/
 export const actionFormSchema = z.object({
-    risk: z.object({ id: z.string() }),
     title: z.string().nullable().optional(),
     description: z.string().nullable().optional(),
     type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE]).default(ActionType.CORRECTIVE),

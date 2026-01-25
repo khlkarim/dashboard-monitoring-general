@@ -1,8 +1,8 @@
 "use client";
 
 import React from 'react';
-import { RoleEnum } from '../types/roles.types';
-import { useRole } from '../hooks/useRole';
+import { useRole } from '../hooks/use-role';
+import { RoleEnum } from '../../users/types/roles.types';
 
 interface ProtectProps {
     children: React.ReactNode;

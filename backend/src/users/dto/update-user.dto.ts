@@ -6,6 +6,7 @@ import { IsEmail, IsOptional, MinLength } from 'class-validator';
 import { FileDto } from '../../files/dto/file.dto';
 import { RoleDto } from '../../roles/dto/role.dto';
 import { StatusDto } from '../../statuses/dto/status.dto';
+import { SkillDto } from '../../skills/dto/skill.dto';
 import { lowerCaseTransformer } from '../../utils/transformers/lower-case.transformer';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
@@ -45,4 +46,9 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   @Type(() => StatusDto)
   status?: StatusDto;
+
+  @ApiPropertyOptional({ type: () => [SkillDto] })
+  @IsOptional()
+  @Type(() => SkillDto)
+  skills?: SkillDto[];
 }

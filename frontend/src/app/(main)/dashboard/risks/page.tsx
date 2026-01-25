@@ -7,7 +7,7 @@ import { RisksStats } from "./_components/risks-stats";
 import { LoadingPage } from "@/components/common/loading-page";
 import { ErrorDisplay } from "@/components/common/error-display";
 import { useGetRisks } from "@/features/risks/hooks/use-get-risks";
-import { withAuth } from "@/features/auth/components/guards/withAuth";
+import { withAuth } from "@/features/auth/components/with-auth";
 
 function RisksPage() {
     const { 

@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { SkillSeedService } from './skill/skill-seed.service';
 import { CommentsSeedService } from './comments/comments-seed.service';
 import { RoleSeedService } from './role/role-seed.service';
 import { SeedModule } from './seed.module';
@@ -18,6 +19,7 @@ const runSeed = async () => {
   await app.get(RoleSeedService).run();
   await app.get(StatusSeedService).run();
   await app.get(ProcessusSeedService).run();
+  await app.get(SkillSeedService).run();
   await app.get(UserSeedService).run();
   await app.get(SprintSeedService).run();
   await app.get(TaskSeedService).run();

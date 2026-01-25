@@ -1,6 +1,6 @@
 "use client";
 
-import { withAuth } from "@/features/auth/components/guards/withAuth";
+import { withAuth } from "@/features/auth/components/with-auth";
 import { useGetSprints } from "@/features/sprints/hooks/use-get-sprints";
 import { useGetUsers } from "@/features/users/hooks/use-get-users";
 import { useGetRisks } from "@/features/risks/hooks/use-get-risks";

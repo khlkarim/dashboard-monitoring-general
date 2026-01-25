@@ -1,6 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
 import { usersApi } from '../api/users.api';
-
+import { useQuery } from '@tanstack/react-query';
 import { QueryUsersDto } from '../schemas/users.schemas';
 
 export const useGetUsers = (query?: QueryUsersDto) => {

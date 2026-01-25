@@ -1,40 +1,28 @@
 import { z } from 'zod';
-
-export enum RoleEnum {
-    ADMINISTRATOR = 'administrator',
-    PRESIDENT = 'president',
-    MEMBER = 'member',
-    ALUMNI = 'alumni',
-}
-
-export enum StatusEnum {
-    ACTIVE = 'active',
-    INACTIVE = 'inactive',
-}
+import { RoleEnum } from '../types/roles.types';
+import { StatusEnum } from '../types/status.types';
+import { fileTypeSchema } from '@/features/files/schemas/files.schemas';
+import { skillSchema } from '@/features/skills/schemas/skills.schemas';
 
 export const roleSchema = z.object({
     id: z.enum([RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT, RoleEnum.MEMBER, RoleEnum.ALUMNI]).optional(),
-    name: z.string()
+    name: z.string().nullable().optional(),
 });
 
 export const statusSchema = z.object({
     id: z.enum([StatusEnum.ACTIVE, StatusEnum.INACTIVE]).optional(),
-    name: z.string()
+    name: z.string().nullable().optional(),
 });
 
-export const fileSchema = z.object({
-    id: z.string(),
-    path: z.string(),
-});
-
-export const userSchema = z.object({
+export const userResponseSchema = z.object({
     id: z.string(),
     email: z.string().email().nullable(),
     firstName: z.string().nullable(),
     lastName: z.string().nullable(),
-    photo: fileSchema.nullable().optional(),
+    photo: fileTypeSchema.nullable().optional(),
     role: roleSchema.nullable().optional(),
     status: statusSchema.nullable().optional(),
+    skills: z.array(skillSchema),
     provider: z.string().optional(),
     socialId: z.string().nullable().optional(),
     createdAt: z.string().datetime().optional(),
@@ -47,17 +35,26 @@ export const createUserRequestSchema = z.object({
     password: z.string().min(6).optional(),
     firstName: z.string().min(1).nullable(),
     lastName: z.string().min(1).nullable(),
-    photo: fileSchema.nullable().optional(),
+    photo: fileTypeSchema.nullable().optional(),
     role: roleSchema.nullable().optional(),
     status: statusSchema.optional(),
 });
 
-export const updateUserRequestSchema = createUserRequestSchema.partial();
-
-export const userResponseSchema = userSchema;
+/** Update User */
+export const updateUserRequestSchema = z.object({
+    photo: z.any().nullable().optional(), // File or null
+    firstName: z.string().min(1).optional().nullable(),
+    lastName: z.string().min(1).optional().nullable(),
+    email: z.string().email().optional().nullable(),
+    password: z.string().min(6).optional().nullable(),
+    oldPassword: z.string().min(1).optional().nullable(),
+    role: roleSchema.nullable().optional().nullable(),
+    skills: z.array(skillSchema).optional().nullable(),
+});
+export type UpdateUserRequest = z.infer<typeof updateUserRequestSchema>;
 
 export const usersListResponseSchema = z.object({
-    data: z.array(userSchema),
+    data: z.array(userResponseSchema),
     hasNextPage: z.boolean(),
 });
 
@@ -69,7 +66,6 @@ export const queryUsersSchema = z.object({
 });
 
 export type CreateUserRequest = z.infer<typeof createUserRequestSchema>;
-export type UpdateUserRequest = z.infer<typeof updateUserRequestSchema>;
 export type UserResponse = z.infer<typeof userResponseSchema>;
 export type UsersListResponse = z.infer<typeof usersListResponseSchema>;
 export type QueryUsersDto = z.infer<typeof queryUsersSchema>;

@@ -56,7 +56,7 @@ export class TasksController {
   @ApiOkResponse({
     type: InfinityPaginationResponse(Task),
   })
-  @Roles(RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
+  @Roles(RoleEnum.ALUMNI, RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   @Get()
   async findAll(
     @Query() query: FindAllTasksDto,
@@ -81,7 +81,7 @@ export class TasksController {
   @ApiOkResponse({
     type: InfinityPaginationResponse(Task),
   })
-  @Roles(RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
+  @Roles(RoleEnum.ALUMNI, RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   @Get('sprint/:sprintId')
   async findAllBySprintId(
     @Param('sprintId') sprintId: string,
@@ -108,7 +108,7 @@ export class TasksController {
   @ApiOkResponse({
     type: Task,
   })
-  @Roles(RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
+  @Roles(RoleEnum.ALUMNI, RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   @Get(':id')
   @ApiParam({
     name: 'id',
@@ -122,7 +122,7 @@ export class TasksController {
   @ApiOkResponse({
     type: Task,
   })
-  @Roles(RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
+  @Roles(RoleEnum.ALUMNI, RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   @Patch(':id')
   @ApiParam({
     name: 'id',

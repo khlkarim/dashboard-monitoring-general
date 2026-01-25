@@ -11,6 +11,7 @@ import { useUpdateTask } from "@/features/tasks/hooks/use-update-task";
 import { useDeleteTask } from "@/features/tasks/hooks/use-delete-task";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Protect, RoleEnum } from '@/features/auth';
 
 interface TaskCard {
     task: Task;
@@ -76,31 +77,35 @@ export function TaskCard({ task } : TaskCard) {
                                 for some reason the event handlers of the buttons 
                                 won't get triggerd unless we put them in drop down menus
                             */}
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button 
-                                        size="icon" 
-                                        variant="ghost" 
-                                        className="h-8 w-8 text-muted-foreground hover:text-primary" 
-                                        onClick={(e) => { e.stopPropagation(); handleEditTask(); }}
-                                    >
-                                        <Pencil className="h-4 w-4" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                            </DropdownMenu>
+                            <Protect 
+                                allowedRoles={[RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT]}
+                            >
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button 
+                                            size="icon" 
+                                            variant="ghost" 
+                                            className="h-8 w-8 text-muted-foreground hover:text-primary" 
+                                            onClick={(e) => { e.stopPropagation(); handleEditTask(); }}
+                                        >
+                                            <Pencil className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                </DropdownMenu>
 
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button 
-                                        size="icon" 
-                                        variant="ghost" 
-                                        className="h-8 w-8 text-muted-foreground hover:text-destructive" 
-                                        onClick={(e) => { e.stopPropagation(); handleDeleteTask(); }}
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                            </DropdownMenu>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button 
+                                            size="icon" 
+                                            variant="ghost" 
+                                            className="h-8 w-8 text-muted-foreground hover:text-destructive" 
+                                            onClick={(e) => { e.stopPropagation(); handleDeleteTask(); }}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                </DropdownMenu>
+                            </Protect>
                         </div>
                     </div>
                     <p className="m-0 text-muted-foreground text-xs">

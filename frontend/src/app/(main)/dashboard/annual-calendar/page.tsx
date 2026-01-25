@@ -1,20 +1,20 @@
 "use client";
 
-import { activities } from "./_components/activities";
 import { useCallback, useState } from "react";
 import "@bitnoi.se/react-scheduler/dist/style.css";
 import { Header } from "@/components/common/header";
 import { Separator } from "@/components/ui/separator";
+import { activities } from "./_components/activities";
 import { LoadingPage } from "@/components/common/loading-page";
+import { withAuth } from "@/features/auth/components/with-auth";
 import { ErrorDisplay } from "@/components/common/error-display";
 import { Scheduler, SchedulerData } from "@bitnoi.se/react-scheduler";
-import { withAuth } from "@/features/auth/components/guards/withAuth";
 import { useGetProcessus } from "@/features/processus/hooks/use-get-processus";
 
 function Page() {
-    const { 
-        data: processus, 
-        isLoading, 
+    const {
+        data: processus,
+        isLoading,
         isError,
         error
     } = useGetProcessus();
@@ -27,7 +27,7 @@ function Page() {
 
     const handleRangeChange = useCallback(
         (newRange: { startDate: Date; endDate: Date }) => {
-        setRange(newRange);
+            setRange(newRange);
         },
         []
     );
@@ -50,7 +50,7 @@ function Page() {
             </div>
         );
     }
-    
+
     if (isLoading) {
         return (
             <LoadingPage />
@@ -60,25 +60,25 @@ function Page() {
     const schedulerData: SchedulerData = processus?.data.map((p) => ({
         id: p.id,
         label: {
-        icon: "📋",
-        title: p.label,
-        subtitle: p.description ?? "",
+            icon: "📋",
+            title: p.label,
+            subtitle: p.description ?? "",
         },
         data: activities.map(activity => ({
-        ...activity,
-        id: `${p.id}-${activity.id}`
+            ...activity,
+            id: `${p.id}-${activity.id}`
         })),
     })) || [];
 
     return (
-        <div className="flex flex-col gap-6 mx-auto animate-in fade-in duration-500">
-            <Header 
+        <div className="flex flex-col gap-6 p-6 mx-auto animate-in fade-in duration-500">
+            <Header
                 title="Annual Calendar"
                 description="Interactive scheduler visualization of project timeline and team resources."
             />
             <Separator />
 
-            <div className="relative h-[700px] w-full overflow-hidden rounded-lg border bg-card">
+            <div className="relative h-[700px] overflow-hidden rounded-lg border bg-card">
                 <Scheduler
                     data={schedulerData}
                     onRangeChange={handleRangeChange}

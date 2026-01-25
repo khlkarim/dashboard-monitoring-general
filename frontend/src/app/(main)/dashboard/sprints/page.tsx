@@ -6,7 +6,7 @@ import { SprintsTable } from "./_components/sprints-table";
 import { SprintsStats } from "./_components/sprints-stats";
 import { LoadingPage } from "@/components/common/loading-page";
 import { ErrorDisplay } from "@/components/common/error-display";
-import { withAuth } from "@/features/auth/components/guards/withAuth";
+import { withAuth } from "@/features/auth/components/with-auth";
 import { useGetSprints } from "@/features/sprints/hooks/use-get-sprints";
 
 function SprintsPage() {

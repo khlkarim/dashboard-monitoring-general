@@ -5,6 +5,7 @@ import { StatusEntity } from '../../../../../statuses/infrastructure/persistence
 import { User } from '../../../../domain/user';
 import { UserEntity } from '../entities/user.entity';
 import { TaskMapper } from '../../../../../tasks/infrastructure/persistence/relational/mappers/task.mapper';
+import { SkillMapper } from '../../../../../skills/infrastructure/persistence/relational/mappers/skill.mapper';
 
 export class UserMapper {
   static toDomain(raw: UserEntity): User {
@@ -24,6 +25,11 @@ export class UserMapper {
     if (raw.assignedTasks) {
       domainEntity.assignedTasks = raw.assignedTasks.map((task) =>
         TaskMapper.toDomain(task),
+      );
+    }
+    if (raw.skills) {
+      domainEntity.skills = raw.skills.map((skill) =>
+        SkillMapper.toDomain(skill),
       );
     }
     domainEntity.createdAt = raw.createdAt;
@@ -72,6 +78,11 @@ export class UserMapper {
     if (domainEntity.assignedTasks) {
       persistenceEntity.assignedTasks = domainEntity.assignedTasks.map((task) =>
         TaskMapper.toPersistence(task),
+      );
+    }
+    if (domainEntity.skills) {
+      persistenceEntity.skills = domainEntity.skills.map((skill) =>
+        SkillMapper.toPersistence(skill),
       );
     }
     persistenceEntity.createdAt = domainEntity.createdAt;

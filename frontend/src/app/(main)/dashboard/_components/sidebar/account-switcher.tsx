@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn, getInitials } from "@/lib/utils";
 import { useAuthStore } from "@/features/auth/store/auth.store";
-import { withAuth } from "@/features/auth/components/guards/withAuth";
+import { withAuth } from "@/features/auth/components/with-auth";
 import Link from "next/link";
 
 export const AccountSwitcher = withAuth(() => {

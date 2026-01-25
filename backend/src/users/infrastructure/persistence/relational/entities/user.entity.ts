@@ -19,6 +19,8 @@ import { FileEntity } from '../../../../../files/infrastructure/persistence/rela
 import { AuthProvidersEnum } from '../../../../../auth/auth-providers.enum';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 import { NotificationEntity } from '../../../../../notifications/infrastructure/persistence/relational/entities/notification.entity';
+import { SkillEntity } from '../../../../../skills/infrastructure/persistence/relational/entities/skill.entity';
+import { JoinTable } from 'typeorm';
 
 @Entity({
   name: 'user',
@@ -80,4 +82,8 @@ export class UserEntity extends EntityRelationalHelper {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @ManyToMany(() => SkillEntity, (skill) => skill.users, { eager: true })
+  @JoinTable({ name: 'user_skill' })
+  skills: SkillEntity[];
 }

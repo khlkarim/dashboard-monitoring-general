@@ -54,7 +54,7 @@ export class SprintsController {
   @ApiOkResponse({
     type: InfinityPaginationResponse(Sprint),
   })
-  @Roles(RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
+  @Roles(RoleEnum.ALUMNI, RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   async findAll(
     @Query() query: FindAllSprintsDto,
   ): Promise<InfinityPaginationResponseDto<Sprint>> {
@@ -84,7 +84,7 @@ export class SprintsController {
   @ApiOkResponse({
     type: Sprint,
   })
-  @Roles(RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
+  @Roles(RoleEnum.ALUMNI, RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   findOne(@Param('id') id: string) {
     return this.sprintsService.findById(id);
   }

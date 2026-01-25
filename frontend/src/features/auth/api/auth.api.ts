@@ -6,8 +6,6 @@ import {
   confirmEmailRequestSchema,
   forgotPasswordRequestSchema,
   resetPasswordRequestSchema,
-  updateUserRequestSchema,
-  userResponseSchema,
   refreshResponseSchema,
   LoginRequest,
   LoginResponse,
@@ -15,12 +13,11 @@ import {
   ConfirmEmailRequest,
   ForgotPasswordRequest,
   ResetPasswordRequest,
-  UpdateUserRequest,
-  UserResponse,
   RefreshResponse,
 } from '@/features/auth/schemas/auth.schemas';
 import { useAuthStore } from '../store/auth.store';
 import { filesApi } from '@/features/files/api/files.api';
+import { UpdateUserRequest, updateUserRequestSchema, UserResponse, userResponseSchema } from '@/features/users/schemas/users.schemas';
 
 export const authApi = {
   /** POST /api/v1/auth/email/login */

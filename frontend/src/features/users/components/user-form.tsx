@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,22 +13,23 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-    FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CreateUserRequest, RoleEnum } from "@/features/users/schemas/users.schemas";
+import { CreateUserRequest } from "@/features/users/schemas/users.schemas";
 import { User } from "@/features/users/types/users.types";
+import { RoleEnum } from "../types/roles.types";
+import { Loader2, UploadCloud, User as UserIcon } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const formSchema = z.object({
+const profileFormSchema = z.object({
+    photo: z.any().optional(), // File or Blob
     firstName: z.string().min(1, "First name is required"),
     lastName: z.string().min(1, "Last name is required"),
-    email: z.string().email("Invalid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters").optional().or(z.literal("")),
     role: z.enum([RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT, RoleEnum.MEMBER, RoleEnum.ALUMNI], { required_error: "Role is required" }),
 });
 
-type UserFormValues = z.infer<typeof formSchema>;
+type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 interface UserFormProps {
     initialData?: User | null;
@@ -37,137 +38,153 @@ interface UserFormProps {
 }
 
 export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
-    const form = useForm<UserFormValues>({
-        resolver: zodResolver(formSchema),
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [previewApi, setPreviewApi] = useState<string | null>(null);
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            profileForm.setValue("photo", file);
+
+            if (previewApi && previewApi.startsWith('blob:')) {
+                URL.revokeObjectURL(previewApi);
+            }
+
+            const objectUrl = URL.createObjectURL(file);
+            setPreviewApi(objectUrl);
+        }
+    };
+
+    const profileForm = useForm<ProfileFormValues>({
+        resolver: zodResolver(profileFormSchema),
         defaultValues: {
+            photo: initialData?.photo || null,
             firstName: initialData?.firstName || "",
             lastName: initialData?.lastName || "",
-            email: initialData?.email || "",
-            password: "",
             role: initialData?.role?.id || RoleEnum.MEMBER,
         },
     });
 
     useEffect(() => {
         if (initialData) {
-            form.reset({
+            profileForm.reset({
+                photo: initialData.photo || null,
                 firstName: initialData.firstName || "",
                 lastName: initialData.lastName || "",
-                email: initialData.email || "",
-                password: "",
                 role: initialData.role?.id || RoleEnum.MEMBER,
             });
         }
-    }, [initialData, form]);
+    }, [initialData, profileForm]);
 
-    const handleSubmit = (values: UserFormValues) => {
+    const handleSubmit = (values: ProfileFormValues) => {
         const apiData: Partial<CreateUserRequest> = {
+            photo: values.photo,
             firstName: values.firstName,
             lastName: values.lastName,
-            email: values.email,
             role: { id: values.role, name: (values.role.charAt(0).toUpperCase() + values.role.slice(1)) },
         };
 
-        // Only include password if it's provided (important for updates to not overwrite with empty)
-        if (values.password && values.password.length >= 6) {
-            apiData.password = values.password;
-        }
+        console.log(apiData);
 
         onSubmit(apiData);
     };
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-                <div className="flex gap-4">
+        <Form {...profileForm}>
+            <form onSubmit={profileForm.handleSubmit(handleSubmit)} className="space-y-6">
+
+                {/* Photo Upload Section */}
+                <div className="flex items-center gap-6">
+                    <Avatar className="h-24 w-24 border">
+                        <AvatarImage src={previewApi || undefined} alt="Profile preview" className="object-cover" />
+                        <AvatarFallback>
+                            <UserIcon className="h-8 w-8 text-muted-foreground" />
+                        </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col gap-2">
+                        <FormLabel>Profile Photo</FormLabel>
+                        <div className="flex gap-2">
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => fileInputRef.current?.click()}
+                            >
+                                <UploadCloud className="mr-2 h-4 w-4" />
+                                Upload New Photo
+                            </Button>
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                            />
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                            Max file size: 5MB. Accepted formats: JPG, PNG.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
-                        control={form.control}
+                        control={profileForm.control}
                         name="firstName"
                         render={({ field }) => (
-                            <FormItem className="flex-1">
+                            <FormItem>
                                 <FormLabel>First Name</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="John" {...field} />
+                                    <Input placeholder="John" {...field} value={field.value || ""} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-
                     <FormField
-                        control={form.control}
+                        control={profileForm.control}
                         name="lastName"
                         render={({ field }) => (
-                            <FormItem className="flex-1">
+                            <FormItem>
                                 <FormLabel>Last Name</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Doe" {...field} />
+                                    <Input placeholder="Doe" {...field} value={field.value || ""} />
                                 </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={profileForm.control}
+                        name="role"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Role</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a role" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value={RoleEnum.ADMINISTRATOR}>Administrator</SelectItem>
+                                        <SelectItem value={RoleEnum.PRESIDENT}>President</SelectItem>
+                                        <SelectItem value={RoleEnum.MEMBER}>Member</SelectItem>
+                                        <SelectItem value={RoleEnum.ALUMNI}>Alumni</SelectItem>
+                                    </SelectContent>
+                                </Select>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
                 </div>
 
-                <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                                <Input placeholder="john.doe@example.com" type="email" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>{initialData ? "New Password (Optional)" : "Password"}</FormLabel>
-                            <FormControl>
-                                <Input type="password" placeholder="******" {...field} />
-                            </FormControl>
-                            {initialData && (
-                                <FormDescription>Leave empty to keep current password.</FormDescription>
-                            )}
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
-                    name="role"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Role</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                                <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a role" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    {Object.values(RoleEnum).map((role) => (
-                                        <SelectItem key={role} value={role} className="capitalize">
-                                            {role.charAt(0).toUpperCase() + role.slice(1)}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <div className="flex justify-end pt-4">
+                <div className="flex justify-end">
                     <Button type="submit" disabled={isLoading}>
-                        {isLoading ? "Saving..." : initialData ? "Update User" : "Create User"}
+                        {isLoading && (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        )}
+                        Save Profile
                     </Button>
                 </div>
             </form>

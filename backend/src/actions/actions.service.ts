@@ -16,8 +16,8 @@ import { isUUID } from 'class-validator';
 @Injectable()
 export class ActionsService {
   constructor(
-    private readonly riskService: RisksService,
     // Dependencies here
+    private readonly riskService: RisksService,
     private readonly actionRepository: ActionRepository,
   ) { }
 
