@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { usersApi } from '../api/users.api';
 import { CreateUserRequest } from '../schemas/users.schemas';
-import { toast } from 'sonner';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useCreateUser = () => {
     const queryClient = useQueryClient();
@@ -12,8 +12,7 @@ export const useCreateUser = () => {
             queryClient.invalidateQueries({ queryKey: ['users'] });
             toast.success('User created successfully');
         },
-        onError: (error) => {
-            console.error(error);
+        onError: () => {
             toast.error('Failed to create User');
         },
     });

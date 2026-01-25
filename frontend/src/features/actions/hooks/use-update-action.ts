@@ -13,8 +13,7 @@ export const useUpdateAction = () => {
             queryClient.invalidateQueries({ queryKey: ['actions'] });
             toast.success('Action updated successfully');
         },
-        onError: (error) => {
-            console.error(error);
+        onError: () => {
             toast.error('Failed to update action');
         },
     });

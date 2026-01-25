@@ -9,7 +9,7 @@ import { KpiSamples } from "../_components/kpi-samples";
 import { PageHeader } from "@/components/common/page-header";
 import { LoadingPage } from "@/components/common/loading-page";
 import { ErrorDisplay } from "@/components/common/error-display";
-import { withAuth } from "@/features/auth/components/guards/withAuth";
+import { withAuth } from "@/features/auth/components/with-auth";
 import { useGetKpiById } from "@/features/kpis/hooks/use-get-kpi-by-id";
 import { useNavigationStore } from "@/navigation/store/navigation.store";
 

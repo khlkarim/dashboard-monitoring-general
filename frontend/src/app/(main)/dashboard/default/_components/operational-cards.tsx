@@ -1,14 +1,13 @@
-import { Clock, AlertCircle, CheckCircle, ArrowRight } from "lucide-react";
-import { format, isAfter, parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
+import { Clock, AlertCircle, CheckCircle } from "lucide-react";
 
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 
-import { SprintResponse } from "@/features/sprints/schemas/sprints.schemas";
-import { TaskResponse, TaskStatus } from "@/features/tasks/schemas/tasks.schemas";
 import { UserResponse } from "@/features/users/schemas/users.schemas";
 import { RiskResponse } from "@/features/risks/schemas/risks.schemas";
+import { SprintResponse } from "@/features/sprints/schemas/sprints.schemas";
+import { TaskResponse, TaskStatus } from "@/features/tasks/schemas/tasks.schemas";
 import { NotificationResponse } from "@/features/notifications/schemas/notifications.schemas";
 
 interface DashboardData {

@@ -40,8 +40,6 @@ export const usersApi = {
 
     /** PATCH /api/v1/users/:id */
     update: async (id: string, data: UpdateUserRequest): Promise<UserResponse> => {
-        console.log("Update user request: ", id, data);
-
         updateUserRequestSchema.parse(data);
 
         const payload = { ...data };

@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { actionsApi } from '../api/actions.api';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useDeleteAction = () => {
     const queryClient = useQueryClient();
@@ -11,8 +11,7 @@ export const useDeleteAction = () => {
             queryClient.invalidateQueries({ queryKey: ['actions'] });
             toast.success('Action deleted successfully');
         },
-        onError: (error) => {
-            console.error(error);
+        onError: () => {
             toast.error('Failed to delete action');
         },
     });

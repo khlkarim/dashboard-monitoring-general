@@ -4,5 +4,3 @@ export enum RoleEnum {
     MEMBER = 'member',
     ALUMNI = 'alumni',
 }
-
-export type RoleName = keyof typeof RoleEnum;

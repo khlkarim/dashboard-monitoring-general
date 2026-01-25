@@ -2,7 +2,7 @@
 
 import { Header } from "@/components/common/header";
 import { Separator } from "@/components/ui/separator";
-import { UsersTable } from "../users/_components/users-table";
+import { AlumniTable } from "./_components/alumni-table";
 import { LoadingPage } from "@/components/common/loading-page";
 import { ErrorDisplay } from "@/components/common/error-display";
 import { useGetAlumni } from "@/features/users/hooks/use-get-alumni";
@@ -39,7 +39,7 @@ export default function AlumniPage() {
                 description="Manage former members and track their professional progress."
             />    
             <Separator />
-            <UsersTable users={alumni.data} />
+            <AlumniTable users={alumni.data} />
         </div>
     );
 }

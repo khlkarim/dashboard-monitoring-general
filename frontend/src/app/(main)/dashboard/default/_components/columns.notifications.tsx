@@ -1,5 +1,5 @@
-import { ColumnDef } from "@tanstack/react-table";
 import { format, parseISO } from "date-fns";
+import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { NotificationResponse } from "@/features/notifications/schemas/notifications.schemas";
 

@@ -13,6 +13,7 @@ import { DataTableColumnHeader } from "@/components/data-table/data-table-column
 import { Sprint } from "@/features/sprints/types/sprints.types";
 import { useNavigationStore } from "@/navigation/store/navigation.store";
 import { SprintStatus } from "@/features/sprints/schemas/sprints.schemas";
+import { Protect, RoleEnum } from "@/features/auth";
 
 function OpenSprintButton({ sprint }: { sprint: Sprint }) {
     const router = useRouter();
@@ -132,11 +133,15 @@ export const getColumns = (
                 return (
                     <div className="flex items-center gap-2">
                         <OpenSprintButton sprint={row.original} />
-                        <DataTableRowActions
-                            row={row}
-                            onEdit={onEdit}
-                            onDelete={onDelete}
-                        />
+                        <Protect
+                            allowedRoles={[RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT]}
+                        >
+                            <DataTableRowActions
+                                row={row}
+                                onEdit={onEdit}
+                                onDelete={onDelete}
+                            />
+                        </Protect>
                     </div>
                 );
             },

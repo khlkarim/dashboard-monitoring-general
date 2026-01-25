@@ -1,16 +1,7 @@
 import { z } from 'zod';
-
-export enum RoleEnum {
-    ADMINISTRATOR = 'administrator',
-    PRESIDENT = 'president',
-    MEMBER = 'member',
-    ALUMNI = 'alumni',
-}
-
-export enum StatusEnum {
-    ACTIVE = 'active',
-    INACTIVE = 'inactive',
-}
+import { RoleEnum } from '../types/roles.types';
+import { StatusEnum } from '../types/status.types';
+import { fileTypeSchema } from '@/features/files/schemas/files.schemas';
 
 export const roleSchema = z.object({
     id: z.enum([RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT, RoleEnum.MEMBER, RoleEnum.ALUMNI]).optional(),
@@ -22,17 +13,12 @@ export const statusSchema = z.object({
     name: z.string()
 });
 
-export const fileSchema = z.object({
-    id: z.string(),
-    path: z.string(),
-});
-
-export const userSchema = z.object({
+export const userResponseSchema = z.object({
     id: z.string(),
     email: z.string().email().nullable(),
     firstName: z.string().nullable(),
     lastName: z.string().nullable(),
-    photo: fileSchema.nullable().optional(),
+    photo: fileTypeSchema.nullable().optional(),
     role: roleSchema.nullable().optional(),
     status: statusSchema.nullable().optional(),
     provider: z.string().optional(),
@@ -47,17 +33,24 @@ export const createUserRequestSchema = z.object({
     password: z.string().min(6).optional(),
     firstName: z.string().min(1).nullable(),
     lastName: z.string().min(1).nullable(),
-    photo: fileSchema.nullable().optional(),
+    photo: fileTypeSchema.nullable().optional(),
     role: roleSchema.nullable().optional(),
     status: statusSchema.optional(),
 });
 
-export const updateUserRequestSchema = createUserRequestSchema.partial();
-
-export const userResponseSchema = userSchema;
+/** Update User */
+export const updateUserRequestSchema = z.object({
+  photo: z.any().nullable().optional(), // File or null
+  firstName: z.string().min(1).optional(),
+  lastName: z.string().min(1).optional(),
+  email: z.string().email().optional(),
+  password: z.string().min(6).optional(),
+  oldPassword: z.string().min(1).optional(),
+});
+export type UpdateUserRequest = z.infer<typeof updateUserRequestSchema>;
 
 export const usersListResponseSchema = z.object({
-    data: z.array(userSchema),
+    data: z.array(userResponseSchema),
     hasNextPage: z.boolean(),
 });
 
@@ -69,7 +62,6 @@ export const queryUsersSchema = z.object({
 });
 
 export type CreateUserRequest = z.infer<typeof createUserRequestSchema>;
-export type UpdateUserRequest = z.infer<typeof updateUserRequestSchema>;
 export type UserResponse = z.infer<typeof userResponseSchema>;
 export type UsersListResponse = z.infer<typeof usersListResponseSchema>;
 export type QueryUsersDto = z.infer<typeof queryUsersSchema>;

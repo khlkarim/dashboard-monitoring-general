@@ -1,14 +1,14 @@
 "use client";
 
-import { activities } from "./_components/activities";
 import { useCallback, useState } from "react";
 import "@bitnoi.se/react-scheduler/dist/style.css";
 import { Header } from "@/components/common/header";
 import { Separator } from "@/components/ui/separator";
+import { activities } from "./_components/activities";
 import { LoadingPage } from "@/components/common/loading-page";
+import { withAuth } from "@/features/auth/components/with-auth";
 import { ErrorDisplay } from "@/components/common/error-display";
 import { Scheduler, SchedulerData } from "@bitnoi.se/react-scheduler";
-import { withAuth } from "@/features/auth/components/guards/withAuth";
 import { useGetProcessus } from "@/features/processus/hooks/use-get-processus";
 
 function Page() {

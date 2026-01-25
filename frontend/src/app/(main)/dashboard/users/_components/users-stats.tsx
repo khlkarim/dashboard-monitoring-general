@@ -2,7 +2,7 @@ import { Users } from "lucide-react";
 import { RoleEnum } from "@/features/auth";
 import { useEffect, useState } from "react";
 import { User } from "@/features/users/types/users.types";
-import { StatusEnum } from "@/features/users/schemas/users.schemas";
+import { StatusEnum } from "@/features/users/types/status.types";
 import { StatCard, StatCardProps } from "@/components/common/stat-card";
 
 interface UsersStatsProps {

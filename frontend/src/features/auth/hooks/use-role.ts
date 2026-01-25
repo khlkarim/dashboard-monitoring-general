@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useAuthStore } from '../store/auth.store';
-import { RoleEnum } from '../types/roles.types';
+import { RoleEnum } from '../../users/types/roles.types';
 
 export const useRole = () => {
     const user = useAuthStore((state) => state.user);

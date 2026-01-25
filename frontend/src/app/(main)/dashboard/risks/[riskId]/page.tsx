@@ -12,7 +12,7 @@ import { PageHeader } from "@/components/common/page-header";
 import { BaseDialog } from "@/components/common/form-dialog";
 import { LoadingPage } from "@/components/common/loading-page";
 import { ErrorDisplay } from "@/components/common/error-display";
-import { withAuth } from "@/features/auth/components/guards/withAuth";
+import { withAuth } from "@/features/auth/components/with-auth";
 import { ActionForm } from "@/features/actions/components/action-form";
 import { useNavigationStore } from "@/navigation/store/navigation.store";
 import { useGetRiskById } from "@/features/risks/hooks/use-get-risk-by-id";

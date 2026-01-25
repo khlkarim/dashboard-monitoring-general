@@ -6,9 +6,9 @@ import { Risk } from './domain/risk';
 import { LlmService } from 'src/llm/llm.service';
 import { CreateRiskDto } from './dto/create-risk.dto';
 import { UpdateRiskDto } from './dto/update-risk.dto';
-import { RiskRepository } from './infrastructure/persistence/risk.repository';
+import { CreateActionDto } from 'src/actions/dto/create-action.dto'; 
 import { IPaginationOptions } from '../utils/types/pagination-options';
-import { CreateActionDto } from 'src/actions/dto/create-action.dto';
+import { RiskRepository } from './infrastructure/persistence/risk.repository';
 import { ActionRepository } from 'src/actions/infrastructure/persistence/action.repository';
 
 @Injectable()
@@ -97,8 +97,9 @@ export class RisksService {
   }
 
   async generateAction(risk: Risk): Promise<CreateActionDto[]> {
+    // TODO: this should probably be extracted into a config parameter. 
     const llmRequest = {
-      prompt: 
+      content: 
         "//Context Start//" +
         "The INSAT Junior Enterprise is a non-profit association founded in 2005 and joined the National Confederation" +
         "of Junior Enterprises (JET) in 2013. The mission of the INSAT Junior Enterprise is to train students" +
@@ -129,11 +130,11 @@ export class RisksService {
       let actions = [];
 
       llmResponse.options.forEach(o => {
-        if(o.reply.startsWith("```json")) { o.reply = o.reply.slice(7); }
-        if(o.reply.endsWith("```")) { o.reply = o.reply.slice(0, o.reply.length - 3); }
+        if(o.content.startsWith("```json")) { o.content = o.content.slice(7); }
+        if(o.content.endsWith("```")) { o.content = o.content.slice(0, o.content.length - 3); }
 
         try {
-          actions = actions.concat(JSON.parse(o.reply).actions);
+          actions = actions.concat(JSON.parse(o.content).actions);
         } catch {
           console.log("Failed to parse AI generated actions");
         }

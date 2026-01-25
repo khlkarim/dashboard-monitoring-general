@@ -1,3 +1,5 @@
+import { fileTypeSchema } from '@/features/files/schemas/files.schemas';
+import { roleSchema, statusSchema, userResponseSchema } from '@/features/users/schemas/users.schemas';
 import { z } from 'zod';
 
 /** Login */
@@ -34,52 +36,6 @@ export const resetPasswordRequestSchema = z.object({
   password: z.string().min(1),
 });
 export type ResetPasswordRequest = z.infer<typeof resetPasswordRequestSchema>;
-
-/** Update User */
-export const updateUserRequestSchema = z.object({
-  photo: z.any().nullable().optional(), // File or null
-  firstName: z.string().min(1).optional(),
-  lastName: z.string().min(1).optional(),
-  email: z.string().email().optional(),
-  password: z.string().min(6).optional(),
-  oldPassword: z.string().min(1).optional(),
-});
-export type UpdateUserRequest = z.infer<typeof updateUserRequestSchema>;
-
-/** Role schema */
-export const roleSchema = z.object({
-  id: z.string(),
-  name: z.string().optional(),
-});
-
-/** Status schema */
-export const statusSchema = z.object({
-  id: z.string(),
-  name: z.string().optional(),
-});
-
-/** FileType schema */
-export const fileTypeSchema = z.object({
-  id: z.string(),
-  path: z.string(),
-});
-
-export const userResponseSchema = z.object({
-  id: z.string(),
-  email: z.string().email().nullable(),
-  firstName: z.string().nullable(),
-  lastName: z.string().nullable(),
-  photo: fileTypeSchema.nullable().optional(),
-  role: roleSchema.optional(),
-  status: statusSchema.optional(),
-  provider: z.string().optional(),
-  socialId: z.string().nullable().optional(),
-  createdAt: z.string().datetime().optional(),
-  updatedAt: z.string().datetime().optional(),
-  deletedAt: z.string().datetime().nullable(),
-});
-
-export type UserResponse = z.infer<typeof userResponseSchema>;
 
 /** Login Response */
 export const loginResponseSchema = z.object({

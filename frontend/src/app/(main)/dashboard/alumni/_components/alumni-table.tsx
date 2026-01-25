@@ -20,6 +20,7 @@ import { CreateUserRequest } from "@/features/users/schemas/users.schemas";
 import { UpdateUserRequest } from "@/features/users/schemas/users.schemas";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 import { DataTableViewOptions } from "@/components/data-table/data-table-view-options";
+import { Protect, RoleEnum } from "@/features/auth";
 
 interface AlumniTableProps {
     users: User[];
@@ -83,14 +84,18 @@ export function AlumniTable({ users } : AlumniTableProps) {
     return (
         <>
             <TableCard 
-                title="Users"
-                description="Track and manage all the users."
+                title="Alumni"
+                description="Track and connect with past members."
                 actions={
                     <>
-                        <Button onClick={handleCreate} size="sm">
-                            <Plus className="h-4 w-4" />
-                            Create User
-                        </Button>
+                        <Protect
+                            allowedRoles={[RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT]}
+                        >
+                            <Button onClick={handleCreate} size="sm">
+                                <Plus className="h-4 w-4" />
+                                Register Alumni
+                            </Button>
+                        </Protect>
                     </>
                 }
             >
@@ -127,8 +132,8 @@ export function AlumniTable({ users } : AlumniTableProps) {
             <BaseDialog
                 open={isCreateOpen}
                 onOpenChange={setIsCreateOpen}
-                title="Create User"
-                description="Add a new user to your timeline."
+                title="Register Alumni"
+                description="Add a new alumni to the network."
             >
                 <UserForm 
                     onSubmit={handleCreateSubmit}

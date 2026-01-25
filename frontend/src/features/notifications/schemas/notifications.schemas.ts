@@ -1,5 +1,5 @@
-import { userResponseSchema } from '@/features/users/schemas/users.schemas';
 import { z } from 'zod';
+import { userResponseSchema } from '@/features/users/schemas/users.schemas';
 
 /** Create Notification */
 export const createNotificationRequestSchema = z.object({

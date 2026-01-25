@@ -2,7 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { authApi } from '../api/auth.api';
 import type { AuthState, AuthActions } from '../types/auth.types';
-import type { LoginRequest, RegisterRequest, UserResponse } from '../schemas/auth.schemas';
+import type { LoginRequest, RegisterRequest } from '../schemas/auth.schemas';
+import { User } from '@/features/users/types/users.types';
 
 export const useAuthStore = create<AuthState & AuthActions>()(
   persist(
@@ -71,7 +72,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       },
 
       /** Update user info */
-      updateUser: (updatedUser: UserResponse) => {
+      updateUser: (updatedUser: User) => {
         set({ user: updatedUser });
       },
 

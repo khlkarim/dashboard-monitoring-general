@@ -17,7 +17,7 @@ import { APP_CONFIG } from "@/config/app-config";
 
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
-import { withAuth } from "@/features/auth/components/guards/withAuth";
+import { withAuth } from "@/features/auth/components/with-auth";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useNavigationStore } from "@/navigation/store/navigation.store";
 

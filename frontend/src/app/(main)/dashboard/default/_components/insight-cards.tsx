@@ -1,16 +1,14 @@
-import { XAxis, Label, Pie, PieChart, Bar, BarChart, CartesianGrid, LabelList, YAxis, Cell, ResponsiveContainer } from "recharts";
 import { PieChart as PieChartIcon, ShieldAlert, Users } from "lucide-react";
+import { XAxis, Label, Pie, PieChart, Bar, BarChart, CartesianGrid } from "recharts";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend } from "@/components/ui/chart";
-import { cn } from "@/lib/utils";
 
 import { TaskStatus } from "@/features/tasks/schemas/tasks.schemas";
-import { RoleEnum } from "@/features/users/schemas/users.schemas";
-import { SprintResponse } from "@/features/sprints/schemas/sprints.schemas";
 import { TaskResponse } from "@/features/tasks/schemas/tasks.schemas";
 import { UserResponse } from "@/features/users/schemas/users.schemas";
 import { RiskResponse } from "@/features/risks/schemas/risks.schemas";
+import { SprintResponse } from "@/features/sprints/schemas/sprints.schemas";
 import { NotificationResponse } from "@/features/notifications/schemas/notifications.schemas";
 
 interface DashboardData {

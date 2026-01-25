@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { userResponseSchema } from '@/features/auth/schemas/auth.schemas';
 import { sprintResponseSchema } from '@/features/sprints/schemas/sprints.schemas';
+import { userResponseSchema } from '@/features/users/schemas/users.schemas';
 
 export enum TaskStatus {
     TODO = 'TODO',

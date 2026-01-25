@@ -18,13 +18,12 @@ import { Loader2, UploadCloud, User } from "lucide-react";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useUpdateUser } from "@/features/auth/hooks/use-update-user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { updateUserRequestSchema } from "@/features/auth/schemas/auth.schemas";
+import { updateUserRequestSchema } from "@/features/users/schemas/users.schemas";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const profileFormSchema = updateUserRequestSchema.pick({
     firstName: true,
     lastName: true,
-    email: true,
     photo: true,
 });
 
@@ -43,7 +42,6 @@ export function PersonalInfoForm() {
         defaultValues: {
             firstName: user?.firstName ?? "",
             lastName: user?.lastName ?? "",
-            email: user?.email ?? "",
         },
     });
 
@@ -53,7 +51,6 @@ export function PersonalInfoForm() {
             profileForm.reset({
                 firstName: user.firstName ?? "",
                 lastName: user.lastName ?? "",
-                email: user.email ?? "",
             });
             if (user.photo?.path) {
                 setPreviewApi(user.photo.path);
@@ -151,20 +148,6 @@ export function PersonalInfoForm() {
                                 )}
                             />
                         </div>
-
-                        <FormField
-                            control={profileForm.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email Address</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="john.doe@example.com" type="email" {...field} value={field.value || ""} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
 
                         <div className="flex justify-end">
                             <Button type="submit" disabled={updateUserMutation.isPending}>

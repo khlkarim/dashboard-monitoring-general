@@ -1,10 +1,9 @@
 import api from '@/lib/api';
-import { fileTypeSchema } from '@/features/auth/schemas/auth.schemas';
-import { z } from 'zod';
+import { FileResponse } from '../schemas/files.schemas';
 
 export const filesApi = {
     /** POST /api/v1/files/upload */
-    upload: async (file: File): Promise<{ file: z.infer<typeof fileTypeSchema> }> => {
+    upload: async (file: File): Promise<FileResponse> => {
         const formData = new FormData();
         formData.append('file', file);
 

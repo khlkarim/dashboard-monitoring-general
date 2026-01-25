@@ -1,13 +1,13 @@
 "use client";
 
-import { UsersTable } from "./_components/users-table";
-import { withAuth } from "@/features/auth/components/guards/withAuth";
-import { useGetUsers } from "@/features/users/hooks/use-get-users";
-import { Separator } from "@/components/ui/separator";
 import { Header } from "@/components/common/header";
+import { Separator } from "@/components/ui/separator";
+import { UsersTable } from "./_components/users-table";
 import { UsersStats } from "./_components/users-stats";
-import { ErrorDisplay } from "@/components/common/error-display";
 import { LoadingPage } from "@/components/common/loading-page";
+import { withAuth } from "@/features/auth/components/with-auth";
+import { ErrorDisplay } from "@/components/common/error-display";
+import { useGetUsers } from "@/features/users/hooks/use-get-users";
 
 function UsersPage() {
     const { 

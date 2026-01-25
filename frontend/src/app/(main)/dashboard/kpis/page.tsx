@@ -7,7 +7,7 @@ import { LoadingPage } from "@/components/common/loading-page";
 import { useGetKpis } from "@/features/kpis/hooks/use-get-kpis";
 import { ErrorDisplay } from "@/components/common/error-display";
 import { ProcessusToKpis } from "./_components/processus-to-kpis";
-import { withAuth } from "@/features/auth/components/guards/withAuth";
+import { withAuth } from "@/features/auth/components/with-auth";
 import { useGetProcessus } from "@/features/processus/hooks/use-get-processus";
 
 function KpisPage() {

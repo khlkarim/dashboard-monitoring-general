@@ -1,10 +1,9 @@
-import type { RegisterRequest, UserResponse } from '../schemas/auth.schemas';
+import { User } from '@/features/users/types/users.types';
 import type { LoginRequest } from '../schemas/auth.schemas';
-
-export type User = UserResponse;
+import type { RegisterRequest } from '../schemas/auth.schemas';
 
 export interface AuthState {
-  user: UserResponse | null;
+  user: User | null;
   accessToken: string | null;
   refreshToken: string | null;
   tokenExpires?: number;
@@ -19,6 +18,6 @@ export interface AuthActions {
   refresh: () => Promise<void>;
   fetchCurrentUser: () => Promise<void>;
   logout: () => Promise<void>;
-  updateUser: (user: UserResponse) => void;
+  updateUser: (user: User) => void;
   setHasHydrated: (state: boolean) => void;
 }

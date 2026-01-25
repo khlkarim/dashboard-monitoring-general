@@ -21,6 +21,7 @@ import { DataTablePagination } from "@/components/data-table/data-table-paginati
 import { DataTableViewOptions } from "@/components/data-table/data-table-view-options";
 import { DataTableFacetedFilter } from "@/components/data-table/data-table-faceted-filter";
 import { CreateSprintRequest, SprintStatus } from "@/features/sprints/schemas/sprints.schemas";
+import { Protect, RoleEnum } from "@/features/auth";
 
 interface SprintsTableProps {
     sprints: Sprint[];
@@ -84,10 +85,14 @@ export function SprintsTable({ sprints } : SprintsTableProps) {
                 description="Track and manage all the sprints."
                 actions={
                     <>
-                        <Button onClick={handleCreate} size="sm">
-                            <Plus className="h-4 w-4" />
-                            Create Sprint
-                        </Button>
+                        <Protect
+                            allowedRoles={[RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT]}
+                        >
+                            <Button onClick={handleCreate} size="sm">
+                                <Plus className="h-4 w-4" />
+                                Create Sprint
+                            </Button>
+                        </Protect>
                     </>
                 }
             >
