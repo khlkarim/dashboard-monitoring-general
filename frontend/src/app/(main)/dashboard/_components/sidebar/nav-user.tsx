@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { getInitials } from "@/lib/utils";
+import { User } from "@/features/users/types/users.types";
 import { useAuthStore } from "@/features/auth/store/auth.store";
-import { User } from "@/features/auth/types/auth.types";
 import Link from "next/link";
 
 export function NavUser({
