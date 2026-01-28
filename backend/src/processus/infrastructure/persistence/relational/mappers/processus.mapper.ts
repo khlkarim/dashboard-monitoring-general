@@ -1,6 +1,7 @@
 import { Processus } from '../../../../domain/processus';
 import { ProcessusEntity } from '../entities/processus.entity';
 import { KpiMapper } from '../../../../../kpis/infrastructure/persistence/relational/mappers/kpi.mapper';
+import { ActivityMapper } from 'src/activities/infrastructure/persistence/relational/mappers/activity.mapper';
 
 export class ProcessusMapper {
   static toDomain(raw: ProcessusEntity): Processus {
@@ -10,6 +11,9 @@ export class ProcessusMapper {
     domainEntity.label = raw.label;
     if (raw.kpis) {
       domainEntity.kpis = raw.kpis.map((kpi) => KpiMapper.toDomain(kpi));
+    }
+    if (raw.activities) {
+      domainEntity.activities = raw.activities.map((activity) => ActivityMapper.toDomain(activity));
     }
     domainEntity.id = raw.id;
     domainEntity.createdAt = raw.createdAt;
@@ -25,6 +29,11 @@ export class ProcessusMapper {
     if (domainEntity.kpis) {
       persistenceEntity.kpis = domainEntity.kpis.map((kpi) =>
         KpiMapper.toPersistence(kpi),
+      );
+    }
+    if (domainEntity.activities) {
+      persistenceEntity.activities = domainEntity.activities.map((activity) =>
+        ActivityMapper.toPersistence(activity),
       );
     }
 

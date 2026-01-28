@@ -20,8 +20,11 @@ import { CommentsSeedModule } from './comments/comments-seed.module';
 
 import { SkillSeedModule } from './skill/skill-seed.module';
 
+import { ActivitySeedModule } from './activity/activity-seed.module';
+
 @Module({
   imports: [
+    ActivitySeedModule,
     SkillSeedModule,
     CommentsSeedModule,
     RoleSeedModule,

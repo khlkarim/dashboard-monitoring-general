@@ -1,3 +1,4 @@
+import { ProcessusMapper } from 'src/processus/infrastructure/persistence/relational/mappers/processus.mapper';
 import { Activity } from '../../../../domain/activity';
 
 
@@ -8,6 +9,10 @@ import { ActivityEntity } from '../entities/activity.entity';
 export class ActivityMapper {
   static toDomain(raw: ActivityEntity): Activity {
     const domainEntity = new Activity();
+    if (raw.processus) {
+      domainEntity.processus = ProcessusMapper.toDomain(raw.processus);
+    }
+
   domainEntity.endDate = raw.endDate;
 
 
@@ -37,6 +42,10 @@ export class ActivityMapper {
 
   static toPersistence(domainEntity: Activity): ActivityEntity {
     const persistenceEntity = new ActivityEntity();
+    if (domainEntity.processus) {
+      persistenceEntity.processus = ProcessusMapper.toPersistence(domainEntity.processus);
+    }
+
   persistenceEntity.endDate = domainEntity.endDate;
 
 

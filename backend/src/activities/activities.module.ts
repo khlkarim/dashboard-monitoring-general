@@ -13,10 +13,11 @@ import {
 import { ActivitiesService } from './activities.service';
 import { ActivitiesController } from './activities.controller';
 import { RelationalActivityPersistenceModule } from './infrastructure/persistence/relational/relational-persistence.module';
+import { ProcessusModule } from 'src/processus/processus.module';
 
 @Module({
   imports: [
-
+    ProcessusModule,
 
 
 

@@ -3,8 +3,15 @@
 
 
 import { ApiProperty } from '@nestjs/swagger';
+import { Processus } from 'src/processus/domain/processus';
 
 export class Activity {
+  @ApiProperty({
+    type: () => Processus,
+    nullable: false,
+  })
+  processus: Processus;
+
 @ApiProperty({
   type: () => 
                   Date,

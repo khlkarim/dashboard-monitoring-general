@@ -1,3 +1,5 @@
+  import { ProcessusDto } from '../../processus/dto/processus.dto';
+
 
 
 import {
@@ -26,6 +28,14 @@ import {
 
 
 
+
+
+
+  ValidateNested,
+
+  IsNotEmptyObject,
+
+
 } from 'class-validator';
 import { FileDto } from '../../files/dto/file.dto';
 import { RoleDto } from '../../roles/dto/role.dto';
@@ -34,6 +44,19 @@ import { SkillDto } from '../../skills/dto/skill.dto';
 import { lowerCaseTransformer } from '../../utils/transformers/lower-case.transformer';
 
 export class CreateUserDto {
+  @ApiProperty({
+    required: false,
+    type: () => 
+                        ProcessusDto,
+                })
+
+      @IsOptional()
+        @ValidateNested()
+    @Type(() => ProcessusDto)
+          @IsNotEmptyObject()
+      
+  processus?: ProcessusDto  | null;
+
   @ApiProperty({
     required: false,
     type: () => 

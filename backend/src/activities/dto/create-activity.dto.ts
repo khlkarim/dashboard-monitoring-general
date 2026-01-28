@@ -33,6 +33,8 @@
 
 
   IsDate,
+  ValidateNested,
+  IsNotEmptyObject,
 
   } from 'class-validator';
 
@@ -48,10 +50,17 @@
     // decorators here
 
   Transform,
+  Type,
 
   } from 'class-transformer';
+import { ProcessusDto } from 'src/processus/dto/processus.dto';
 
 export class CreateActivityDto {
+  @ValidateNested()
+  @Type(() => ProcessusDto)
+  @IsNotEmptyObject()
+  processus: ProcessusDto;
+
   @ApiProperty({
     required: false,
     type: () => 

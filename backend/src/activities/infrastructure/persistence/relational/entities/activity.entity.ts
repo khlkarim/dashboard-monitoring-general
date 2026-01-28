@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   Column,
+  ManyToOne,
 
 
 
@@ -31,11 +32,19 @@ import {
 
 } from 'typeorm';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
+import { ProcessusEntity } from 'src/processus/infrastructure/persistence/relational/entities/processus.entity';
 
 @Entity({
   name: 'activity',
 })
 export class ActivityEntity extends EntityRelationalHelper {
+  @ManyToOne(
+    () => ProcessusEntity,
+    (parentEntity) => parentEntity.activities,
+    { eager: true, nullable: false }
+  )
+  processus: ProcessusEntity;
+
   @Column({
     nullable: true,
     type:

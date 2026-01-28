@@ -1,3 +1,4 @@
+import { ProcessusModule } from '../processus/processus.module';
 
 
 import {
@@ -5,6 +6,7 @@ import {
   Module,
 
 
+  
 } from '@nestjs/common';
 
 import { UsersController } from './users.controller';
@@ -18,6 +20,9 @@ const infrastructurePersistenceModule = RelationalUserPersistenceModule;
 
 @Module({
   imports: [
+      ProcessusModule,
+  
+  
 
 
 

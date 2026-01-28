@@ -1,3 +1,4 @@
+import { Processus } from '../../processus/domain/processus';
 
 
 import { Exclude, Expose } from 'class-transformer';
@@ -10,6 +11,14 @@ import { Notification } from '../../notifications/domain/notification';
 import { Skill } from '../../skills/domain/skill';
 
 export class User {
+@ApiProperty({
+  type: () => 
+                  Processus,
+            nullable: true,
+})
+
+  processus?: Processus  | null;
+
 @ApiProperty({
   type: () => 
                   String,

@@ -1,3 +1,5 @@
+  import { ProcessusEntity } from '../../../../../processus/infrastructure/persistence/relational/entities/processus.entity';
+
 import {
   Column,
   CreateDateColumn,
@@ -11,6 +13,7 @@ import {
   OneToOne,
   OneToMany,
   ManyToMany,
+
 
 
 } from 'typeorm';
@@ -28,6 +31,19 @@ import { JoinTable } from 'typeorm';
   name: 'user',
 })
 export class UserEntity extends EntityRelationalHelper {
+
+
+      @ManyToOne(
+      () => ProcessusEntity,
+            { eager: true, nullable: true }
+    )
+  
+  
+  
+  processus?: ProcessusEntity  | null;
+
+
+
   @Column({
     nullable: true,
     type:

@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { KpiEntity } from '../../../../../kpis/infrastructure/persistence/relational/entities/kpi.entity';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
+import { ActivityEntity } from 'src/activities/infrastructure/persistence/relational/entities/activity.entity';
 
 @Entity({
   name: 'processus',
@@ -29,6 +30,9 @@ export class ProcessusEntity extends EntityRelationalHelper {
 
   @OneToMany(() => KpiEntity, (kpi) => kpi.processus)
   kpis: KpiEntity[];
+
+  @OneToMany(() => ActivityEntity, (activity) => activity.processus)
+  activities: ActivityEntity[];
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
