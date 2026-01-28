@@ -1,7 +1,13 @@
+
+
+
+
 import {
   HttpStatus,
   Injectable,
   UnprocessableEntityException,
+
+
 
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -25,6 +31,8 @@ import { Skill } from '../skills/domain/skill';
 @Injectable()
 export class UsersService {
   constructor(
+
+
     private readonly usersRepository: UserRepository,
     private readonly filesService: FilesService,
     private readonly skillsService: SkillsService,
@@ -33,6 +41,8 @@ export class UsersService {
   async create(createUserDto: CreateUserDto): Promise<User> {
     // Do not remove comment below.
     // <creating-property />
+  
+  
     let password: string | undefined = undefined;
 
     if (createUserDto.password) {
@@ -127,6 +137,10 @@ export class UsersService {
     return this.usersRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+  workplace: createUserDto.workplace,
+
+  mandate: createUserDto.mandate,
+
       firstName: createUserDto.firstName,
       lastName: createUserDto.lastName,
       email: email,
@@ -187,6 +201,8 @@ export class UsersService {
   ): Promise<User | null> {
     // Do not remove comment below.
     // <updating-property />
+
+
     let password: string | undefined = undefined;
 
     if (updateUserDto.password) {
@@ -289,6 +305,10 @@ export class UsersService {
     await this.usersRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+  workplace: updateUserDto.workplace,
+
+  mandate: updateUserDto.mandate,
+
       firstName: updateUserDto.firstName,
       lastName: updateUserDto.lastName,
       email,

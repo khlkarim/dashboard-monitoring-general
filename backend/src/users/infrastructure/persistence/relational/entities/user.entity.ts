@@ -11,6 +11,8 @@ import {
   OneToOne,
   OneToMany,
   ManyToMany,
+
+
 } from 'typeorm';
 import { TaskEntity } from '../../../../../tasks/infrastructure/persistence/relational/entities/task.entity';
 import { RoleEntity } from '../../../../../roles/infrastructure/persistence/relational/entities/role.entity';
@@ -26,6 +28,28 @@ import { JoinTable } from 'typeorm';
   name: 'user',
 })
 export class UserEntity extends EntityRelationalHelper {
+  @Column({
+    nullable: true,
+    type:
+              String,
+        })
+
+
+  workplace?: string  | null;
+
+
+
+  @Column({
+    nullable: true,
+    type:
+              String,
+        })
+
+
+  mandate?: string  | null;
+
+
+
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
