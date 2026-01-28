@@ -63,11 +63,21 @@ export const getColumns = (
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Name" />
             ),
+            cell: ({ getValue }) => (
+                <div className="truncate max-w-[200px]">
+                    {getValue<string>()}
+                </div>
+            ),
         },
         {
             accessorKey: "description",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Description" />
+            ),
+            cell: ({ getValue }) => (
+                <div className="truncate max-w-[300px]">
+                    {getValue<string>()}
+                </div>
             ),
         },
         {

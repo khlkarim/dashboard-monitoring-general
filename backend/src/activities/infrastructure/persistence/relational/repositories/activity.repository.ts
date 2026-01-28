@@ -72,7 +72,7 @@ export class ActivityRelationalRepository implements ActivityRepository {
     id: Activity['id'],
     payload: Partial<Activity>,
   ): Promise<Activity> {
-    const entity = await this.activityRepository.findOne({
+    let entity = await this.activityRepository.findOne({
       where: { id },
     });
 
@@ -80,7 +80,7 @@ export class ActivityRelationalRepository implements ActivityRepository {
       throw new Error('Record not found');
     }
 
-    const updatedEntity = await this.activityRepository.save(
+    await this.activityRepository.save(
       this.activityRepository.create(
         ActivityMapper.toPersistence({
           ...ActivityMapper.toDomain(entity),
@@ -89,7 +89,15 @@ export class ActivityRelationalRepository implements ActivityRepository {
       ),
     );
 
-    return ActivityMapper.toDomain(updatedEntity);
+    entity = await this.activityRepository.findOne({
+      where: { id },
+    });
+
+    if (!entity) {
+      throw new Error('Record not found');
+    }
+
+    return ActivityMapper.toDomain(entity);
   }
 
   async remove(id: Activity['id']): Promise<void> {

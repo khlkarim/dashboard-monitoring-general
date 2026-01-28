@@ -20,8 +20,8 @@ export const THEME_PRESET_OPTIONS = [
     label: "JEI",
     value: "jei",
     primary: {
-      light: "oklch(0.6489 0.2370 26.9728)",
-      dark: "oklch(0.7044 0.1872 23.1858)",
+      light: "#a80f21",
+      dark: "#a80f21",
     },
   },
   {
