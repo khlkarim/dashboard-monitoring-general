@@ -13,7 +13,7 @@ export class ActivityRelationalRepository implements ActivityRepository {
   constructor(
     @InjectRepository(ActivityEntity)
     private readonly activityRepository: Repository<ActivityEntity>,
-  ) {}
+  ) { }
 
   async create(data: Activity): Promise<Activity> {
     const persistenceModel = ActivityMapper.toPersistence(data);
@@ -31,6 +31,22 @@ export class ActivityRelationalRepository implements ActivityRepository {
     const entities = await this.activityRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
+    });
+
+    return entities.map((entity) => ActivityMapper.toDomain(entity));
+  }
+
+  async findAllWithPaginationByProcessusId({
+    paginationOptions,
+    processusId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    processusId: string;
+  }): Promise<Activity[]> {
+    const entities = await this.activityRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      where: { processus: { id: processusId } },
     });
 
     return entities.map((entity) => ActivityMapper.toDomain(entity));

@@ -14,6 +14,14 @@ export abstract class ActivityRepository {
     paginationOptions: IPaginationOptions;
   }): Promise<Activity[]>;
 
+  abstract findAllWithPaginationByProcessusId({
+    paginationOptions,
+    processusId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    processusId: string;
+  }): Promise<Activity[]>;
+
   abstract findById(id: Activity['id']): Promise<NullableType<Activity>>;
 
   abstract findByIds(ids: Activity['id'][]): Promise<Activity[]>;

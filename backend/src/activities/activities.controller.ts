@@ -36,7 +36,7 @@ import { FindAllActivitiesDto } from './dto/find-all-activities.dto';
   version: '1',
 })
 export class ActivitiesController {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  constructor(private readonly activitiesService: ActivitiesService) { }
 
   @Post()
   @ApiCreatedResponse({
@@ -54,7 +54,7 @@ export class ActivitiesController {
     @Query() query: FindAllActivitiesDto,
   ): Promise<InfinityPaginationResponseDto<Activity>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
+    let limit = query?.limit ?? 50;
     if (limit > 50) {
       limit = 50;
     }
@@ -65,6 +65,37 @@ export class ActivitiesController {
           page,
           limit,
         },
+      }),
+      { page, limit },
+    );
+  }
+
+  @Get('processus/:processusId')
+  @ApiParam({
+    name: 'processusId',
+    type: String,
+    required: true,
+  })
+  @ApiOkResponse({
+    type: InfinityPaginationResponse(Activity),
+  })
+  async findAllByProcessusId(
+    @Param('processusId') processusId: string,
+    @Query() query: FindAllActivitiesDto,
+  ): Promise<InfinityPaginationResponseDto<Activity>> {
+    const page = query?.page ?? 1;
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+
+    return infinityPagination(
+      await this.activitiesService.findAllWithPaginationByProcessusId({
+        paginationOptions: {
+          page,
+          limit,
+        },
+        processusId,
       }),
       { page, limit },
     );

@@ -6,7 +6,7 @@
 
 
 
-import { 
+import {
   HttpStatus,
   // common
   Injectable,
@@ -36,7 +36,7 @@ export class ActivitiesService {
     private readonly processusService: ProcessusService,
     // Dependencies here
     private readonly activityRepository: ActivityRepository,
-  ) {}
+  ) { }
 
   async create(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -44,7 +44,7 @@ export class ActivitiesService {
   ) {
     // Do not remove comment below.
     // <creating-property />
-    
+
     const processusObject = await this.processusService.findById(
       createActivityDto.processus.id,
     );
@@ -57,21 +57,21 @@ export class ActivitiesService {
       });
     }
     const processus = processusObject;
-  
-  
-  
+
+
+
 
     return this.activityRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
       processus,
-  endDate: createActivityDto.endDate,
+      endDate: createActivityDto.endDate,
 
-  startDate: createActivityDto.startDate,
+      startDate: createActivityDto.startDate,
 
-  description: createActivityDto.description,
+      description: createActivityDto.description,
 
-  title: createActivityDto.title,
+      title: createActivityDto.title,
 
     });
   }
@@ -86,6 +86,22 @@ export class ActivitiesService {
         page: paginationOptions.page,
         limit: paginationOptions.limit,
       },
+    });
+  }
+
+  findAllWithPaginationByProcessusId({
+    paginationOptions,
+    processusId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    processusId: string;
+  }) {
+    return this.activityRepository.findAllWithPaginationByProcessusId({
+      paginationOptions: {
+        page: paginationOptions.page,
+        limit: paginationOptions.limit,
+      },
+      processusId,
     });
   }
 
@@ -105,7 +121,7 @@ export class ActivitiesService {
     // Do not remove comment below.
     // <updating-property />
     let processus: Processus | undefined = undefined;
-    
+
     if (updateActivityDto.processus) {
       const processusObject = await this.processusService.findById(
         updateActivityDto.processus.id,
@@ -127,13 +143,13 @@ export class ActivitiesService {
       // Do not remove comment below.
       // <updating-property-payload />
       processus,
-  endDate: updateActivityDto.endDate,
+      endDate: updateActivityDto.endDate,
 
-  startDate: updateActivityDto.startDate,
+      startDate: updateActivityDto.startDate,
 
-  description: updateActivityDto.description,
+      description: updateActivityDto.description,
 
-  title: updateActivityDto.title,
+      title: updateActivityDto.title,
 
     });
   }

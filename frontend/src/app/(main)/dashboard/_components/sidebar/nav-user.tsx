@@ -15,7 +15,7 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { getInitials } from "@/lib/utils";
 import { useAuthStore } from "@/features/auth/store/auth.store";
-import { User } from "@/features/auth/types/auth.types";
+import { User } from "@/features/users/types/users.types";
 import Link from "next/link";
 
 export function NavUser({

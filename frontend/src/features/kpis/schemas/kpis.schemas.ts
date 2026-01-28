@@ -7,7 +7,7 @@ import { userResponseSchema } from '@/features/users/schemas/users.schemas';
 export const createKpiRequestSchema = z.object({
     sprint: z.object({ id: z.string() }).nullable().optional(),
     processus: z.object({ id: z.string() }).nullable().optional(),
-    createdBy: z.object({ id: z.string() }),
+    manager: z.object({ id: z.string() }),
     description: z.string().nullable().optional(),
     name: z.string().min(1),
     samples: z.array(z.string()).nullable().optional(),
@@ -24,7 +24,7 @@ export const kpiResponseSchema = z.object({
     id: z.string(),
     sprint: sprintResponseSchema.nullable().optional(),
     processus: processusResponseSchema.nullable().optional(),
-    createdBy: userResponseSchema,
+    manager: userResponseSchema,
     description: z.string().nullable().optional(),
     name: z.string(),
     createdAt: z.string().datetime(),
