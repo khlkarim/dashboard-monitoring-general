@@ -95,6 +95,22 @@ export class CommentsService {
     });
   }
 
+  findAllByTaskIdWithPagination({
+    paginationOptions,
+    taskId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    taskId: Task['id'];
+  }) {
+    return this.commentRepository.findAllByTaskIdWithPagination({
+      paginationOptions: {
+        page: paginationOptions.page,
+        limit: paginationOptions.limit,
+      },
+      taskId,
+    });
+  }
+
   findById(id: Comment['id']) {
     return this.commentRepository.findById(id);
   }

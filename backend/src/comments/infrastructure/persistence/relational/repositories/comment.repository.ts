@@ -7,13 +7,14 @@ import { Comment } from '../../../../domain/comment';
 import { CommentRepository } from '../../comment.repository';
 import { CommentMapper } from '../mappers/comment.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
+import { Task } from 'src/tasks/domain/task';
 
 @Injectable()
 export class CommentRelationalRepository implements CommentRepository {
   constructor(
     @InjectRepository(CommentEntity)
     private readonly commentRepository: Repository<CommentEntity>,
-  ) {}
+  ) { }
 
   async create(data: Comment): Promise<Comment> {
     const persistenceModel = CommentMapper.toPersistence(data);
@@ -29,6 +30,22 @@ export class CommentRelationalRepository implements CommentRepository {
     paginationOptions: IPaginationOptions;
   }): Promise<Comment[]> {
     const entities = await this.commentRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+    });
+
+    return entities.map((entity) => CommentMapper.toDomain(entity));
+  }
+
+  async findAllByTaskIdWithPagination({
+    paginationOptions,
+    taskId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    taskId: Task['id'];
+  }): Promise<Comment[]> {
+    const entities = await this.commentRepository.find({
+      where: { task: { id: taskId } },
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
     });

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Protect, RoleEnum } from "@/features/auth";
 import { Separator } from "@/components/ui/separator";
 import { useParams, useRouter } from "next/navigation";
 import { TasksBoard } from "../_components/tasks-board";
@@ -10,14 +11,13 @@ import { SprintStats } from "../_components/sprint-stats";
 import { PageHeader } from "@/components/common/page-header";
 import { BaseDialog } from "@/components/common/form-dialog";
 import { LoadingPage } from "@/components/common/loading-page";
+import { withAuth } from "@/features/auth/components/with-auth";
 import { ErrorDisplay } from "@/components/common/error-display";
 import { TaskForm } from "@/features/tasks/components/task-form";
 import { useGetTasks } from "@/features/tasks/hooks/use-get-tasks";
-import { withAuth } from "@/features/auth/components/with-auth";
 import { useCreateTask } from "@/features/tasks/hooks/use-create-task";
 import { useNavigationStore } from "@/navigation/store/navigation.store";
 import { useGetSprintById } from "@/features/sprints/hooks/use-get-sprint-by-id";
-import { Protect, RoleEnum } from "@/features/auth";
 
 function SprintDetailPage() {
     const params = useParams();

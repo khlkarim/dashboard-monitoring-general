@@ -36,7 +36,7 @@ import { FindAllCommentsDto } from './dto/find-all-comments.dto';
   version: '1',
 })
 export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {}
+  constructor(private readonly commentsService: CommentsService) { }
 
   @Post()
   @ApiCreatedResponse({
@@ -65,6 +65,37 @@ export class CommentsController {
           page,
           limit,
         },
+      }),
+      { page, limit },
+    );
+  }
+
+  @Get('task/:taskId')
+  @ApiParam({
+    name: 'taskId',
+    type: String,
+    required: true,
+  })
+  @ApiOkResponse({
+    type: InfinityPaginationResponse(Comment),
+  })
+  async findAllByTaskId(
+    @Query() query: FindAllCommentsDto,
+    @Param('taskId') taskId: string,
+  ): Promise<InfinityPaginationResponseDto<Comment>> {
+    const page = query?.page ?? 1;
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+
+    return infinityPagination(
+      await this.commentsService.findAllByTaskIdWithPagination({
+        paginationOptions: {
+          page,
+          limit,
+        },
+        taskId,
       }),
       { page, limit },
     );
