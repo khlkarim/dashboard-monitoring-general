@@ -92,7 +92,7 @@ export function KpiForm({ initialData, onSubmit, isLoading, type = KpiType.PROCE
             ...values,
             sprint: type === KpiType.SPRINT && values.sprint ? values.sprint : null,
             processus: type === KpiType.PROCESSUS && values.processus ? values.processus : null,
-            createdBy: {
+            manager: {
                 id: user?.id,
             },
         };

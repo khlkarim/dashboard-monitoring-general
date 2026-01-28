@@ -1,8 +1,18 @@
+import { ProcessusService } from '../processus/processus.service';
+  import { Processus } from '../processus/domain/processus';
+
+
+
+
+
 import {
   HttpStatus,
   Injectable,
   UnprocessableEntityException,
 
+
+
+  
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { NullableType } from '../utils/types/nullable.type';
@@ -25,6 +35,11 @@ import { Skill } from '../skills/domain/skill';
 @Injectable()
 export class UsersService {
   constructor(
+  
+  private readonly processusService: ProcessusService,
+
+
+
     private readonly usersRepository: UserRepository,
     private readonly filesService: FilesService,
     private readonly skillsService: SkillsService,
@@ -33,6 +48,28 @@ export class UsersService {
   async create(createUserDto: CreateUserDto): Promise<User> {
     // Do not remove comment below.
     // <creating-property />
+            let processus: Processus  | null | undefined = undefined;
+
+      if (createUserDto.processus) {
+        const processusObject = await this.processusService.findById(
+          createUserDto.processus.id,
+        );
+        if (!processusObject) {
+          throw new UnprocessableEntityException({
+            status: HttpStatus.UNPROCESSABLE_ENTITY,
+            errors: {
+              processus: 'notExists',
+            },
+          });
+        }
+        processus = processusObject;
+      }
+              else if (createUserDto.processus === null) {
+          processus = null;
+        }
+            
+  
+  
     let password: string | undefined = undefined;
 
     if (createUserDto.password) {
@@ -127,6 +164,12 @@ export class UsersService {
     return this.usersRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+  processus,
+
+  workplace: createUserDto.workplace,
+
+  mandate: createUserDto.mandate,
+
       firstName: createUserDto.firstName,
       lastName: createUserDto.lastName,
       email: email,
@@ -187,6 +230,28 @@ export class UsersService {
   ): Promise<User | null> {
     // Do not remove comment below.
     // <updating-property />
+      let processus: Processus  | null | undefined = undefined;
+
+    if (updateUserDto.processus) {
+      const processusObject = await this.processusService.findById(
+        updateUserDto.processus.id,
+      );
+      if (!processusObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            processus: 'notExists',
+          },
+        });
+      }
+      processus = processusObject;
+    }
+          else if (updateUserDto.processus === null) {
+        processus = null;
+      }
+      
+
+
     let password: string | undefined = undefined;
 
     if (updateUserDto.password) {
@@ -289,6 +354,12 @@ export class UsersService {
     await this.usersRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+  processus,
+
+  workplace: updateUserDto.workplace,
+
+  mandate: updateUserDto.mandate,
+
       firstName: updateUserDto.firstName,
       lastName: updateUserDto.lastName,
       email,

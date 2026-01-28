@@ -3,6 +3,7 @@ import { RoleEnum } from '../types/roles.types';
 import { StatusEnum } from '../types/status.types';
 import { fileTypeSchema } from '@/features/files/schemas/files.schemas';
 import { skillSchema } from '@/features/skills/schemas/skills.schemas';
+import { processusResponseSchema } from '@/features/processus/schemas/processus.schemas';
 
 export const roleSchema = z.object({
     id: z.enum([RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT, RoleEnum.MEMBER, RoleEnum.ALUMNI]).optional(),
@@ -16,13 +17,16 @@ export const statusSchema = z.object({
 
 export const userResponseSchema = z.object({
     id: z.string(),
-    email: z.string().email().nullable(),
+    email: z.string().nullable(),
     firstName: z.string().nullable(),
     lastName: z.string().nullable(),
     photo: fileTypeSchema.nullable().optional(),
     role: roleSchema.nullable().optional(),
     status: statusSchema.nullable().optional(),
     skills: z.array(skillSchema),
+    processus: processusResponseSchema.optional().nullable(),
+    workplace: z.string().nullable().optional(),
+    mandate: z.string().nullable().optional(),
     provider: z.string().optional(),
     socialId: z.string().nullable().optional(),
     createdAt: z.string().datetime().optional(),
@@ -31,13 +35,16 @@ export const userResponseSchema = z.object({
 });
 
 export const createUserRequestSchema = z.object({
-    email: z.string().email().nullable(),
+    email: z.string().nullable(),
     password: z.string().min(6).optional(),
     firstName: z.string().min(1).nullable(),
     lastName: z.string().min(1).nullable(),
     photo: fileTypeSchema.nullable().optional(),
     role: roleSchema.nullable().optional(),
     status: statusSchema.optional(),
+    processus: z.object({ id: z.string() }).optional().nullable(),
+    workplace: z.string().nullable().optional(),
+    mandate: z.string().nullable().optional(),
 });
 
 /** Update User */
@@ -45,11 +52,14 @@ export const updateUserRequestSchema = z.object({
     photo: z.any().nullable().optional(), // File or null
     firstName: z.string().min(1).optional().nullable(),
     lastName: z.string().min(1).optional().nullable(),
-    email: z.string().email().optional().nullable(),
+    email: z.string().optional().nullable(),
     password: z.string().min(6).optional().nullable(),
     oldPassword: z.string().min(1).optional().nullable(),
     role: roleSchema.nullable().optional().nullable(),
     skills: z.array(skillSchema).optional().nullable(),
+    processus: z.object({ id: z.string() }).optional().nullable(),
+    workplace: z.string().nullable().optional(),
+    mandate: z.string().nullable().optional(),
 });
 export type UpdateUserRequest = z.infer<typeof updateUserRequestSchema>;
 

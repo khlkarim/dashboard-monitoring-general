@@ -50,8 +50,14 @@ import { NotificationsModule } from './notifications/notifications.module';
 
 import { SkillsModule } from './skills/skills.module';
 
+import { ActivitiesModule } from './activities/activities.module';
+
+import { TaskStatusesModule } from './task-statuses/task-statuses.module';
+
 @Module({
   imports: [
+    TaskStatusesModule,
+    ActivitiesModule,
     SkillsModule,
     NotificationsModule,
     CommentsModule,

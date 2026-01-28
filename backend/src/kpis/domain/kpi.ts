@@ -35,7 +35,7 @@ export class Kpi {
     type: () => User,
     nullable: false,
   })
-  createdBy: User;
+  manager: User;
 
   @ApiProperty({
     type: () => String,

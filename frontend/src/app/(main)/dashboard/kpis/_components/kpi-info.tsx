@@ -20,7 +20,7 @@ export function KpiInfo({ kpi } : KpiInfoProps) {
                     </div>
                     <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">
-                            {kpi.createdBy ? `${kpi.createdBy.firstName} ${kpi.createdBy.lastName}` : "Unknown"}
+                            {kpi.manager ? `${kpi.manager.firstName} ${kpi.manager.lastName}` : "Unknown"}
                         </span>
                     </div>
                     {kpi.sprint && (

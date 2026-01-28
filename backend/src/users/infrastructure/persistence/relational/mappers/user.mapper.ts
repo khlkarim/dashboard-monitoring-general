@@ -1,4 +1,8 @@
 import { FileEntity } from '../../../../../files/infrastructure/persistence/relational/entities/file.entity';
+  import { ProcessusMapper } from '../../../../../processus/infrastructure/persistence/relational/mappers/processus.mapper';
+
+
+
 import { FileMapper } from '../../../../../files/infrastructure/persistence/relational/mappers/file.mapper';
 import { RoleEntity } from '../../../../../roles/infrastructure/persistence/relational/entities/role.entity';
 import { StatusEntity } from '../../../../../statuses/infrastructure/persistence/relational/entities/status.entity';
@@ -10,6 +14,26 @@ import { SkillMapper } from '../../../../../skills/infrastructure/persistence/re
 export class UserMapper {
   static toDomain(raw: UserEntity): User {
     const domainEntity = new User();
+      if (raw.processus) {
+      domainEntity.processus = ProcessusMapper.toDomain(raw.processus);
+    }
+          else if (raw.processus === null) {
+        domainEntity.processus = null;
+      }
+      
+
+
+
+  domainEntity.workplace = raw.workplace;
+
+
+
+
+  domainEntity.mandate = raw.mandate;
+
+
+
+
     domainEntity.id = raw.id;
     domainEntity.email = raw.email;
     domainEntity.password = raw.password;
@@ -64,6 +88,26 @@ export class UserMapper {
     }
 
     const persistenceEntity = new UserEntity();
+      if (domainEntity.processus) {
+      persistenceEntity.processus = ProcessusMapper.toPersistence(domainEntity.processus);
+    }
+          else if (domainEntity.processus === null) {
+        persistenceEntity.processus = null;
+      }
+      
+
+
+
+  persistenceEntity.workplace = domainEntity.workplace;
+
+
+
+
+  persistenceEntity.mandate = domainEntity.mandate;
+
+
+
+
 
     persistenceEntity.id = domainEntity.id;
     persistenceEntity.email = domainEntity.email;

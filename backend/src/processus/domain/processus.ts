@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Kpi } from '../../kpis/domain/kpi';
+import { Activity } from 'src/activities/domain/activity';
 
 export class Processus {
   @ApiProperty({
@@ -20,6 +21,11 @@ export class Processus {
     type: () => [Kpi],
   })
   kpis?: Kpi[];
+
+  @ApiProperty({
+    type: () => [Activity],
+  })
+  activities?: Activity[];
 
   @ApiProperty({
     type: String,

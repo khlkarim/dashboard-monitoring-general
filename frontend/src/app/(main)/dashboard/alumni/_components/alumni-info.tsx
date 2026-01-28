@@ -1,19 +1,23 @@
 import { format } from "date-fns";
-import { Mail } from "lucide-react";
+import { Mail, Briefcase, FileText } from "lucide-react";
 import { User } from "@/features/users/types/users.types";
-import { Card, CardTitle, CardDescription, CardContent, CardHeader } from "@/components/ui/card";
+import {
+    Card,
+    CardTitle,
+    CardDescription,
+    CardContent,
+    CardHeader,
+} from "@/components/ui/card";
+import { RoleEnum } from "@/features/users/types/roles.types";
 
 interface UserInfoProps {
     user: User;
 }
 
-/** 
- * currently this is just the same code as UserInfo 
- * but its copied here because its highly likely that it will change
-*/
-export function AlumniInfo({ user } : UserInfoProps) {
+export function AlumniInfo({ user }: UserInfoProps) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Contact Information */}
             <div className="lg:col-span-8 flex flex-col gap-6">
                 <Card className="h-full">
                     <CardHeader>
@@ -27,19 +31,54 @@ export function AlumniInfo({ user } : UserInfoProps) {
                         <div className="flex flex-col gap-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="flex flex-col gap-1">
-                                    <span className="text-sm font-medium text-muted-foreground">Email Address</span>
+                                    <span className="text-sm font-medium text-muted-foreground">
+                                        Email Address
+                                    </span>
                                     <span className="text-base">{user.email || "No email provided"}</span>
                                 </div>
                                 <div className="flex flex-col gap-1">
-                                    <span className="text-sm font-medium text-muted-foreground">Auth Provider</span>
+                                    <span className="text-sm font-medium text-muted-foreground">
+                                        Auth Provider
+                                    </span>
                                     <span className="text-base capitalize">{user.provider || "Local"}</span>
                                 </div>
                             </div>
                         </div>
                     </CardContent>
                 </Card>
+
+                {/* Alumni Info - Workplace and Mandate */}
+                {user.role?.id === RoleEnum.ALUMNI && (
+                    <Card className="h-full">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Briefcase className="h-5 w-5" />
+                                Alumni Information
+                            </CardTitle>
+                            <CardDescription>Workplace and mandate details for this alumni.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex flex-col gap-4">
+                            {user.workplace && (
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-sm font-medium text-muted-foreground">Workplace</span>
+                                    <span className="text-base">{user.workplace}</span>
+                                </div>
+                            )}
+                            {user.mandate && (
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-sm font-medium text-muted-foreground">Mandate</span>
+                                    <span className="text-base">{user.mandate}</span>
+                                </div>
+                            )}
+                            {!user.workplace && !user.mandate && (
+                                <span className="text-sm text-muted-foreground">No alumni details provided.</span>
+                            )}
+                        </CardContent>
+                    </Card>
+                )}
             </div>
 
+            {/* System Metadata */}
             <div className="lg:col-span-4 flex flex-col gap-6">
                 <Card>
                     <CardHeader>
@@ -48,7 +87,9 @@ export function AlumniInfo({ user } : UserInfoProps) {
                     <CardContent className="space-y-4">
                         <div className="flex justify-between items-center py-2 border-b">
                             <span className="text-sm text-muted-foreground">User ID</span>
-                            <code className="text-xs bg-muted p-1 rounded block truncate max-w-[150px]">{user.id}</code>
+                            <code className="text-xs bg-muted p-1 rounded block truncate max-w-[150px]">
+                                {user.id}
+                            </code>
                         </div>
                         <div className="flex justify-between items-center py-2 border-b">
                             <span className="text-sm text-muted-foreground">Last Updated</span>

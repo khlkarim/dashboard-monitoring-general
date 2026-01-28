@@ -1,3 +1,6 @@
+import { Processus } from '../../processus/domain/processus';
+
+
 import { Exclude, Expose } from 'class-transformer';
 import { FileType } from '../../files/domain/file';
 import { Role } from '../../roles/domain/role';
@@ -8,6 +11,30 @@ import { Notification } from '../../notifications/domain/notification';
 import { Skill } from '../../skills/domain/skill';
 
 export class User {
+@ApiProperty({
+  type: () => 
+                  Processus,
+            nullable: true,
+})
+
+  processus?: Processus  | null;
+
+@ApiProperty({
+  type: () => 
+                  String,
+            nullable: true,
+})
+
+  workplace?: string  | null;
+
+@ApiProperty({
+  type: () => 
+                  String,
+            nullable: true,
+})
+
+  mandate?: string  | null;
+
   @ApiProperty({
     type: String,
   })

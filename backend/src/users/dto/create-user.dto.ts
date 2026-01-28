@@ -1,3 +1,7 @@
+  import { ProcessusDto } from '../../processus/dto/processus.dto';
+
+
+
 import {
   // decorators here
   Transform,
@@ -10,6 +14,28 @@ import {
   IsNotEmpty,
   IsOptional,
   MinLength,
+
+
+  IsString,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ValidateNested,
+
+  IsNotEmptyObject,
+
+
 } from 'class-validator';
 import { FileDto } from '../../files/dto/file.dto';
 import { RoleDto } from '../../roles/dto/role.dto';
@@ -18,6 +44,41 @@ import { SkillDto } from '../../skills/dto/skill.dto';
 import { lowerCaseTransformer } from '../../utils/transformers/lower-case.transformer';
 
 export class CreateUserDto {
+  @ApiProperty({
+    required: false,
+    type: () => 
+                        ProcessusDto,
+                })
+
+      @IsOptional()
+        @ValidateNested()
+    @Type(() => ProcessusDto)
+          @IsNotEmptyObject()
+      
+  processus?: ProcessusDto  | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => 
+                        String,
+                })
+
+      @IsOptional()
+              @IsString()
+      
+  workplace?: string  | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => 
+                        String,
+                })
+
+      @IsOptional()
+              @IsString()
+      
+  mandate?: string  | null;
+
   @ApiProperty({ example: 'test1@example.com', type: String })
   @Transform(lowerCaseTransformer)
   @IsNotEmpty()

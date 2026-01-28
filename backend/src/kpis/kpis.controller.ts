@@ -177,8 +177,8 @@ export class KpisController {
       if (!kpi) {
         throw new NotFoundException('KPI not found');
       }
-      if (kpi.createdBy.id !== request.user.id) {
-        throw new ForbiddenException('You can only update KPIs created by you');
+      if (kpi.manager.id !== request.user.id) {
+        throw new ForbiddenException('You can only update KPIs managed by you');
       }
     }
     return this.kpisService.update(id, updateKpiDto);
@@ -198,8 +198,8 @@ export class KpisController {
       if (!kpi) {
         throw new NotFoundException('KPI not found');
       }
-      if (kpi.createdBy.id !== request.user.id) {
-        throw new ForbiddenException('You can only delete KPIs created by you');
+      if (kpi.manager.id !== request.user.id) {
+        throw new ForbiddenException('You can only delete KPIs managed by you');
       }
     }
     return this.kpisService.remove(id);

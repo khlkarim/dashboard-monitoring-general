@@ -38,7 +38,7 @@ export class KpiEntity extends EntityRelationalHelper {
   sprint?: SprintEntity | null;
 
   @ManyToOne(() => UserEntity, { eager: true, nullable: false })
-  createdBy: UserEntity;
+  manager: UserEntity;
 
   @Column({
     nullable: true,

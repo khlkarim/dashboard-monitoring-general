@@ -54,7 +54,7 @@ export class ProcessusController {
     @Query() query: FindAllProcessusDto,
   ): Promise<InfinityPaginationResponseDto<Processus>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
+    let limit = query?.limit ?? 50;
     if (limit > 50) {
       limit = 50;
     }

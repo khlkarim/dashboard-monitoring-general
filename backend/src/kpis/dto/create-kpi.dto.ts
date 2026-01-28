@@ -2,7 +2,6 @@ import { ProcessusDto } from '../../processus/dto/processus.dto';
 import {
   IsString,
   IsOptional,
-  IsNumber,
   ValidateNested,
   IsNotEmptyObject,
   IsArray,
@@ -63,7 +62,7 @@ export class CreateKpiDto {
   @ValidateNested()
   @Type(() => UserDto)
   @IsNotEmptyObject()
-  createdBy: UserDto;
+  manager: UserDto;
 
   @ApiProperty({
     required: false,

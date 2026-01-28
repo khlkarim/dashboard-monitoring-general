@@ -21,8 +21,8 @@ export class KpiMapper {
       domainEntity.sprint = SprintMapper.toDomain(raw.sprint);
     }
 
-    if (raw.createdBy) {
-      domainEntity.createdBy = UserMapper.toDomain(raw.createdBy);
+    if (raw.manager) {
+      domainEntity.manager = UserMapper.toDomain(raw.manager);
     }
 
     domainEntity.description = raw.description;
@@ -50,10 +50,10 @@ export class KpiMapper {
       persistenceEntity.sprint = sprintEntity;
     }
 
-    if (domainEntity.createdBy) {
+    if (domainEntity.manager) {
       const userEntity = new UserEntity();
-      userEntity.id = domainEntity.createdBy.id;
-      persistenceEntity.createdBy = userEntity;
+      userEntity.id = domainEntity.manager.id;
+      persistenceEntity.manager = userEntity;
     }
 
     persistenceEntity.description = domainEntity.description;

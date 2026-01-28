@@ -49,19 +49,19 @@ export class KpisService {
     else if (createKpiDto.processus === null) {
       processus = null;
     }
-    // Validate and fetch createdBy user (required)
-    const createdByObject = await this.usersService.findById(
-      createKpiDto.createdBy.id,
+    // Validate and fetch manager user (required)
+    const managerObject = await this.usersService.findById(
+      createKpiDto.manager.id,
     );
-    if (!createdByObject) {
+    if (!managerObject) {
       throw new UnprocessableEntityException({
         status: HttpStatus.UNPROCESSABLE_ENTITY,
         errors: {
-          createdBy: 'notExists',
+          manager: 'notExists',
         },
       });
     }
-    const createdBy = createdByObject;
+    const manager = managerObject;
 
     // Validate and fetch sprint (optional)
     let sprint: Sprint | null = null;
@@ -90,7 +90,7 @@ export class KpisService {
       processus,
 
       sprint,
-      createdBy,
+      manager,
       description: createKpiDto.description,
       name: createKpiDto.name,
     });
@@ -177,20 +177,20 @@ export class KpisService {
     }
 
 
-    let createdBy: User | undefined = undefined;
-    if (updateKpiDto.createdBy) {
-      const createdByObject = await this.usersService.findById(
-        updateKpiDto.createdBy.id,
+    let manager: User | undefined = undefined;
+    if (updateKpiDto.manager) {
+      const managerObject = await this.usersService.findById(
+        updateKpiDto.manager.id,
       );
-      if (!createdByObject) {
+      if (!managerObject) {
         throw new UnprocessableEntityException({
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            createdBy: 'notExists',
+            manager: 'notExists',
           },
         });
       }
-      createdBy = createdByObject;
+      manager = managerObject;
     }
 
     let sprint: Sprint | null | undefined = undefined;
@@ -221,7 +221,7 @@ export class KpisService {
       processus,
 
       sprint,
-      createdBy,
+      manager,
       description: updateKpiDto.description,
       name: updateKpiDto.name,
     });
