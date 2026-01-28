@@ -71,6 +71,7 @@
     "@faker-js/faker": "^10.1.0",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/lodash": "^4.17.23",
+    "@types/lodash.throttle": "^4.1.9",
     "@types/node": "^22.19.0",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",

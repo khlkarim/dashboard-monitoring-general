@@ -1,7 +1,7 @@
 import { toast } from 'sonner';
 import { activitiesApi } from '../api/activities.api';
-import { UpdateActivityRequest } from '../schemas/activities.schemas';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { UpdateActivityRequest } from '../schemas/activities.schemas';
 
 export const useUpdateActivity = () => {
     const queryClient = useQueryClient();

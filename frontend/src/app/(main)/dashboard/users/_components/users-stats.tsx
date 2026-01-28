@@ -14,6 +14,7 @@ export function UsersStats({ users } : UsersStatsProps) {
 
     useEffect(() => {
         if(users) {
+            console.log(users);
             setStats([
                 {
                     title: "Total Users",
@@ -24,14 +25,14 @@ export function UsersStats({ users } : UsersStatsProps) {
                 },
                 {
                     title: "Active Users",
-                    value: users.filter(u => u.status?.name === StatusEnum.ACTIVE).length.toString(),
+                    value: users.filter(u => u.status?.id === StatusEnum.ACTIVE).length.toString(),
                     description: "Currently active accounts",
                     icon: <Users className="text-emerald-500" />,
                     className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-emerald-500/10 bg-gradient-to-br from-emerald-500/5 to-transparent"
                 },
                 {
                     title: "Administrators",
-                    value: users.filter(u => u.role?.name === RoleEnum.ADMINISTRATOR).length.toString(),
+                    value: users.filter(u => u.role?.id === RoleEnum.ADMINISTRATOR).length.toString(),
                     description: "With full system access",
                     icon: <Users className="text-orange-500" />,
                     className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-orange-500/10 bg-gradient-to-br from-orange-500/5 to-transparent"

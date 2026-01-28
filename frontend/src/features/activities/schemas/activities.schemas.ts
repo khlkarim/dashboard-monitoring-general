@@ -30,6 +30,9 @@ export type ActivityResponse = z.infer<typeof activityResponseSchema>;
 
 /** Activity Form Schema **/
 export const activityFormSchema = z.object({
+    processus: z.object({
+      id: z.string().min(1, "Processus is required"),
+    }),
     title: z.string().nullable().optional(),
     description: z.string().nullable().optional(),
     startDate: z.string().datetime().optional().nullable(),

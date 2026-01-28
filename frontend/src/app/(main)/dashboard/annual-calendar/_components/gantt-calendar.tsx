@@ -1,23 +1,22 @@
 "use client";
 
 import { isAfter, isBefore } from "date-fns";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
-  GanttProvider,
-  GanttSidebar,
-  GanttSidebarGroup,
-  GanttSidebarItem,
-  GanttTimeline,
-  GanttHeader,
-  GanttFeatureList,
-  GanttFeatureListGroup,
-  GanttFeatureItem,
-  GanttToday,
-  GanttStatus,
-  GanttFeature,
-} from "@/components/ui/gantt"; // adjust import path if needed
+    GanttFeatureList,
+    GanttFeatureListGroup,
+    GanttHeader,
+    GanttProvider,
+    GanttSidebar,
+    GanttSidebarGroup,
+    GanttSidebarItem,
+    GanttTimeline,
+    GanttToday,
+} from "@/components/kibo-ui/gantt";
 
+import { ActivityGanttFeature } from "./activity-gantt-feature";
+import { GanttFeature, GanttStatus } from "@/components/ui/gantt";
 import { Processus } from "@/features/processus/types/processus.types";
 import { Activity } from "@/features/activities/types/activities.types";
 
@@ -37,141 +36,99 @@ function resolveStatus(start: Date, end: Date): GanttStatus {
 
 interface GanttCalendarProps {
   processus: Processus[];
-  activites: Activity[];
+  activities: Activity[];
 }
 
 export function GanttCalendar({
-  processus,
-  activites,
+    processus,
+    activities,
 }: GanttCalendarProps) {
-  const [mounted, setMounted] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(true);
+    const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
-  /* -------------------------------------------
-     Transform backend data → Gantt features
-  ------------------------------------------- */
+    const featuresByProcessus = useMemo(() => {
+        const map = new Map<string, { feature: GanttFeature; activity: Activity }[]>();
 
-  const featuresByProcessus = useMemo(() => {
-    const map = new Map<string, GanttFeature[]>();
+        for (const activity of activities) {
+            if (!activity.startDate || !activity.endDate) continue;
 
-    for (const activity of activites) {
-      if (!activity.startDate || !activity.endDate) continue;
+            const startAt = new Date(activity.startDate);
+            const endAt = new Date(activity.endDate);
 
-      const startAt = new Date(activity.startDate);
-      const endAt = new Date(activity.endDate);
+            const feature: GanttFeature = {
+                id: activity.id,
+                name: activity.title ?? "Untitled activity",
+                startAt,
+                endAt,
+                status: resolveStatus(startAt, endAt),
+            };
 
-      const feature: GanttFeature = {
-        id: activity.id,
-        name: activity.title ?? "Untitled activity",
-        startAt,
-        endAt,
-        status: resolveStatus(startAt, endAt),
-      };
+            const pid = activity.processus.id;
 
-      const pid = activity.processus.id;
+            if (!map.has(pid)) {
+                map.set(pid, []);
+            }
 
-      if (!map.has(pid)) {
-        map.set(pid, []);
-      }
+            map.get(pid)!.push({feature, activity});
+        }
+        console.log(map);
+        return map;
+    }, [activities]);
 
-      map.get(pid)!.push(feature);
+    const zoom = useMemo(() => {
+        if (typeof window === "undefined") return 100;
+        if (window.innerWidth < 640) return 50;
+        if (window.innerWidth < 1024) return 75;
+        return 100;
+    }, []);
+
+    // SSR guard (important for gantt internals)
+    if (!mounted) {
+        return <div className="h-[400px] w-full bg-muted/50 animate-pulse" />;
     }
 
-    return map;
-  }, [activites]);
+    return (
+        <div className="w-full overflow-x-auto">
+            <GanttProvider
+                className="min-w-[900px] border rounded-lg"
+                range="monthly"
+                zoom={zoom}
+            >
+                {/* Sidebar */}
+                <GanttSidebar className="min-w-[220px] max-w-[260px]">
+                    {processus.map((proc) => (
+                        <GanttSidebarGroup key={proc.id} name={proc.label}>
+                            {(featuresByProcessus.get(proc.id) ?? []).map((fa) => (
+                                <GanttSidebarItem key={fa.feature.id} feature={fa.feature} />
+                            ))}
+                        </GanttSidebarGroup>
+                    ))}
+                </GanttSidebar>
 
-  /* -------------------------------------------
-     Drag handling (local-only for now)
-  ------------------------------------------- */
+                {/* Timeline */}
+                <GanttTimeline>
+                    <GanttHeader />
 
-  const handleMoveFeature = useCallback(
-    (_id: string, _startAt: Date, _endAt: Date | null) => {
-      // noop for now
-    },
-    []
-  );
+                    <GanttFeatureList>
+                        {processus.map((proc) => (
+                            <GanttFeatureListGroup key={proc.id}>
+                                {(featuresByProcessus.get(proc.id) ?? []).map((fa) => (
+                                    <ActivityGanttFeature 
+                                        key={fa.feature.id} 
+                                        feature={fa.feature} 
+                                        activity={fa.activity}
+                                    />
+                                ))}
+                            </GanttFeatureListGroup>
+                        ))}
+                    </GanttFeatureList>
 
-  /* -------------------------------------------
-     Responsive zoom
-  ------------------------------------------- */
-
-  const zoom = useMemo(() => {
-    if (typeof window === "undefined") return 100;
-    if (window.innerWidth < 640) return 50;
-    if (window.innerWidth < 1024) return 75;
-    return 100;
-  }, []);
-
-  /* -------------------------------------------
-     SSR guard (necessary for dnd-kit)
-  ------------------------------------------- */
-
-  if (!mounted) {
-    return <div className="h-[400px] w-full bg-muted/50 animate-pulse" />;
-  }
-
-  return (
-    <div className="w-full">
-      {/* Mobile sidebar toggle */}
-      <div className="flex items-center justify-between mb-2 md:hidden">
-        <button
-          onClick={() => setShowSidebar(s => !s)}
-          className="text-sm px-3 py-1 border rounded-md"
-        >
-          {showSidebar ? "Hide groups" : "Show groups"}
-        </button>
-      </div>
-
-      {/* Scroll container */}
-      <div className="relative w-full overflow-x-auto">
-        <GanttProvider
-          className="min-w-[900px] border rounded-lg"
-          range="monthly"
-          zoom={zoom}
-        >
-          {/* Sidebar */}
-          {showSidebar && (
-            <GanttSidebar className="min-w-[220px] max-w-[260px]">
-              {processus.map(proc => (
-                <GanttSidebarGroup key={proc.id} name={proc.label}>
-                  {(featuresByProcessus.get(proc.id) ?? []).map(feature => (
-                    <GanttSidebarItem key={feature.id} feature={feature} />
-                  ))}
-                </GanttSidebarGroup>
-              ))}
-            </GanttSidebar>
-          )}
-
-          {/* Timeline */}
-          <GanttTimeline>
-            <GanttHeader />
-
-            <GanttFeatureList>
-              {processus.map(proc => (
-                <GanttFeatureListGroup key={proc.id}>
-                  {(featuresByProcessus.get(proc.id) ?? []).map(feature => (
-                    <GanttFeatureItem
-                      key={feature.id}
-                      {...feature}
-                      onMove={handleMoveFeature}
-                    >
-                      <p className="flex-1 truncate text-[10px] sm:text-xs">
-                        {feature.name}
-                      </p>
-                    </GanttFeatureItem>
-                  ))}
-                </GanttFeatureListGroup>
-              ))}
-            </GanttFeatureList>
-
-            <GanttToday />
-          </GanttTimeline>
-        </GanttProvider>
-      </div>
-    </div>
-  );
+                    <GanttToday />
+                </GanttTimeline>
+            </GanttProvider>
+        </div>
+    );
 }
