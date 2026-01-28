@@ -10,7 +10,7 @@ export const useCreateNotification = () => {
         mutationFn: (data: CreateNotificationRequest) => notificationsApi.create(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['notifications'] });
-            toast.success('Notification created successfully');
+            toast.success('Notification sent successfully');
         },
         onError: () => {
             toast.error('Failed to create notification');
