@@ -1,3 +1,4 @@
+import { Task } from 'src/tasks/domain/task';
 import { DeepPartial } from '../../../utils/types/deep-partial.type';
 import { NullableType } from '../../../utils/types/nullable.type';
 import { IPaginationOptions } from '../../../utils/types/pagination-options';
@@ -12,6 +13,14 @@ export abstract class CommentRepository {
     paginationOptions,
   }: {
     paginationOptions: IPaginationOptions;
+  }): Promise<Comment[]>;
+
+  abstract findAllByTaskIdWithPagination({
+    paginationOptions,
+    taskId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    taskId: Task['id'];
   }): Promise<Comment[]>;
 
   abstract findById(id: Comment['id']): Promise<NullableType<Comment>>;

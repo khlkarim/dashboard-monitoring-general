@@ -43,7 +43,17 @@ export function GanttCalendar({
     processus,
     activities,
 }: GanttCalendarProps) {
+    const [search, setSearch] = useState("");
     const [mounted, setMounted] = useState(false);
+
+    const filteredProcessus = useMemo(() => {
+        const q = search.trim().toLowerCase();
+        if (!q) return processus;
+
+        return processus.filter((p) =>
+            p.label.toLowerCase().includes(q)
+        );
+    }, [processus, search]);
 
     useEffect(() => {
         setMounted(true);
@@ -74,7 +84,6 @@ export function GanttCalendar({
 
             map.get(pid)!.push({feature, activity});
         }
-        console.log(map);
         return map;
     }, [activities]);
 
@@ -99,7 +108,16 @@ export function GanttCalendar({
             >
                 {/* Sidebar */}
                 <GanttSidebar className="min-w-[220px] max-w-[260px]">
-                    {processus.map((proc) => (
+                    <div className="m-3 max-w-sm">
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Search by processus..."
+                            className="w-full rounded-md border px-3 py-2 text-sm"
+                        />
+                    </div>
+                    {filteredProcessus.map((proc) => (
                         <GanttSidebarGroup key={proc.id} name={proc.label}>
                             {(featuresByProcessus.get(proc.id) ?? []).map((fa) => (
                                 <GanttSidebarItem key={fa.feature.id} feature={fa.feature} />
@@ -113,7 +131,7 @@ export function GanttCalendar({
                     <GanttHeader />
 
                     <GanttFeatureList>
-                        {processus.map((proc) => (
+                        {filteredProcessus.map((proc) => (
                             <GanttFeatureListGroup key={proc.id}>
                                 {(featuresByProcessus.get(proc.id) ?? []).map((fa) => (
                                     <ActivityGanttFeature 

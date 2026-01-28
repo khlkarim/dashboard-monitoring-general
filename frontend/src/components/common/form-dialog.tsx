@@ -8,6 +8,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 export interface BaseDialogProps {
     open: boolean;
@@ -15,8 +16,15 @@ export interface BaseDialogProps {
 
     title?: React.ReactNode;
     description?: React.ReactNode;
-
     children: React.ReactNode;
+
+    contentClassName?: string;
+    headerClassName?: string;
+    titleClassName?: string;
+    descriptionClassName?: string;
+    bodyClassName?: string;
+
+    contentProps?: React.ComponentPropsWithoutRef<typeof DialogContent>;
 }
 
 export function BaseDialog({
@@ -25,20 +33,35 @@ export function BaseDialog({
     title,
     description,
     children,
+    contentClassName,
+    headerClassName,
+    titleClassName,
+    descriptionClassName,
+    bodyClassName,
+    contentProps,
 }: BaseDialogProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent>
+            <DialogContent
+                {...contentProps}
+                className={cn(contentClassName, contentProps?.className)}
+            >
                 {(title || description) && (
-                <DialogHeader>
-                    {title && <DialogTitle>{title}</DialogTitle>}
-                    {description && (
-                    <DialogDescription>{description}</DialogDescription>
-                    )}
-                </DialogHeader>
+                    <DialogHeader className={headerClassName}>
+                        {title && (
+                            <DialogTitle className={titleClassName}>
+                                {title}
+                            </DialogTitle>
+                        )}
+                        {description && (
+                            <DialogDescription className={descriptionClassName}>
+                                {description}
+                            </DialogDescription>
+                        )}
+                    </DialogHeader>
                 )}
 
-                {children}
+                <div className={bodyClassName}>{children}</div>
             </DialogContent>
         </Dialog>
     );

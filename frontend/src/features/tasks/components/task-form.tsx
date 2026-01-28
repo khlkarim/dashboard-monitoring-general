@@ -38,7 +38,8 @@ export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
             status: initialData?.status || TaskStatus.TODO,
             criticality: initialData?.criticality || null,
             deliverable: initialData?.deliverable || null,
-            dueDate: initialData?.dueDate ? new Date(initialData.dueDate) : new Date(),
+            dueDate: initialData?.dueDate ? initialData.dueDate : "",
+            startDate: initialData?.startDate ? initialData.startDate : "",
             description: initialData?.description || "",
             title: initialData?.title || "",
             assignee: initialData?.assignee || null,
@@ -49,7 +50,8 @@ export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
     const handleSubmit = (values: TaskFormValues) => {
         const apiData = {
             ...values,
-            dueDate: values.dueDate.toISOString(),
+            dueDate: values.dueDate,
+            startDate: values.startDate,
             reporter: values.reporter ? {
                 id: values.reporter.id,
             } : {
@@ -87,10 +89,10 @@ export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
                         <FormItem>
                             <FormLabel>Description</FormLabel>
                             <FormControl>
-                                <Textarea 
-                                    placeholder="Task Description" 
-                                    value={field.value || ""} 
-                                    onChange={(e) => field.onChange(e.target.value)} 
+                                <Textarea
+                                    placeholder="Task Description"
+                                    value={field.value || ""}
+                                    onChange={(e) => field.onChange(e.target.value)}
                                 />
                             </FormControl>
                             <FormMessage />
@@ -98,49 +100,86 @@ export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
                     )}
                 />
 
-                <FormField
-                    control={form.control}
-                    name="dueDate"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Due Date</FormLabel>
-                            <FormControl>
-                                <DatePicker
-                                    date={field.value}
-                                    setDate={field.onChange}
-                                    placeholder="Pick due date"
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                <div className="flex gap-4">
+                    <FormField
+                        control={form.control}
+                        name="startDate"
+                        render={({ field }) => (
+                            <FormItem className="w-1/2">
+                                <FormLabel>Start Date</FormLabel>
+                                <FormControl>
+                                    <DatePicker
+                                        date={field.value ? new Date(field.value) : undefined}
+                                        setDate={(date) => field.onChange(date?.toISOString() || "")}
+                                        placeholder="Pick start date"
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                <FormField
-                    control={form.control}
-                    name="status"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Status</FormLabel>
-                            <FormControl>
-                                <Select
-                                    value={field.value}
-                                    onValueChange={(value) => field.onChange(value as TaskStatus)}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value={TaskStatus.TODO}>Planned</SelectItem>
-                                        <SelectItem value={TaskStatus.IN_PROGRESS}>In Progress</SelectItem>
-                                        <SelectItem value={TaskStatus.DONE}>Done</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                    <FormField
+                        control={form.control}
+                        name="dueDate"
+                        render={({ field }) => (
+                            <FormItem className="w-1/2">
+                                <FormLabel>Due Date</FormLabel>
+                                <FormControl>
+                                    <DatePicker
+                                        date={field.value ? new Date(field.value) : undefined}
+                                        setDate={(date) => field.onChange(date?.toISOString() || "")}
+                                        placeholder="Pick due date"
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+
+                <div className="flex gap-4">
+                    <FormField
+                        control={form.control}
+                        name="deliverable"
+                        render={({ field }) => (
+                            <FormItem className="w-1/2">
+                                <FormLabel>Deliverable</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Deliverable" {...field} value={field.value || ""} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="criticality"
+                        render={({ field }) => (
+                            <FormItem className="w-1/2">
+                                <FormLabel>Criticality</FormLabel>
+                                <FormControl>
+                                    <Select
+
+                                        value={field.value?.toString() || undefined}
+                                        onValueChange={(value) => field.onChange(Number(value))}
+                                    >
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select criticality" />
+                                        </SelectTrigger>
+                                        <SelectContent className="w-full">
+                                            <SelectItem value="0">Low</SelectItem>
+                                            <SelectItem value="1">Medium</SelectItem>
+                                            <SelectItem value="2">High</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
 
                 <FormField
                     control={form.control}
