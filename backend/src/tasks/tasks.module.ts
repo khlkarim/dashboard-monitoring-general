@@ -3,6 +3,7 @@ import { SprintsModule } from '../sprints/sprints.module';
 import {
   // do not remove this comment
   Module,
+  forwardRef,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { TasksController } from './tasks.controller';
@@ -10,8 +11,8 @@ import { RelationalTaskPersistenceModule } from './infrastructure/persistence/re
 
 @Module({
   imports: [
-    UsersModule,
-    SprintsModule,
+    forwardRef(() => UsersModule),
+    forwardRef(() => SprintsModule),
     // do not remove this comment
     RelationalTaskPersistenceModule,
   ],

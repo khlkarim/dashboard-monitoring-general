@@ -4,6 +4,24 @@ import { NullableType } from '../../../utils/types/nullable.type';
 import { IPaginationOptions } from '../../../utils/types/pagination-options';
 import { Task } from '../../domain/task';
 
+export interface TaskStatusDistribution {
+  TODO: number;
+  IN_PROGRESS: number;
+  DONE: number;
+}
+
+export interface MemberStatistics {
+  totalTasks: number;
+  taskStatusDistribution: TaskStatusDistribution;
+  overdueTasks: number;
+  completionRate: number;
+  engagementScore: number;
+  skillsDistribution: Array<{ skillId: string; skillTitle: string; taskCount: number }>;
+  averageCompletionTime: number;
+  completedThisMonth: number;
+  onTimeRate: number;
+}
+
 export abstract class TaskRepository {
   abstract create(
     data: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>,
@@ -33,4 +51,6 @@ export abstract class TaskRepository {
   ): Promise<Task | null>;
 
   abstract remove(id: Task['id']): Promise<void>;
+
+  abstract getMemberStatistics(userId: string): Promise<MemberStatistics>;
 }

@@ -9,6 +9,9 @@ import {
   HttpStatus,
   Injectable,
   UnprocessableEntityException,
+  NotFoundException,
+  Inject,
+  forwardRef,
 
 
 
@@ -31,6 +34,7 @@ import { Status } from '../statuses/domain/status';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SkillsService } from '../skills/skills.service';
 import { Skill } from '../skills/domain/skill';
+import { TaskRepository } from '../tasks/infrastructure/persistence/task.repository';
 
 @Injectable()
 export class UsersService {
@@ -43,6 +47,8 @@ export class UsersService {
     private readonly usersRepository: UserRepository,
     private readonly filesService: FilesService,
     private readonly skillsService: SkillsService,
+    @Inject(forwardRef(() => TaskRepository))
+    private readonly taskRepository: TaskRepository,
   ) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -377,5 +383,13 @@ export class UsersService {
 
   async remove(id: User['id']): Promise<void> {
     await this.usersRepository.remove(id);
+  }
+
+  async getMemberStatistics(userId: string) {
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return this.taskRepository.getMemberStatistics(userId);
   }
 }

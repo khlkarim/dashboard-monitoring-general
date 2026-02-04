@@ -35,6 +35,7 @@ import { User } from './domain/user';
 import { UsersService } from './users.service';
 import { RolesGuard } from '../roles/roles.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
+import { MemberStatisticsDto } from './dto/member-statistics.dto';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -172,5 +173,24 @@ export class UsersController {
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: User['id']): Promise<void> {
     return this.usersService.remove(id);
+  }
+
+  @ApiOkResponse({
+    type: MemberStatisticsDto,
+    description: 'Get comprehensive statistics for a specific member',
+  })
+  @SerializeOptions({
+    groups: ['admin'],
+  })
+  @Roles(RoleEnum.ALUMNI, RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
+  @Get(':id/statistics')
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+  })
+  getMemberStatistics(@Param('id') id: string): Promise<MemberStatisticsDto> {
+    return this.usersService.getMemberStatistics(id);
   }
 }

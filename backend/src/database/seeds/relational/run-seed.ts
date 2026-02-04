@@ -9,6 +9,7 @@ import { UserSeedService } from './user/user-seed.service';
 import { ProcessusSeedService } from './processus/processus-seed.service';
 import { SprintSeedService } from './sprint/sprint-seed.service';
 import { TaskSeedService } from './task/task-seed.service';
+import { TaskStatisticsSeedService } from './task/task-statistics-seed.service';
 import { KpiSeedService } from './kpi/kpi-seed.service';
 import { RisksSeedService } from './risks/risks-seed.service';
 import { ActionsSeedService } from './actions/actions-seed.service';
@@ -31,6 +32,9 @@ const runSeed = async () => {
   await app.get(CommentsSeedService).run();
 
   await app.get(ActivitySeedService).run();
+
+  // Run task statistics seed for comprehensive testing
+  await app.get(TaskStatisticsSeedService).run();
 
   await app.close();
 };
