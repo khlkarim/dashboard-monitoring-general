@@ -48,15 +48,19 @@ export type TaskResponse = z.infer<typeof taskResponseSchema>;
 /** Task Form Schema */
 export const taskFormSchema = z.object({
     status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.DONE]).default(TaskStatus.TODO),
-    criticality: z.number().optional().nullable(),
+    criticality: z.number({ message: "Criticality is required." }),
     deliverable: z.string().optional().nullable(),
-    dueDate: z.string().datetime("Due date is required"),
+    dueDate: z.string().min(1, { message: "Due date is required." }),
     description: z.string().optional().nullable(),
-    title: z.string().min(1, "Title is required"),
+    title: z.string().min(1, { message: "Title is required." }),
     reporter: z.object({ id: z.string() }).optional().nullable(),
-    assignee: z.object({ id: z.string() }).optional().nullable(),
-    startDate: z.string().datetime("Start date is required"),
-});
+    assignee: z.object({ id: z.string() }, { message: "Assigne is required." }),
+    startDate: z.string().min(1, { message: "Start date is required." }),
+})
+    .refine((data) => data.startDate < data.dueDate, {
+        message: "Start date must be before the due date.",
+        path: ["startDate"],
+    });
 export type TaskFormValues = z.infer<typeof taskFormSchema>;
 
 /** Find All Query */

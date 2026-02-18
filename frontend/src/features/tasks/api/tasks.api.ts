@@ -28,6 +28,7 @@ export const tasksApi = {
     /** GET /api/v1/tasks/sprint/:sprintId */
     findAllBySprintId: async (sprintId: string): Promise<TaskListResponse> => {
         const res = await api.get(`/api/v1/tasks/sprint/${sprintId}`);
+        console.log(res);
         return taskListResponseSchema.parse(res.data);
     },
 

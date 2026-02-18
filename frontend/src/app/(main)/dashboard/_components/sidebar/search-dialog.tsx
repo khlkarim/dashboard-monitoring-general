@@ -54,10 +54,15 @@ export function SearchDialog() {
               <CommandGroup heading={navGroup.label} key={navGroup.label}>
                 {navGroup.items.map((item) => (
                   <CommandItem className="!py-1.5" key={item.title}>
-                    {item.icon && <item.icon />}
-                    <Link href={item.url} onClick={() => setOpen(false)}>
+                    <Link
+                      href={item.url}
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-2"
+                    >
+                      {item.icon && <item.icon className="h-4 w-4" />}
                       <span>{item.title}</span>
                     </Link>
+
                   </CommandItem>
                 ))}
               </CommandGroup>

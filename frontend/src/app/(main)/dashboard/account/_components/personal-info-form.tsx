@@ -25,13 +25,13 @@ const profileFormSchema = updateUserRequestSchema.pick({
     firstName: true,
     lastName: true,
     photo: true,
+    phoneNumber: true,
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 export function PersonalInfoForm() {
     const user = useAuthStore((state) => state.user);
-
     const updateUserMutation = useUpdateUser();
 
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -42,15 +42,16 @@ export function PersonalInfoForm() {
         defaultValues: {
             firstName: user?.firstName ?? "",
             lastName: user?.lastName ?? "",
+            phoneNumber: user?.phoneNumber ?? "",
         },
     });
 
-    // Reset forms when user data is loaded
     useEffect(() => {
         if (user) {
             profileForm.reset({
                 firstName: user.firstName ?? "",
                 lastName: user.lastName ?? "",
+                phoneNumber: user.phoneNumber ?? "",
             });
             if (user.photo?.path) {
                 setPreviewApi(user.photo.path);
@@ -72,7 +73,11 @@ export function PersonalInfoForm() {
         }
     };
 
-    const onProfileSubmit = (data: ProfileFormValues) => {
+    const onProfileSubmit = (values: ProfileFormValues) => {
+        const data = {
+            ...values,
+            phoneNumber: values.phoneNumber || null,
+        };
         updateUserMutation.mutate({ data });
     };
 
@@ -142,6 +147,25 @@ export function PersonalInfoForm() {
                                         <FormLabel>Last Name</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Doe" {...field} value={field.value || ""} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={profileForm.control}
+                                name="phoneNumber"
+                                render={({ field }) => (
+                                    <FormItem className="md:col-span-2">
+                                        <FormLabel>Phone Number</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="tel"
+                                                placeholder="+33 6 12 34 56 78"
+                                                {...field}
+                                                value={field.value || ""}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { Mail } from "lucide-react";
+import { Mail, Phone, ShieldCheck } from "lucide-react"; // Added Phone icon
 import { User } from "@/features/users/types/users.types";
 import { Card, CardTitle, CardDescription, CardContent, CardHeader } from "@/components/ui/card";
 
@@ -7,27 +7,44 @@ interface UserInfoProps {
     user: User;
 }
 
-export function UserInfo({ user } : UserInfoProps) {
+export function UserInfo({ user }: UserInfoProps) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-8 flex flex-col gap-6">
                 <Card className="h-full">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <Mail className="h-5 w-5" />
+                            <ShieldCheck className="h-5 w-5" />
                             Contact Information
                         </CardTitle>
                         <CardDescription>Direct contact details for this user.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="flex flex-col gap-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4"> {/* Changed to 3 cols for better spacing */}
+                                {/* Email */}
                                 <div className="flex flex-col gap-1">
-                                    <span className="text-sm font-medium text-muted-foreground">Email Address</span>
+                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                        <Mail className="h-4 w-4" />
+                                        <span className="text-sm font-medium">Email Address</span>
+                                    </div>
                                     <span className="text-base">{user.email || "No email provided"}</span>
                                 </div>
+
+                                {/* Phone Number - Conditional Display */}
                                 <div className="flex flex-col gap-1">
-                                    <span className="text-sm font-medium text-muted-foreground">Auth Provider</span>
+                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                        <Phone className="h-4 w-4" />
+                                        <span className="text-sm font-medium">Phone Number</span>
+                                    </div>
+                                    <span className="text-base">
+                                        {user.phoneNumber || <span className="text-muted-foreground italic text-sm">Not provided</span>}
+                                    </span>
+                                </div>
+
+                                {/* Auth Provider */}
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-sm font-medium text-muted-foreground md:mt-6">Auth Provider</span>
                                     <span className="text-base capitalize">{user.provider || "Local"}</span>
                                 </div>
                             </div>

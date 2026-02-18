@@ -3,16 +3,16 @@ import { TaskEntity } from '../../../../../tasks/infrastructure/persistence/rela
 import { KpiEntity } from '../../../../../kpis/infrastructure/persistence/relational/entities/kpi.entity';
 
 import {
-  CreateDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
   Column,
   ManyToOne,
   OneToMany,
+  UpdateDateColumn,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 import { SprintStatus } from 'src/sprints/domain/sprint-status.enum';
+import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 
 @Entity({
   name: 'sprint',
@@ -33,7 +33,7 @@ export class SprintEntity extends EntityRelationalHelper {
   })
   status: SprintStatus;
 
-  @ManyToOne(() => UserEntity, { eager: true, nullable: false })
+  @ManyToOne(() => UserEntity, { eager: true, onDelete: 'CASCADE', nullable: false })
   createdBy: UserEntity;
 
   @OneToMany(() => TaskEntity, (task) => task.sprint)

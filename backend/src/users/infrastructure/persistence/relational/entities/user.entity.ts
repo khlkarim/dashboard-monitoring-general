@@ -1,4 +1,4 @@
-  import { ProcessusEntity } from '../../../../../processus/infrastructure/persistence/relational/entities/processus.entity';
+import { ProcessusEntity } from '../../../../../processus/infrastructure/persistence/relational/entities/processus.entity';
 
 import {
   Column,
@@ -13,9 +13,6 @@ import {
   OneToOne,
   OneToMany,
   ManyToMany,
-
-
-
 } from 'typeorm';
 import { TaskEntity } from '../../../../../tasks/infrastructure/persistence/relational/entities/task.entity';
 import { RoleEntity } from '../../../../../roles/infrastructure/persistence/relational/entities/role.entity';
@@ -31,46 +28,36 @@ import { JoinTable } from 'typeorm';
   name: 'user',
 })
 export class UserEntity extends EntityRelationalHelper {
+  @Column({
+    nullable: true,
+    type:
+      String,
+  })
+  phoneNumber?: string | null;
 
-
-      @ManyToOne(
-      () => ProcessusEntity,
-            { eager: true, nullable: true }
-    )
-  
-  
-  
-  processus?: ProcessusEntity  | null;
-
-
+  @ManyToOne(
+    () => ProcessusEntity,
+    { eager: true, nullable: true }
+  )
+  processus?: ProcessusEntity | null;
 
   @Column({
     nullable: true,
     type:
-              String,
-        })
-
-
-  workplace?: string  | null;
-
-
+      String,
+  })
+  workplace?: string | null;
 
   @Column({
     nullable: true,
     type:
-              String,
-        })
-
-
-  mandate?: string  | null;
-
-
+      String,
+  })
+  mandate?: string | null;
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // For "string | null" we need to use String type.
-  // More info: https://github.com/typeorm/typeorm/issues/2567
   @Column({ type: String, unique: true, nullable: true })
   email: string | null;
 
