@@ -16,7 +16,10 @@ import { TaskRepository } from './infrastructure/persistence/task.repository';
 import { CommentRepository } from '../comments/infrastructure/persistence/comment.repository';
 import { IPaginationOptions } from '../utils/types/pagination-options';
 import { Task } from './domain/task';
-import { MemberStatisticsDto, TaskStatusDistribution } from '../users/dto/member-statistics.dto';
+import {
+  MemberStatisticsDto,
+  TaskStatusDistribution,
+} from '../users/dto/member-statistics.dto';
 
 @Injectable()
 export class TasksService {
@@ -27,7 +30,7 @@ export class TasksService {
     // Dependencies here
     private readonly taskRepository: TaskRepository,
     private readonly commentRepository: CommentRepository,
-  ) { }
+  ) {}
 
   async create(createTaskDto: CreateTaskDto) {
     // Do not remove comment below.
@@ -226,12 +229,16 @@ export class TasksService {
   async getMemberStatistics(userId: string): Promise<MemberStatisticsDto> {
     // 1. Get raw data from repository (simple queries)
     const totalTasks = await this.taskRepository.getTaskCountByUser(userId);
-    const statusCounts = await this.taskRepository.getTaskStatusCountsByUser(userId);
-    const overdueTasks = await this.taskRepository.getOverdueTasksCountByUser(userId);
-    const completedTasksWithDates = await this.taskRepository.getCompletedTasksWithDatesByUser(userId);
-    
+    const statusCounts =
+      await this.taskRepository.getTaskStatusCountsByUser(userId);
+    const overdueTasks =
+      await this.taskRepository.getOverdueTasksCountByUser(userId);
+    const completedTasksWithDates =
+      await this.taskRepository.getCompletedTasksWithDatesByUser(userId);
+
     // Get comment data
-    const totalComments = await this.commentRepository.getCommentCountByUser(userId);
+    const totalComments =
+      await this.commentRepository.getCommentCountByUser(userId);
 
     // 2. BUSINESS LOGIC: Build task status distribution
     const taskStatusDistribution: TaskStatusDistribution = {
@@ -242,7 +249,11 @@ export class TasksService {
 
     statusCounts.forEach((row) => {
       // Only count statuses that match our business model
-      if (row.status === 'TODO' || row.status === 'IN_PROGRESS' || row.status === 'DONE') {
+      if (
+        row.status === 'TODO' ||
+        row.status === 'IN_PROGRESS' ||
+        row.status === 'DONE'
+      ) {
         taskStatusDistribution[row.status] = row.count;
       }
     });
@@ -250,20 +261,32 @@ export class TasksService {
     const completedTasks = taskStatusDistribution.DONE;
 
     // 3. BUSINESS LOGIC: Calculate completion rate
-    const completionRate = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+    const completionRate =
+      totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
     // 4. BUSINESS LOGIC: Calculate completed this month
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
-    const completedThisMonth = await this.taskRepository.getCompletedTasksCountByUserAfterDate(userId, startOfMonth);
-    const commentsThisMonth = await this.commentRepository.getCommentCountByUserAfterDate(userId, startOfMonth);
+    const completedThisMonth =
+      await this.taskRepository.getCompletedTasksCountByUserAfterDate(
+        userId,
+        startOfMonth,
+      );
+    const commentsThisMonth =
+      await this.commentRepository.getCommentCountByUserAfterDate(
+        userId,
+        startOfMonth,
+      );
 
     // 5. BUSINESS LOGIC: Calculate average completion time (in days)
     let averageCompletionTime = 0;
     if (completedTasksWithDates.length > 0) {
       const totalDays = completedTasksWithDates.reduce((sum, task) => {
-        const days = Math.floor((task.completedDate.getTime() - task.startDate.getTime()) / (1000 * 60 * 60 * 24));
+        const days = Math.floor(
+          (task.completedDate.getTime() - task.startDate.getTime()) /
+            (1000 * 60 * 60 * 24),
+        );
         return sum + days;
       }, 0);
       averageCompletionTime = totalDays / completedTasksWithDates.length;
@@ -271,7 +294,9 @@ export class TasksService {
 
     // 6. BUSINESS LOGIC: Calculate on-time completion rate
     let onTimeRate = 0;
-    const tasksWithDueDate = completedTasksWithDates.filter(task => task.dueDate !== undefined);
+    const tasksWithDueDate = completedTasksWithDates.filter(
+      (task) => task.dueDate !== undefined,
+    );
     if (tasksWithDueDate.length > 0) {
       const onTimeCount = tasksWithDueDate.filter((task) => {
         return task.completedDate <= task.dueDate!;
@@ -290,7 +315,11 @@ export class TasksService {
     // 9. BUSINESS LOGIC: Calculate engagement score
     // Business formula: weighted average including comment activity
     // 35% completion + 35% on-time + 15% task activity + 15% comment activity
-    const engagementScore = (completionRate * 0.35) + (onTimeRate * 0.35) + (activityScore * 0.15) + (commentActivityRate * 0.15);
+    const engagementScore =
+      completionRate * 0.35 +
+      onTimeRate * 0.35 +
+      activityScore * 0.15 +
+      commentActivityRate * 0.15;
 
     // Return calculated statistics with proper rounding
     // Note: comment metrics are used internally but not exposed in the response

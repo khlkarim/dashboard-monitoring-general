@@ -22,7 +22,7 @@ export class SprintsService {
     private readonly userService: UsersService,
     // Dependencies here
     private readonly sprintRepository: SprintRepository,
-  ) { }
+  ) {}
 
   async create(createSprintDto: CreateSprintDto) {
     // Do not remove comment below.

@@ -21,4 +21,4 @@ import { RelationalCommentPersistenceModule } from './infrastructure/persistence
   providers: [CommentsService],
   exports: [CommentsService, RelationalCommentPersistenceModule],
 })
-export class CommentsModule { }
+export class CommentsModule {}

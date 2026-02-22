@@ -36,6 +36,9 @@ export abstract class CommentRepository {
 
   // Simple data query for member statistics
   abstract getCommentCountByUser(userId: string): Promise<number>;
-  
-  abstract getCommentCountByUserAfterDate(userId: string, startDate: Date): Promise<number>;
+
+  abstract getCommentCountByUserAfterDate(
+    userId: string,
+    startDate: Date,
+  ): Promise<number>;
 }

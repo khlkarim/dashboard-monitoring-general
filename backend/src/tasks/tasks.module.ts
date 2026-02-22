@@ -22,4 +22,4 @@ import { RelationalTaskPersistenceModule } from './infrastructure/persistence/re
   providers: [TasksService],
   exports: [TasksService, RelationalTaskPersistenceModule],
 })
-export class TasksModule { }
+export class TasksModule {}

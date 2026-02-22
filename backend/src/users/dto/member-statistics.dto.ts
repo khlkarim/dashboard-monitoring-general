@@ -15,7 +15,10 @@ export class MemberStatisticsDto {
   @ApiProperty({ description: 'Total number of tasks assigned to the member' })
   totalTasks: number;
 
-  @ApiProperty({ description: 'Distribution of tasks by status', type: TaskStatusDistribution })
+  @ApiProperty({
+    description: 'Distribution of tasks by status',
+    type: TaskStatusDistribution,
+  })
   taskStatusDistribution: TaskStatusDistribution;
 
   @ApiProperty({ description: 'Number of overdue tasks' })

@@ -48,12 +48,19 @@ export abstract class TaskRepository {
 
   // Simple data queries for member statistics (no business logic)
   abstract getTaskCountByUser(userId: string): Promise<number>;
-  
-  abstract getTaskStatusCountsByUser(userId: string): Promise<TaskStatusCount[]>;
-  
+
+  abstract getTaskStatusCountsByUser(
+    userId: string,
+  ): Promise<TaskStatusCount[]>;
+
   abstract getOverdueTasksCountByUser(userId: string): Promise<number>;
-  
-  abstract getCompletedTasksCountByUserAfterDate(userId: string, startDate: Date): Promise<number>;
-  
-  abstract getCompletedTasksWithDatesByUser(userId: string): Promise<TaskDateInfo[]>;
+
+  abstract getCompletedTasksCountByUserAfterDate(
+    userId: string,
+    startDate: Date,
+  ): Promise<number>;
+
+  abstract getCompletedTasksWithDatesByUser(
+    userId: string,
+  ): Promise<TaskDateInfo[]>;
 }

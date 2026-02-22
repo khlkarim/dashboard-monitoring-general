@@ -14,7 +14,7 @@ export class CommentRelationalRepository implements CommentRepository {
   constructor(
     @InjectRepository(CommentEntity)
     private readonly commentRepository: Repository<CommentEntity>,
-  ) { }
+  ) {}
 
   async create(data: Comment): Promise<Comment> {
     const persistenceModel = CommentMapper.toPersistence(data);
@@ -69,10 +69,7 @@ export class CommentRelationalRepository implements CommentRepository {
     return entities.map((entity) => CommentMapper.toDomain(entity));
   }
 
-  async update(
-    id: Comment['id'],
-    payload: Partial<Comment>,
-  ): Promise<Comment> {
+  async update(id: Comment['id'], payload: Partial<Comment>): Promise<Comment> {
     const entity = await this.commentRepository.findOne({
       where: { id },
     });
@@ -104,7 +101,10 @@ export class CommentRelationalRepository implements CommentRepository {
     });
   }
 
-  async getCommentCountByUserAfterDate(userId: string, startDate: Date): Promise<number> {
+  async getCommentCountByUserAfterDate(
+    userId: string,
+    startDate: Date,
+  ): Promise<number> {
     return this.commentRepository
       .createQueryBuilder('comment')
       .where('comment.authorId = :userId', { userId })

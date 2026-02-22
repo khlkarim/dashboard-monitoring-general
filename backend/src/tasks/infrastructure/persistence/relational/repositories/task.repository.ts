@@ -4,7 +4,11 @@ import { Repository, In } from 'typeorm';
 import { TaskEntity } from '../entities/task.entity';
 import { NullableType } from '../../../../../utils/types/nullable.type';
 import { Task } from '../../../../domain/task';
-import { TaskRepository, TaskStatusCount, TaskDateInfo } from '../../task.repository';
+import {
+  TaskRepository,
+  TaskStatusCount,
+  TaskDateInfo,
+} from '../../task.repository';
 import { TaskMapper } from '../mappers/task.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
 import { Sprint } from 'src/sprints/domain/sprint';
@@ -15,7 +19,7 @@ export class TaskRelationalRepository implements TaskRepository {
   constructor(
     @InjectRepository(TaskEntity)
     private readonly taskRepository: Repository<TaskEntity>,
-  ) { }
+  ) {}
 
   async create(data: Task): Promise<Task> {
     const persistenceModel = TaskMapper.toPersistence(data);
@@ -117,7 +121,7 @@ export class TaskRelationalRepository implements TaskRepository {
       .groupBy('task.status')
       .getRawMany();
 
-    return results.map(row => ({
+    return results.map((row) => ({
       status: row.status,
       count: parseInt(row.count),
     }));
@@ -132,7 +136,10 @@ export class TaskRelationalRepository implements TaskRepository {
       .getCount();
   }
 
-  async getCompletedTasksCountByUserAfterDate(userId: string, startDate: Date): Promise<number> {
+  async getCompletedTasksCountByUserAfterDate(
+    userId: string,
+    startDate: Date,
+  ): Promise<number> {
     return this.taskRepository
       .createQueryBuilder('task')
       .where('task.assigneeId = :userId', { userId })
@@ -141,7 +148,9 @@ export class TaskRelationalRepository implements TaskRepository {
       .getCount();
   }
 
-  async getCompletedTasksWithDatesByUser(userId: string): Promise<TaskDateInfo[]> {
+  async getCompletedTasksWithDatesByUser(
+    userId: string,
+  ): Promise<TaskDateInfo[]> {
     const results = await this.taskRepository
       .createQueryBuilder('task')
       .select('task.startDate', 'startDate')
@@ -152,7 +161,7 @@ export class TaskRelationalRepository implements TaskRepository {
       .andWhere('task.startDate IS NOT NULL')
       .getRawMany();
 
-    return results.map(row => ({
+    return results.map((row) => ({
       startDate: new Date(row.startDate),
       completedDate: new Date(row.completedDate),
       dueDate: row.dueDate ? new Date(row.dueDate) : undefined,
