@@ -1,5 +1,6 @@
 import { UsersModule } from '../users/users.module';
 import { SprintsModule } from '../sprints/sprints.module';
+import { CommentsModule } from '../comments/comments.module';
 import {
   // do not remove this comment
   Module,
@@ -13,6 +14,7 @@ import { RelationalTaskPersistenceModule } from './infrastructure/persistence/re
   imports: [
     forwardRef(() => UsersModule),
     forwardRef(() => SprintsModule),
+    forwardRef(() => CommentsModule),
     // do not remove this comment
     RelationalTaskPersistenceModule,
   ],

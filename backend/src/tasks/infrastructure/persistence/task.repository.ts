@@ -4,22 +4,16 @@ import { NullableType } from '../../../utils/types/nullable.type';
 import { IPaginationOptions } from '../../../utils/types/pagination-options';
 import { Task } from '../../domain/task';
 
-export interface TaskStatusDistribution {
-  TODO: number;
-  IN_PROGRESS: number;
-  DONE: number;
+// Raw data interfaces returned by repository
+export interface TaskStatusCount {
+  status: string;
+  count: number;
 }
 
-export interface MemberStatistics {
-  totalTasks: number;
-  taskStatusDistribution: TaskStatusDistribution;
-  overdueTasks: number;
-  completionRate: number;
-  engagementScore: number;
-  skillsDistribution: Array<{ skillId: string; skillTitle: string; taskCount: number }>;
-  averageCompletionTime: number;
-  completedThisMonth: number;
-  onTimeRate: number;
+export interface TaskDateInfo {
+  startDate: Date;
+  completedDate: Date;
+  dueDate?: Date;
 }
 
 export abstract class TaskRepository {
@@ -52,5 +46,14 @@ export abstract class TaskRepository {
 
   abstract remove(id: Task['id']): Promise<void>;
 
-  abstract getMemberStatistics(userId: string): Promise<MemberStatistics>;
+  // Simple data queries for member statistics (no business logic)
+  abstract getTaskCountByUser(userId: string): Promise<number>;
+  
+  abstract getTaskStatusCountsByUser(userId: string): Promise<TaskStatusCount[]>;
+  
+  abstract getOverdueTasksCountByUser(userId: string): Promise<number>;
+  
+  abstract getCompletedTasksCountByUserAfterDate(userId: string, startDate: Date): Promise<number>;
+  
+  abstract getCompletedTasksWithDatesByUser(userId: string): Promise<TaskDateInfo[]>;
 }

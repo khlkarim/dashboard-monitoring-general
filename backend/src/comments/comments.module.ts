@@ -4,6 +4,7 @@ import { UsersModule } from '../users/users.module';
 import {
   // do not remove this comment
   Module,
+  forwardRef,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CommentsController } from './comments.controller';
@@ -11,8 +12,8 @@ import { RelationalCommentPersistenceModule } from './infrastructure/persistence
 
 @Module({
   imports: [
-    TasksModule,
-    UsersModule,
+    forwardRef(() => TasksModule),
+    forwardRef(() => UsersModule),
     // do not remove this comment
     RelationalCommentPersistenceModule,
   ],

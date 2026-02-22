@@ -6,6 +6,8 @@ import {
   Injectable,
   HttpStatus,
   UnprocessableEntityException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { CreateSprintDto } from './dto/create-sprint.dto';
 import { UpdateSprintDto } from './dto/update-sprint.dto';
@@ -16,6 +18,7 @@ import { Sprint } from './domain/sprint';
 @Injectable()
 export class SprintsService {
   constructor(
+    @Inject(forwardRef(() => UsersService))
     private readonly userService: UsersService,
     // Dependencies here
     private readonly sprintRepository: SprintRepository,

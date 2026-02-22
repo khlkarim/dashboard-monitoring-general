@@ -1,6 +1,6 @@
 import { ProcessusService } from '../processus/processus.service';
   import { Processus } from '../processus/domain/processus';
-
+import { TasksService } from '../tasks/tasks.service';
 
 
 
@@ -34,7 +34,6 @@ import { Status } from '../statuses/domain/status';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SkillsService } from '../skills/skills.service';
 import { Skill } from '../skills/domain/skill';
-import { TaskRepository } from '../tasks/infrastructure/persistence/task.repository';
 
 @Injectable()
 export class UsersService {
@@ -47,8 +46,8 @@ export class UsersService {
     private readonly usersRepository: UserRepository,
     private readonly filesService: FilesService,
     private readonly skillsService: SkillsService,
-    @Inject(forwardRef(() => TaskRepository))
-    private readonly taskRepository: TaskRepository,
+    @Inject(forwardRef(() => TasksService))
+    private readonly tasksService: TasksService,
   ) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -390,6 +389,7 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return this.taskRepository.getMemberStatistics(userId);
+    // Delegate to TasksService which contains all business logic
+    return this.tasksService.getMemberStatistics(userId);
   }
 }

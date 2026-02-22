@@ -3,36 +3,18 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGetMemberStatistics } from "@/features/users/hooks/use-get-member-statistics";
 import { Skeleton } from "@/components/ui/skeleton";
-import { 
-    PieChart, 
-    Pie, 
-    Cell, 
-    ResponsiveContainer, 
-    Legend, 
-    Tooltip,
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid
-} from "recharts";
+import { PieChart, Pie, Label } from "recharts";
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend } from "@/components/ui/chart";
 
 interface MemberStatisticsProps {
     userId: string;
 }
 
-const STATUS_COLORS = {
-    TODO: "#94a3b8",
-    IN_PROGRESS: "#3b82f6",
-    DONE: "#10b981",
-    BLOCKED: "#ef4444",
-};
-
-const STATUS_LABELS = {
-    TODO: "To Do",
-    IN_PROGRESS: "In Progress",
-    DONE: "Done",
-    BLOCKED: "Blocked",
+const taskStatusConfig = {
+    TODO: { label: "To Do", color: "var(--chart-1)" },
+    IN_PROGRESS: { label: "In Progress", color: "var(--chart-2)" },
+    DONE: { label: "Done", color: "var(--chart-3)" },
+    BLOCKED: { label: "Blocked", color: "var(--chart-4)" },
 };
 
 export function MemberStatistics({ userId }: MemberStatisticsProps) {
@@ -73,21 +55,17 @@ export function MemberStatistics({ userId }: MemberStatisticsProps) {
     const statusData = Object.entries(stats.taskStatusDistribution)
         .filter(([_, value]) => (value as number) > 0)
         .map(([name, value]) => ({
-            name: STATUS_LABELS[name as keyof typeof STATUS_LABELS] || name,
+            name: taskStatusConfig[name as keyof typeof taskStatusConfig]?.label || name,
             value: value as number,
-            originalName: name,
+            fill: taskStatusConfig[name as keyof typeof taskStatusConfig]?.color || "var(--chart-5)",
         }));
 
-    // Prepare data for skills bar chart
-    const skillsData = stats.skillsDistribution.map((skill: { skillId: string; skillTitle: string; taskCount: number }) => ({
-        name: skill.skillTitle,
-        tasks: skill.taskCount,
-    }));
+    const totalTasks = stats.totalTasks;
 
     return (
         <div className="space-y-6">
             {/* Key Metrics Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <Card>
                     <CardHeader className="pb-2">
                         <CardDescription>Total Tasks</CardDescription>
@@ -142,107 +120,66 @@ export function MemberStatistics({ userId }: MemberStatisticsProps) {
                 </Card>
             </div>
 
-            {/* Charts Row */}
-            <div className="grid gap-4 md:grid-cols-2">
-                {/* Task Status Distribution Pie Chart */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Task Status Distribution</CardTitle>
-                        <CardDescription>
-                            Breakdown of tasks by their current status
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        {statusData.length > 0 ? (
-                            <ResponsiveContainer width="100%" height={300}>
-                                <PieChart>
-                                    <Pie
-                                        data={statusData}
-                                        dataKey="value"
-                                        nameKey="name"
-                                        cx="50%"
-                                        cy="50%"
-                                        outerRadius={100}
-                                        label={({ name, value }) => `${name}: ${value}`}
-                                    >
-                                        {statusData.map((entry) => (
-                                            <Cell
-                                                key={entry.originalName}
-                                                fill={STATUS_COLORS[entry.originalName as keyof typeof STATUS_COLORS]}
-                                            />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip />
-                                    <Legend />
-                                </PieChart>
-                            </ResponsiveContainer>
-                        ) : (
-                            <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-                                No task data available
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-
-                {/* Skills Distribution Bar Chart */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Skills Distribution</CardTitle>
-                        <CardDescription>
-                            Tasks assigned by skill category
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        {skillsData.length > 0 ? (
-                            <ResponsiveContainer width="100%" height={300}>
-                                <BarChart data={skillsData}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis 
-                                        dataKey="name" 
-                                        angle={-45}
-                                        textAnchor="end"
-                                        height={100}
-                                    />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Bar dataKey="tasks" fill="#3b82f6" />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        ) : (
-                            <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-                                No skills data available
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Skills Details Table */}
-            {stats.skillsDistribution.length > 0 && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Skills Breakdown</CardTitle>
-                        <CardDescription>
-                            Detailed view of tasks per skill
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-2">
-                            {stats.skillsDistribution.map((skill: { skillId: string; skillTitle: string; taskCount: number }) => (
-                                <div
-                                    key={skill.skillId}
-                                    className="flex items-center justify-between p-3 bg-muted rounded-lg"
+            {/* Task Status Distribution Pie Chart */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Task Status Distribution</CardTitle>
+                    <CardDescription>
+                        Breakdown of tasks by their current status
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {statusData.length > 0 ? (
+                        <ChartContainer config={taskStatusConfig} className="mx-auto aspect-square max-h-[300px]">
+                            <PieChart>
+                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                                <Pie
+                                    data={statusData}
+                                    dataKey="value"
+                                    nameKey="name"
+                                    innerRadius={60}
+                                    strokeWidth={5}
                                 >
-                                    <span className="font-medium">{skill.skillTitle}</span>
-                                    <span className="text-sm font-semibold text-muted-foreground">
-                                        {skill.taskCount} {skill.taskCount === 1 ? 'task' : 'tasks'}
-                                    </span>
-                                </div>
-                            ))}
+                                    <Label
+                                        content={({ viewBox }) => {
+                                            if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                                return (
+                                                    <text
+                                                        x={viewBox.cx}
+                                                        y={viewBox.cy}
+                                                        textAnchor="middle"
+                                                        dominantBaseline="middle"
+                                                    >
+                                                        <tspan
+                                                            x={viewBox.cx}
+                                                            y={viewBox.cy}
+                                                            className="fill-foreground text-3xl font-bold"
+                                                        >
+                                                            {totalTasks}
+                                                        </tspan>
+                                                        <tspan
+                                                            x={viewBox.cx}
+                                                            y={(viewBox.cy || 0) + 24}
+                                                            className="fill-muted-foreground"
+                                                        >
+                                                            Total Tasks
+                                                        </tspan>
+                                                    </text>
+                                                );
+                                            }
+                                        }}
+                                    />
+                                </Pie>
+                                <ChartLegend />
+                            </PieChart>
+                        </ChartContainer>
+                    ) : (
+                        <div className="flex items-center justify-center h-[300px] text-muted-foreground">
+                            No task data available
                         </div>
-                    </CardContent>
-                </Card>
-            )}
+                    )}
+                </CardContent>
+            </Card>
         </div>
     );
 }

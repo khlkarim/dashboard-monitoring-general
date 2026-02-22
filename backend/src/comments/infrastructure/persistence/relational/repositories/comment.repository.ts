@@ -96,4 +96,19 @@ export class CommentRelationalRepository implements CommentRepository {
   async remove(id: Comment['id']): Promise<void> {
     await this.commentRepository.delete(id);
   }
+
+  // Simple data queries for member statistics
+  async getCommentCountByUser(userId: string): Promise<number> {
+    return this.commentRepository.count({
+      where: { author: { id: userId } },
+    });
+  }
+
+  async getCommentCountByUserAfterDate(userId: string, startDate: Date): Promise<number> {
+    return this.commentRepository
+      .createQueryBuilder('comment')
+      .where('comment.authorId = :userId', { userId })
+      .andWhere('comment.createdAt >= :startDate', { startDate })
+      .getCount();
+  }
 }

@@ -11,17 +11,6 @@ export class TaskStatusDistribution {
   DONE: number;
 }
 
-export class SkillDistribution {
-  @ApiProperty()
-  skillId: string;
-
-  @ApiProperty()
-  skillTitle: string;
-
-  @ApiProperty()
-  taskCount: number;
-}
-
 export class MemberStatisticsDto {
   @ApiProperty({ description: 'Total number of tasks assigned to the member' })
   totalTasks: number;
@@ -37,9 +26,6 @@ export class MemberStatisticsDto {
 
   @ApiProperty({ description: 'User engagement score (0-100)' })
   engagementScore: number;
-
-  @ApiProperty({ description: 'Distribution of tasks by required skills', type: [SkillDistribution] })
-  skillsDistribution: SkillDistribution[];
 
   @ApiProperty({ description: 'Average days to complete a task' })
   averageCompletionTime: number;
