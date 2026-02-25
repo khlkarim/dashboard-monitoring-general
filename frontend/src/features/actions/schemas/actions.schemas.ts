@@ -16,8 +16,23 @@ export const createActionRequestSchema = z.object({
 export type CreateActionRequest = z.infer<typeof createActionRequestSchema>;
 
 /** Update Action */
-export const updateActionRequestSchema = createActionRequestSchema.partial();
+export const updateActionRequestSchema = z.object({
+    title: z.string().optional().nullable(),
+    description: z.string().optional().nullable(),
+    type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE]).default(ActionType.CORRECTIVE),
+});
 export type UpdateActionRequest = z.infer<typeof updateActionRequestSchema>;
+
+export const updateActionResponseSchema = z.object({
+    id: z.string(),
+    title: z.string().nullable().optional(),
+    description: z.string().nullable().optional(),
+    risk: riskResponseSchema.optional().nullable(),
+    type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE]),
+    createdAt: z.string().datetime(),
+    updatedAt: z.string().datetime(),
+});
+export type UpdateActionResponse = z.infer<typeof updateActionResponseSchema>;
 
 /** Action Entity */
 export const actionResponseSchema = z.object({
@@ -33,7 +48,7 @@ export type ActionResponse = z.infer<typeof actionResponseSchema>;
 
 /** Action Form Schema **/
 export const actionFormSchema = z.object({
-    title: z.string().nullable().optional(),
+    title: z.string().min(1, { message: "Action title is required" }),
     description: z.string().nullable().optional(),
     type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE]).default(ActionType.CORRECTIVE),
 });

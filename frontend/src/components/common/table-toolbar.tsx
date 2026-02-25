@@ -1,5 +1,5 @@
 "use client";
-"use no memo"   ;
+"use no memo";
 
 import { Input } from "../ui/input";
 import { Table } from "@tanstack/react-table"
@@ -38,27 +38,27 @@ interface DataTableToolbarProps<TData> {
 }
 
 export function TextSearch<TData>({
-  table,
-  columnId,
-  placeholder = "Filter…",
-  className,
+    table,
+    columnId,
+    placeholder = "Filter…",
+    className,
 }: {
-  table: Table<TData>
-  columnId: string
-  placeholder?: string
-  className?: string
+    table: Table<TData>
+    columnId: string
+    placeholder?: string
+    className?: string
 }) {
-  const column = table.getColumn(columnId)
-  if (!column) return null
+    const column = table.getColumn(columnId)
+    if (!column) return null
 
-  return (
-    <Input
-      placeholder={placeholder}
-      value={(column.getFilterValue() as string) ?? ""}
-      onChange={(e) => column.setFilterValue(e.target.value)}
-      className={`h-8 ${className} w-[150px] lg:w-[250px]`}
-    />
-  )
+    return (
+        <Input
+            placeholder={placeholder}
+            value={(column.getFilterValue() as string) ?? ""}
+            onChange={(e) => column.setFilterValue(e.target.value)}
+            className={`h-8 ${className} w-[150px] lg:w-[250px]`}
+        />
+    )
 }
 
 
@@ -71,7 +71,7 @@ export function DataTableToolbar<TData>({
     showViewOptions = true,
     showReset = true,
 }: DataTableToolbarProps<TData>) {
-  const isFiltered = table.getState().columnFilters.length > 0;
+    const isFiltered = table.getState().columnFilters.length > 0;
 
     return (
         <div className="flex items-center justify-between gap-4">
@@ -86,15 +86,15 @@ export function DataTableToolbar<TData>({
                 )}
 
                 {filters?.map(
-                (filter) =>
-                    table.getColumn(filter.columnId) && (
-                    <DataTableFacetedFilter
-                        key={filter.columnId}
-                        column={table.getColumn(filter.columnId)}
-                        title={filter.title}
-                        options={filter.options}
-                    />
-                    )
+                    (filter) =>
+                        table.getColumn(filter.columnId) && (
+                            <DataTableFacetedFilter
+                                key={filter.columnId}
+                                column={table.getColumn(filter.columnId)}
+                                title={filter.title}
+                                options={filter.options}
+                            />
+                        )
                 )}
 
                 {showReset && isFiltered && (

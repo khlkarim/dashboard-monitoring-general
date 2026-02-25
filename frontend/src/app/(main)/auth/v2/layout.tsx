@@ -16,12 +16,12 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
           <div className="absolute top-10 space-y-1 px-10">
             <div className='text-white'>
               {/* {themeMode === 'light'?  */}
-                <Image alt="JE" src="/logo-dark.png" width={30} height={30} />
-                {/* : */}
-                {/* <Image alt="JE" src="/logo-light.png" width={30} height={30} /> */}
+              <Image alt="JE" src="/logo-dark.png" width={30} height={30} />
+              {/* : */}
+              {/* <Image alt="JE" src="/logo-light.png" width={30} height={30} /> */}
               {/* } */}
               <h1 className="text-2xl font-medium">{APP_CONFIG.name}</h1>
-              <p className="text-sm">Design. Build. Launch. Repeat.</p>
+              <p className="text-sm">Build. Launch. Repeat.</p>
 
             </div>
           </div>
@@ -30,7 +30,7 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
             <div className="flex-1 space-y-1 text-white">
               <h2 className="font-medium">Who we are?</h2>
               <p className="text-sm">
-                INSAT Junior Enterprise is a non-profit organization founded in 2005 
+                INSAT Junior Enterprise is a non-profit organization founded in 2005
                 that bridges the gap between academic learning and the professional world.
               </p>
             </div>

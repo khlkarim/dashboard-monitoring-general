@@ -1,7 +1,8 @@
 import {
   Entity,
   Column,
-  ManyToOne,
+  JoinTable,
+  ManyToMany,
   UpdateDateColumn,
   CreateDateColumn,
   PrimaryGeneratedColumn,
@@ -13,12 +14,13 @@ import { ProcessusEntity } from 'src/processus/infrastructure/persistence/relati
   name: 'activity',
 })
 export class ActivityEntity extends EntityRelationalHelper {
-  @ManyToOne(
+  @ManyToMany(
     () => ProcessusEntity,
-    (parentEntity) => parentEntity.activities,
-    { eager: true, onDelete: 'CASCADE', nullable: false }
+    (processus) => processus.activities,
+    { eager: true, onDelete: 'CASCADE' }
   )
-  processus: ProcessusEntity;
+  @JoinTable()
+  processus: ProcessusEntity[];
 
   @Column({
     nullable: true,

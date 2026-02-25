@@ -162,7 +162,7 @@ export function PersonalInfoForm() {
                                         <FormControl>
                                             <Input
                                                 type="tel"
-                                                placeholder="+33 6 12 34 56 78"
+                                                placeholder="+216 12 345 678"
                                                 {...field}
                                                 value={field.value || ""}
                                             />

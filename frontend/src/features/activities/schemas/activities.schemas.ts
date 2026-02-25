@@ -3,7 +3,7 @@ import { processusResponseSchema } from '@/features/processus/schemas/processus.
 
 /** Create Activity */
 export const createActivityRequestSchema = z.object({
-    processus: z.object({ id: z.string() }),
+    processus: z.array(z.object({ id: z.string() })),
     title: z.string().optional().nullable(),
     description: z.string().optional().nullable(),
     startDate: z.string().datetime().optional().nullable(),
@@ -20,7 +20,7 @@ export const activityResponseSchema = z.object({
     id: z.string(),
     title: z.string().nullable().optional(),
     description: z.string().nullable().optional(),
-    processus: processusResponseSchema,
+    processus: z.array(processusResponseSchema),
     startDate: z.string().datetime().optional().nullable(),
     endDate: z.string().datetime().optional().nullable(),
     createdAt: z.string().datetime(),
@@ -30,19 +30,16 @@ export type ActivityResponse = z.infer<typeof activityResponseSchema>;
 
 /** Activity Form Schema **/
 export const activityFormSchema = z.object({
-    processus: z.object({
-      id: z.string().min(1, "Processus is required"),
-    }),
-    title: z.string().nullable().optional(),
+    processus: z.array(z.string()).min(1, "At least one Processus is required"),
+    title: z.string().min(1, "Title is required"),
     description: z.string().nullable().optional(),
-    startDate: z.string().datetime().optional().nullable(),
-    endDate: z.string().datetime().optional().nullable(),
+    startDate: z.string().datetime({ message: "Invalid start date" }),
+    endDate: z.string().datetime({ message: "Invalid end date" }),
 });
 export type ActivityFormValues = z.infer<typeof activityFormSchema>;
 
 export const partialActivityFormSchema = activityFormSchema.partial();
 export type PartialActivityFormValues = z.infer<typeof partialActivityFormSchema>;
-
 
 /** Find All Query */
 export const findAllActivitiesQuerySchema = z.object({

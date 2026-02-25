@@ -99,8 +99,8 @@ export function SkillTable({ skills }: SkillTableProps) {
           <div className="flex flex-1 items-center gap-2">
             <TextSearch
               table={table}
-              columnId={"name"}
-              placeholder={"Search by skill name..."}
+              columnId={"title"}
+              placeholder={"Search by skill title..."}
             />
 
             {table.getState().columnFilters.length > 0 &&
