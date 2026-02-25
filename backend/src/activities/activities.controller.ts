@@ -54,10 +54,7 @@ export class ActivitiesController {
     @Query() query: FindAllActivitiesDto,
   ): Promise<InfinityPaginationResponseDto<Activity>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 50;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.activitiesService.findAllWithPagination({
@@ -84,10 +81,7 @@ export class ActivitiesController {
     @Query() query: FindAllActivitiesDto,
   ): Promise<InfinityPaginationResponseDto<Activity>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.activitiesService.findAllWithPaginationByProcessusId({

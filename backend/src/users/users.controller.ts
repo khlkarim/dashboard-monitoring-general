@@ -72,10 +72,7 @@ export class UsersController {
     @Query() query: QueryUserDto,
   ): Promise<InfinityPaginationResponseDto<User>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.usersService.findManyWithPagination({
@@ -100,10 +97,7 @@ export class UsersController {
     @Query() query: QueryUserDto,
   ): Promise<InfinityPaginationResponseDto<User>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.usersService.findManyWithPagination({

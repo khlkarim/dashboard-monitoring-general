@@ -31,9 +31,9 @@ export type RiskResponse = z.infer<typeof riskResponseSchema>;
 export const riskFormSchema = z.object({
     title: z.string().min(1, "Name is required"),
     description: z.string().optional().nullable(),
-    severity: z.number().optional().nullable(),
-    occurrence: z.number().optional().nullable(),
-    detection: z.number().optional().nullable(),
+    severity: z.coerce.number({ message: "Severity is required" }).min(1),
+    occurrence: z.coerce.number({ message: "Occurence is required" }).min(1),
+    detection: z.coerce.number({ message: "Detection is required" }).min(1),
 });
 export type RiskFormValues = z.infer<typeof riskFormSchema>;
 

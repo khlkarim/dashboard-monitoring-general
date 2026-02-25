@@ -1,24 +1,8 @@
-
-
-
-
-
-
-
-
 import {
   HttpStatus,
   // common
   Injectable,
   UnprocessableEntityException,
-
-
-
-
-
-
-
-
 } from '@nestjs/common';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
@@ -31,8 +15,6 @@ import { Processus } from 'src/processus/domain/processus';
 @Injectable()
 export class ActivitiesService {
   constructor(
-
-
     private readonly processusService: ProcessusService,
     // Dependencies here
     private readonly activityRepository: ActivityRepository,
@@ -45,21 +27,24 @@ export class ActivitiesService {
     // Do not remove comment below.
     // <creating-property />
 
-    const processusObject = await this.processusService.findById(
-      createActivityDto.processus.id,
-    );
-    if (!processusObject) {
-      throw new UnprocessableEntityException({
-        status: HttpStatus.UNPROCESSABLE_ENTITY,
-        errors: {
-          processus: 'notExists',
-        },
-      });
-    }
-    const processus = processusObject;
+    const processus = createActivityDto.processus
+      ? await Promise.all(
+        createActivityDto.processus.map(async (p) => {
+          const processusObject = await this.processusService.findById(p.id);
 
+          if (!processusObject) {
+            throw new UnprocessableEntityException({
+              status: HttpStatus.UNPROCESSABLE_ENTITY,
+              errors: {
+                processus: `Processus with ID ${p.id} does not exist`,
+              },
+            });
+          }
 
-
+          return processusObject;
+        })
+      )
+      : [];
 
     return this.activityRepository.create({
       // Do not remove comment below.
@@ -120,24 +105,28 @@ export class ActivitiesService {
   ) {
     // Do not remove comment below.
     // <updating-property />
-    let processus: Processus | undefined = undefined;
+    let processus: Processus[] | undefined = undefined;
 
     if (updateActivityDto.processus) {
-      const processusObject = await this.processusService.findById(
-        updateActivityDto.processus.id,
-      );
-      if (!processusObject) {
-        throw new UnprocessableEntityException({
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            processus: 'notExists',
-          },
-        });
-      }
-      processus = processusObject;
+      processus = updateActivityDto.processus
+        ? await Promise.all(
+          updateActivityDto.processus.map(async (p) => {
+            const processusObject = await this.processusService.findById(p.id);
+
+            if (!processusObject) {
+              throw new UnprocessableEntityException({
+                status: HttpStatus.UNPROCESSABLE_ENTITY,
+                errors: {
+                  processus: `Processus with ID ${p.id} does not exist`,
+                },
+              });
+            }
+
+            return processusObject;
+          })
+        )
+        : [];
     }
-
-
 
     return this.activityRepository.update(id, {
       // Do not remove comment below.

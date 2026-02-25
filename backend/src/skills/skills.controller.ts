@@ -36,7 +36,7 @@ import { FindAllSkillsDto } from './dto/find-all-skills.dto';
   version: '1',
 })
 export class SkillsController {
-  constructor(private readonly skillsService: SkillsService) {}
+  constructor(private readonly skillsService: SkillsService) { }
 
   @Post()
   @ApiCreatedResponse({
@@ -54,10 +54,7 @@ export class SkillsController {
     @Query() query: FindAllSkillsDto,
   ): Promise<InfinityPaginationResponseDto<Skill>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.skillsService.findAllWithPagination({

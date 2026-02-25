@@ -1,11 +1,15 @@
 import api from '@/lib/api';
 import {
     createUserRequestSchema,
+    createUserResponseSchema,
     updateUserRequestSchema,
+    updateUserResponseSchema,
     userResponseSchema,
     usersListResponseSchema,
     type CreateUserRequest,
+    type CreateUserResponse,
     type UpdateUserRequest,
+    type UpdateUserResponse,
     type UserResponse,
     type UsersListResponse,
     type QueryUsersDto,
@@ -14,10 +18,10 @@ import { filesApi } from '@/features/files/api/files.api';
 
 export const usersApi = {
     /** POST /api/v1/users */
-    create: async (data: CreateUserRequest): Promise<UserResponse> => {
+    create: async (data: CreateUserRequest): Promise<CreateUserResponse> => {
         createUserRequestSchema.parse(data);
         const res = await api.post('/api/v1/users', data);
-        return userResponseSchema.parse(res.data);
+        return createUserResponseSchema.parse(res.data);
     },
 
     /** GET /api/v1/users */
@@ -39,8 +43,9 @@ export const usersApi = {
     },
 
     /** PATCH /api/v1/users/:id */
-    update: async (id: string, data: UpdateUserRequest): Promise<UserResponse> => {
+    update: async (id: string, data: UpdateUserRequest): Promise<UpdateUserResponse> => {
         updateUserRequestSchema.parse(data);
+        console.log(data);
 
         const payload = { ...data };
 
@@ -50,7 +55,7 @@ export const usersApi = {
         }
 
         const res = await api.patch(`/api/v1/users/${id}`, payload);
-        return userResponseSchema.parse(res.data);
+        return updateUserResponseSchema.parse(res.data);
     },
 
     /** DELETE /api/v1/users/:id */

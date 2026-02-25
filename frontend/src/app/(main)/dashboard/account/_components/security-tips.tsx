@@ -8,7 +8,7 @@ export function SecurityTips() {
                     <CardTitle className="text-lg">Security Tips</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-4 text-muted-foreground">
-                    <p>* Use at least 8 characters</p>
+                    <p>* Use at least 6 characters</p>
                     <p>* Mix uppercase and lowercase letters</p>
                     <p>* Include numbers and symbols</p>
                     <p>* Don't use common words or birthdays</p>

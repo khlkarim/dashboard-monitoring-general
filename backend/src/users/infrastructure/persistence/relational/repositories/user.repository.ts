@@ -121,6 +121,10 @@ export class UsersRelationalRepository implements UserRepository {
   }
 
   async remove(id: User['id']): Promise<void> {
-    await this.usersRepository.softDelete(id);
+    const user = await this.usersRepository.findOneBy({ id });
+
+    if (user) {
+      await this.usersRepository.remove(user);
+    }
   }
 }

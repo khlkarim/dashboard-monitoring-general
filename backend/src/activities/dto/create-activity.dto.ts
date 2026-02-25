@@ -1,111 +1,69 @@
-
-
-
-
-
-  import {
-    // decorators here
-
-
+import {
+  // decorators here
   IsString,
-
-
-
-
   IsOptional,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   IsDate,
-  ValidateNested,
-  IsNotEmptyObject,
+  ValidateNested
+} from 'class-validator';
 
-  } from 'class-validator';
-
-  import { 
-    // decorators here
+import {
+  // decorators here
   ApiProperty,
+} from '@nestjs/swagger';
 
-  } from '@nestjs/swagger';
-
-
-
-  import {
-    // decorators here
-
+import {
+  // decorators here
   Transform,
   Type,
-
-  } from 'class-transformer';
+} from 'class-transformer';
 import { ProcessusDto } from 'src/processus/dto/processus.dto';
 
 export class CreateActivityDto {
-  @ValidateNested()
+  @ApiProperty({
+    required: false,
+    type: () =>
+      ProcessusDto,
+  })
   @Type(() => ProcessusDto)
-  @IsNotEmptyObject()
-  processus: ProcessusDto;
+  @IsOptional()
+  @ValidateNested({ each: true })
+  processus?: ProcessusDto[];
 
   @ApiProperty({
     required: false,
-    type: () => 
-                        Date,
-                })
-
-      @IsOptional()
-              @Transform(({ value }) => new Date(value))
-      @IsDate()
-      
-  endDate?: Date  | null;
+    type: () =>
+      Date,
+  })
+  @IsOptional()
+  @Transform(({ value }) => new Date(value))
+  @IsDate()
+  endDate?: Date | null;
 
   @ApiProperty({
     required: false,
-    type: () => 
-                        Date,
-                })
-
-      @IsOptional()
-              @Transform(({ value }) => new Date(value))
-      @IsDate()
-      
-  startDate?: Date  | null;
+    type: () =>
+      Date,
+  })
+  @IsOptional()
+  @Transform(({ value }) => new Date(value))
+  @IsDate()
+  startDate?: Date | null;
 
   @ApiProperty({
     required: false,
-    type: () => 
-                        String,
-                })
-
-      @IsOptional()
-              @IsString()
-      
-  description?: string  | null;
+    type: () =>
+      String,
+  })
+  @IsOptional()
+  @IsString()
+  description?: string | null;
 
   @ApiProperty({
     required: false,
-    type: () => 
-                        String,
-                })
-
-      @IsOptional()
-              @IsString()
-      
-  title?: string  | null;
-
-  // Don't forget to use the class-validator decorators in the DTO properties.
+    type: () =>
+      String,
+  })
+  @IsOptional()
+  @IsString()
+  title?: string | null;
 }

@@ -26,7 +26,7 @@ export class NotificationEntity extends EntityRelationalHelper {
   })
   title?: string | null;
 
-  @ManyToMany(() => UserEntity, (user) => user.notifications)
+  @ManyToMany(() => UserEntity, (user) => user.notifications, { cascade: true, onDelete: 'CASCADE' })
   @JoinTable({
     name: 'notification_recipients',
     joinColumn: { name: 'notification_id', referencedColumnName: 'id' },

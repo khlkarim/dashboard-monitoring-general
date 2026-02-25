@@ -9,8 +9,8 @@ export const useUpdateActivity = () => {
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateActivityRequest }) =>
             activitiesApi.update(id, data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['activities'] });
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ['activities'] });
             toast.success('Activity updated successfully');
         },
         onError: () => {

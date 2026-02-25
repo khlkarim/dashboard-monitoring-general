@@ -29,25 +29,6 @@ import {
 import { useGetProcessus } from "@/features/processus/hooks/use-get-processus";
 import { ErrorDisplay } from "@/components/common/error-display";
 
-const profileFormSchema = z.object({
-    photo: z.any().optional(), // File or Blob
-    firstName: z.string().min(1, "First name is required"),
-    lastName: z.string().min(1, "Last name is required"),
-    processusId: z.string().optional().nullable(),
-    role: z.enum(
-        [
-            RoleEnum.ADMINISTRATOR,
-            RoleEnum.PRESIDENT,
-            RoleEnum.MEMBER,
-            RoleEnum.ALUMNI,
-        ],
-        { required_error: "Role is required" }
-    ),
-    workplace: z.string().nullable().optional(),
-    mandate: z.string().nullable().optional(),
-});
-
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 interface UserFormProps {
     initialData?: User | null;
@@ -56,6 +37,57 @@ interface UserFormProps {
 }
 
 export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
+    const profileFormSchema = z
+        .object({
+            photo: z.any().optional(),
+            firstName: z.string().min(1, "First name is required"),
+            lastName: z.string().min(1, "Last name is required"),
+            email: z.string().email("Invalid email address").min(1, "Email is required"),
+            phoneNumber: z.string().nullable().optional(),
+            processusId: z.string().optional().nullable(),
+            role: z.enum(
+                [
+                    RoleEnum.ADMINISTRATOR,
+                    RoleEnum.PRESIDENT,
+                    RoleEnum.MEMBER,
+                    RoleEnum.ALUMNI,
+                ],
+                { required_error: "Role is required" }
+            ),
+            workplace: z.string().nullable().optional(),
+            mandate: z.string().nullable().optional(),
+
+            password: z.string().optional(),
+            confirmPassword: z.string().optional(),
+        })
+        .superRefine((data, ctx) => {
+            if (!data.password && !initialData) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: "Password is required",
+                    path: ["password"],
+                });
+            }
+
+            if (data.password && data.password.length < 6) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: "Password must be at least 6 characters",
+                    path: ["password"],
+                });
+            }
+
+            if (data.password && data.password !== data.confirmPassword) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: "Passwords do not match",
+                    path: ["confirmPassword"],
+                });
+            }
+        });
+
+    type ProfileFormValues = z.infer<typeof profileFormSchema>;
+
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [previewApi, setPreviewApi] = useState<string | null>(null);
 
@@ -68,10 +100,14 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
             photo: initialData?.photo || null,
             firstName: initialData?.firstName || "",
             lastName: initialData?.lastName || "",
+            email: initialData?.email || "",
+            phoneNumber: initialData?.phoneNumber || "",
             processusId: initialData?.processus?.id || null,
             role: initialData?.role?.id || RoleEnum.MEMBER,
             workplace: initialData?.workplace || "",
             mandate: initialData?.mandate || "",
+            password: "",
+            confirmPassword: "",
         },
     });
 
@@ -82,10 +118,14 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
                 photo: initialData.photo || null,
                 firstName: initialData.firstName || "",
                 lastName: initialData.lastName || "",
+                email: initialData?.email || "",
+                phoneNumber: initialData?.phoneNumber || "",
                 processusId: initialData.processus?.id || null,
                 role: initialData.role?.id || RoleEnum.MEMBER,
                 workplace: initialData.workplace || "",
                 mandate: initialData.mandate || "",
+                password: "",
+                confirmPassword: "",
             });
         }
     }, [initialData, profileForm]);
@@ -107,14 +147,32 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
             photo: values.photo,
             firstName: values.firstName,
             lastName: values.lastName,
-            processus: { id: values.processusId || "" },
+            email: values.email,
+            phoneNumber: values.phoneNumber || null,
+            processus:
+                values.processusId && values.processusId.length > 0
+                    ? { id: values.processusId }
+                    : null,
             role: {
                 id: values.role,
-                name: values.role.charAt(0).toUpperCase() + values.role.slice(1),
+                name:
+                    values.role.charAt(0).toUpperCase() +
+                    values.role.slice(1),
             },
-            workplace: values.workplace,
-            mandate: values.mandate,
+            workplace:
+                values.role === RoleEnum.ALUMNI
+                    ? values.workplace
+                    : null,
+            mandate:
+                values.role === RoleEnum.ALUMNI
+                    ? values.mandate
+                    : null,
         };
+
+        if (values.password) {
+            apiData.password = values.password;
+        }
+
         onSubmit(apiData);
     };
 
@@ -180,6 +238,94 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
                         </FormItem>
                     )} />
 
+                    <FormField
+                        control={profileForm.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email Address</FormLabel>
+                                <FormControl>
+                                    <Input type="email" placeholder="john.doe@example.com" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={profileForm.control}
+                        name="phoneNumber"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Phone Number</FormLabel>
+                                <FormControl>
+                                    <Input type="tel" placeholder="+216 12 345 678" {...field} value={field.value || ""} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={profileForm.control}
+                        name="password"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Password</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="password"
+                                        placeholder={initialData ? "Leave blank to keep current password" : "Enter password"}
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={profileForm.control}
+                        name="confirmPassword"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Confirm Password</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="password"
+                                        placeholder="Confirm password"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    {/* Processus select */}
+                    {!isPendingProcessus && !isErrorProcessus && (
+                        <FormField control={profileForm.control} name="processusId" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Processus</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a processus" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {processus?.data?.map((p) => (
+                                            <SelectItem key={p.id} value={p.id?.toString()}>
+                                                {p.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                    )}
+
                     {/* Role */}
                     <FormField control={profileForm.control} name="role" render={({ field }) => (
                         <FormItem>
@@ -235,29 +381,7 @@ export function UserForm({ initialData, onSubmit, isLoading }: UserFormProps) {
                         )} />
                     )}
 
-                    {/* Processus select */}
-                    {!isPendingProcessus && !isErrorProcessus && (
-                        <FormField control={profileForm.control} name="processusId" render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Processus</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a processus" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        {processus?.data?.map((p) => (
-                                            <SelectItem key={p.id} value={p.id?.toString()}>
-                                                {p.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
-                    )}
+
 
                     {isPendingProcessus && (
                         <div className="flex items-center justify-center col-span-2">

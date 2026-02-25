@@ -31,6 +31,7 @@ export class ActivityRelationalRepository implements ActivityRepository {
     const entities = await this.activityRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
+      relations: { processus: true }
     });
 
     return entities.map((entity) => ActivityMapper.toDomain(entity));

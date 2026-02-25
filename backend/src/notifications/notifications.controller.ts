@@ -64,10 +64,7 @@ export class NotificationsController {
     @Query() query: FindAllNotificationsDto,
   ): Promise<InfinityPaginationResponseDto<Notification>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.notificationsService.findAllWithPagination({
@@ -96,10 +93,7 @@ export class NotificationsController {
     @Query() query: FindAllNotificationsDto,
   ): Promise<InfinityPaginationResponseDto<Notification>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.notificationsService.findAllByUserIdWithPagination({

@@ -1,4 +1,4 @@
 import { z } from 'zod';
-import { skillSchema } from '../schemas/skills.schemas';
+import { skillResponseSchema } from '../schemas/skills.schemas';
 
-export type Skill = z.infer<typeof skillSchema>;
+export type Skill = z.infer<typeof skillResponseSchema>;
