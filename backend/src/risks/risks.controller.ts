@@ -36,7 +36,7 @@ import { FindAllRisksDto } from './dto/find-all-risks.dto';
   version: '1',
 })
 export class RisksController {
-  constructor(private readonly risksService: RisksService) {}
+  constructor(private readonly risksService: RisksService) { }
 
   @Post()
   @ApiCreatedResponse({
@@ -54,10 +54,7 @@ export class RisksController {
     @Query() query: FindAllRisksDto,
   ): Promise<InfinityPaginationResponseDto<Risk>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.risksService.findAllWithPagination({

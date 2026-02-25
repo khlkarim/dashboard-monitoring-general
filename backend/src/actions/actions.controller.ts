@@ -54,10 +54,7 @@ export class ActionsController {
     @Query() query: FindAllActionsDto,
   ): Promise<InfinityPaginationResponseDto<Action>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.actionsService.findAllWithPagination({
@@ -84,10 +81,7 @@ export class ActionsController {
     @Param('riskId') riskId: string,
   ): Promise<InfinityPaginationResponseDto<Action>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.actionsService.findAllByRiskIdWithPagination({

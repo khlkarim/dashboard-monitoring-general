@@ -54,10 +54,7 @@ export class CommentsController {
     @Query() query: FindAllCommentsDto,
   ): Promise<InfinityPaginationResponseDto<Comment>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.commentsService.findAllWithPagination({
@@ -84,10 +81,7 @@ export class CommentsController {
     @Param('taskId') taskId: string,
   ): Promise<InfinityPaginationResponseDto<Comment>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.commentsService.findAllByTaskIdWithPagination({
