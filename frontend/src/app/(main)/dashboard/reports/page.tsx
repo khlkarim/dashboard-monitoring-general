@@ -14,6 +14,7 @@ import { Header } from "@/components/common/header";
 import { useGetTasks } from "@/features/tasks/hooks/use-get-tasks";
 import { MemberStatistics } from "./_components/member-statistics";
 import { ProcessusStatistics } from "./_components/processus-statistics";
+import { GeneralStatistics } from "./_components/general-statistics";
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -53,7 +54,15 @@ function Page() {
 
       <Separator />
 
-      {/* Statistics Selectors */}
+      {/* General Statistics - Always Visible */}
+      <div>
+        <h2 className="mb-4 text-2xl font-bold">General Statistics</h2>
+        <GeneralStatistics />
+      </div>
+
+      <Separator />
+
+      {/* Member and Processus Statistics Selectors */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Member Statistics Selector */}
         {membersList.length > 0 && (
@@ -67,7 +76,7 @@ function Page() {
                 value={selectedMemberId}
                 onValueChange={(value) => {
                   setSelectedMemberId(value);
-                  setSelectedProcessusId(""); // Clear processus selection
+                  setSelectedProcessusId("");
                 }}
               >
                 <SelectTrigger className="w-full">
@@ -97,7 +106,7 @@ function Page() {
                 value={selectedProcessusId}
                 onValueChange={(value) => {
                   setSelectedProcessusId(value);
-                  setSelectedMemberId(""); // Clear member selection
+                  setSelectedMemberId("");
                 }}
               >
                 <SelectTrigger className="w-full">
@@ -116,7 +125,7 @@ function Page() {
         )}
       </div>
 
-      {/* Statistics Display */}
+      {/* Member and Processus Statistics Display */}
       <div className="space-y-6">
         {/* Show Member Statistics */}
         {selectedMemberId && <MemberStatistics userId={selectedMemberId} />}
