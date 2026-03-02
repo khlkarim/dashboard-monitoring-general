@@ -78,6 +78,7 @@ export const getColumns = (
         },
         {
             accessorKey: "status",
+            filterFn: "arrIncludesSome",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Status" />
             ),

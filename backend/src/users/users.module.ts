@@ -1,6 +1,4 @@
 import { ProcessusModule } from '../processus/processus.module';
-
-
 import {
   // common
   Module,
@@ -22,13 +20,7 @@ const infrastructurePersistenceModule = RelationalUserPersistenceModule;
 
 @Module({
   imports: [
-      ProcessusModule,
-  
-  
-
-
-
-
+    ProcessusModule,
     // import modules, etc.
     infrastructurePersistenceModule,
     FilesModule,

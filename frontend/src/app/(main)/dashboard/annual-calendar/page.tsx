@@ -60,10 +60,10 @@ function Page() {
 
     return (
         <div className="grid grid-cols-1 gap-6 p-6 animate-in fade-in duration-500 max-w-[1200px] mx-auto">
-            <PageHeader 
+            <PageHeader
                 title="Annual Calendar"
-                description="Interactive scheduler visualization of project timeline and team resources."  
-                breadcrumbs={[]} 
+                description="Interactive scheduler visualization of project timeline and team resources."
+                breadcrumbs={[]}
                 actions={
                     <>
                         <Button onClick={handleAddActivity}>
@@ -77,7 +77,7 @@ function Page() {
             <Separator />
 
             <div className="w-full overflow-x-auto">
-                <GanttCalendar 
+                <GanttCalendar
                     processus={processus.data}
                     activities={activities.data}
                 />
@@ -89,7 +89,7 @@ function Page() {
                 title="Add Activity"
                 description="Define a new activity for a processus."
             >
-                <ActivityForm 
+                <ActivityForm
                     onSubmit={handleAddActivitySubmit}
                     isLoading={createActivityMutation.isPending}
                 />

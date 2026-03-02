@@ -9,14 +9,16 @@ import {
     FindAllKpisQuery,
     kpiListResponseSchema,
     KpiListResponse,
+    CreateKpiResponse,
+    createKpiResponseSchema
 } from '../schemas/kpis.schemas';
 
 export const kpisApi = {
     /** POST /api/v1/kpis */
-    create: async (data: CreateKpiRequest): Promise<KpiResponse> => {
+    create: async (data: CreateKpiRequest): Promise<CreateKpiResponse> => {
         createKpiRequestSchema.parse(data);
         const res = await api.post('/api/v1/kpis', data);
-        return kpiResponseSchema.parse(res.data);
+        return createKpiResponseSchema.parse(res.data);
     },
 
     /** GET /api/v1/kpis */

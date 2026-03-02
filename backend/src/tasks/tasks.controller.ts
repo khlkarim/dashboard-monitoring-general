@@ -62,10 +62,7 @@ export class TasksController {
     @Query() query: FindAllTasksDto,
   ): Promise<InfinityPaginationResponseDto<Task>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.tasksService.findAllWithPagination({
@@ -88,10 +85,7 @@ export class TasksController {
     @Query() query: FindAllTasksDto,
   ): Promise<InfinityPaginationResponseDto<Task>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.tasksService.findAllBySprintIdWithPagination({

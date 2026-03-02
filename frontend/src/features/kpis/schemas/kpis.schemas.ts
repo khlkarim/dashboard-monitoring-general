@@ -15,6 +15,20 @@ export const createKpiRequestSchema = z.object({
 });
 export type CreateKpiRequest = z.infer<typeof createKpiRequestSchema>;
 
+export const createKpiResponseSchema = z.object({
+    id: z.string(),
+    sprint: sprintResponseSchema.nullable().optional(),
+    processus: processusResponseSchema.nullable().optional(),
+    manager: z.object({ id: z.string() }),
+    description: z.string().nullable().optional(),
+    name: z.string(),
+    createdAt: z.string().datetime(),
+    updatedAt: z.string().datetime(),
+    samples: z.array(z.string()).nullable().optional(),
+    samplingRate: z.string().nullable().optional(),
+});
+export type CreateKpiResponse = z.infer<typeof createKpiResponseSchema>;
+
 /** Update KPI */
 export const updateKpiRequestSchema = createKpiRequestSchema.partial();
 export type UpdateKpiRequest = z.infer<typeof updateKpiRequestSchema>;

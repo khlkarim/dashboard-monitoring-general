@@ -41,13 +41,23 @@ export type SprintResponse = z.infer<typeof sprintResponseSchema>;
 /** Sprint Form Schema */
 export const sprintFormSchema = z.object({
     name: z.string().min(1, "Name is required"),
-    goal: z.string().optional(),
+    goal: z.string().min(1, "Goal is required"),
     startDate: z.date({ required_error: "Start date is required" }),
     endDate: z.date({ required_error: "End date is required" }),
-    validationDate: z.date().optional(),
+    validationDate: z.date({ required_error: "Validation date is required" }),
     status: z.enum([SprintStatus.PLANNED, SprintStatus.ACTIVE, SprintStatus.COMPLETED]),
-});
+})
+    .refine((data) => data.startDate < data.endDate, {
+        message: "Start date must be before the end date.",
+        path: ["startDate"],
+    })
+    .refine((data) => data.endDate <= data.validationDate, {
+        message: "End date must be before or equal to validation date.",
+        path: ["validationDate"],
+    });
+
 export type SprintFormValues = z.infer<typeof sprintFormSchema>;
+
 
 /** Find All Query */
 export const findAllSprintsQuerySchema = z.object({

@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { Mail, Briefcase, FileText } from "lucide-react";
+import { Mail, Phone, Briefcase, FileText } from "lucide-react";
 import { User } from "@/features/users/types/users.types";
 import {
     Card,
@@ -35,6 +35,15 @@ export function AlumniInfo({ user }: UserInfoProps) {
                                         Email Address
                                     </span>
                                     <span className="text-base">{user.email || "No email provided"}</span>
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                        <Phone className="h-4 w-4" />
+                                        <span className="text-sm font-medium">Phone Number</span>
+                                    </div>
+                                    <span className="text-base">
+                                        {user.phoneNumber || <span className="text-muted-foreground italic text-sm">Not provided</span>}
+                                    </span>
                                 </div>
                                 <div className="flex flex-col gap-1">
                                     <span className="text-sm font-medium text-muted-foreground">

@@ -156,6 +156,8 @@ export class UsersService {
     return this.usersRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+      phoneNumber: createUserDto.phoneNumber,
+
       processus,
 
       workplace: createUserDto.workplace,
@@ -240,6 +242,11 @@ export class UsersService {
     } else if (updateUserDto.processus === null) {
       processus = null;
     }
+    else if (updateUserDto.processus === null) {
+      processus = null;
+    }
+
+
 
     let password: string | undefined = undefined;
 
@@ -343,6 +350,8 @@ export class UsersService {
     await this.usersRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+      phoneNumber: updateUserDto.phoneNumber,
+
       processus,
 
       workplace: updateUserDto.workplace,

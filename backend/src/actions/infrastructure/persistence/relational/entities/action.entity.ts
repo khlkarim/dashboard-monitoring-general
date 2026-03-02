@@ -1,16 +1,16 @@
 import { RiskEntity } from '../../../../../risks/infrastructure/persistence/relational/entities/risk.entity';
 
 import {
-  CreateDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
   Column,
   ManyToOne,
+  UpdateDateColumn,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 import { ActionType } from 'src/actions/domain/action-type.enum';
+import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 
 @Entity({
   name: 'action',
@@ -27,7 +27,7 @@ export class ActionEntity extends EntityRelationalHelper {
   @ManyToOne(
     () => RiskEntity,
     (parentEntity) => parentEntity.actions,
-    { eager: true, nullable: false }
+    { eager: true, onDelete: 'CASCADE', nullable: false }
   )
   risk: RiskEntity;
 

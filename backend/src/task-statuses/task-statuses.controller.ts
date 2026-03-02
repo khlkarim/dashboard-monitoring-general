@@ -36,7 +36,7 @@ import { FindAllTaskStatusesDto } from './dto/find-all-task-statuses.dto';
   version: '1',
 })
 export class TaskStatusesController {
-  constructor(private readonly taskStatusesService: TaskStatusesService) {}
+  constructor(private readonly taskStatusesService: TaskStatusesService) { }
 
   @Post()
   @ApiCreatedResponse({
@@ -54,10 +54,7 @@ export class TaskStatusesController {
     @Query() query: FindAllTaskStatusesDto,
   ): Promise<InfinityPaginationResponseDto<TaskStatus>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.taskStatusesService.findAllWithPagination({

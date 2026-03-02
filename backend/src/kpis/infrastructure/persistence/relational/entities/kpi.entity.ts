@@ -1,11 +1,11 @@
 import { ProcessusEntity } from '../../../../../processus/infrastructure/persistence/relational/entities/processus.entity';
 import {
-  CreateDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
   Column,
   ManyToOne,
+  UpdateDateColumn,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 import { SprintEntity } from '../../../../../sprints/infrastructure/persistence/relational/entities/sprint.entity';
@@ -30,14 +30,14 @@ export class KpiEntity extends EntityRelationalHelper {
 
   @ManyToOne(
     () => ProcessusEntity,
-    { eager: true, nullable: true }
+    { eager: true, onDelete: 'CASCADE', nullable: true }
   )
   processus?: ProcessusEntity | null;
 
-  @ManyToOne(() => SprintEntity, { eager: true, nullable: true })
+  @ManyToOne(() => SprintEntity, { eager: true, onDelete: 'CASCADE', nullable: true })
   sprint?: SprintEntity | null;
 
-  @ManyToOne(() => UserEntity, { eager: true, nullable: false })
+  @ManyToOne(() => UserEntity, { eager: true, onDelete: 'CASCADE', nullable: false })
   manager: UserEntity;
 
   @Column({

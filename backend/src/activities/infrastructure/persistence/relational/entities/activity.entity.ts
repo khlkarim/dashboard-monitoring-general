@@ -1,35 +1,11 @@
 import {
-  CreateDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
   Column,
-  ManyToOne,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  JoinTable,
+  ManyToMany,
+  UpdateDateColumn,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 import { ProcessusEntity } from 'src/processus/infrastructure/persistence/relational/entities/processus.entity';
@@ -38,56 +14,41 @@ import { ProcessusEntity } from 'src/processus/infrastructure/persistence/relati
   name: 'activity',
 })
 export class ActivityEntity extends EntityRelationalHelper {
-  @ManyToOne(
+  @ManyToMany(
     () => ProcessusEntity,
-    (parentEntity) => parentEntity.activities,
-    { eager: true, nullable: false }
+    (processus) => processus.activities,
+    { eager: true, onDelete: 'CASCADE' }
   )
-  processus: ProcessusEntity;
+  @JoinTable()
+  processus: ProcessusEntity[];
 
   @Column({
     nullable: true,
     type:
-              Date,
-        })
-
-
-  endDate?: Date  | null;
-
-
+      Date,
+  })
+  endDate?: Date | null;
 
   @Column({
     nullable: true,
     type:
-              Date,
-        })
-
-
-  startDate?: Date  | null;
-
-
+      Date,
+  })
+  startDate?: Date | null;
 
   @Column({
     nullable: true,
     type:
-              String,
-        })
-
-
-  description?: string  | null;
-
-
+      String,
+  })
+  description?: string | null;
 
   @Column({
     nullable: true,
     type:
-              String,
-        })
-
-
-  title?: string  | null;
-
-
+      String,
+  })
+  title?: string | null;
 
   @PrimaryGeneratedColumn('uuid')
   id: string;

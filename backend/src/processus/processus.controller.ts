@@ -39,7 +39,7 @@ import { ProcessusStatisticsDto } from './dto/processus-statistics.dto';
   version: '1',
 })
 export class ProcessusController {
-  constructor(private readonly processusService: ProcessusService) {}
+  constructor(private readonly processusService: ProcessusService) { }
 
   @Post()
   @ApiCreatedResponse({
@@ -57,10 +57,7 @@ export class ProcessusController {
     @Query() query: FindAllProcessusDto,
   ): Promise<InfinityPaginationResponseDto<Processus>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 50;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.processusService.findAllWithPagination({

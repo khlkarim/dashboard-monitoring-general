@@ -34,13 +34,27 @@ export enum KpiType {
     PROCESSUS = "PROCESSUS",
 }
 
-const formSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    description: z.string().optional(),
-    sprint: z.object({ id: z.string() }).optional().nullable(),
-    processus: z.object({ id: z.string() }).optional().nullable(),
-    samplingRate: z.string().optional(),
-});
+// Conditional validation schema
+const formSchema = z
+    .object({
+        name: z.string().min(1, "Name is required"),
+        description: z.string().optional(),
+        sprint: z.object({ id: z.string().min(1) }).nullable().optional(),
+        processus: z.object({ id: z.string().min(1) }).nullable().optional(),
+        samplingRate: z.string({ message: "Sampling rate is required." }),
+        type: z.nativeEnum(KpiType),
+    })
+    .refine((data) => {
+        if (data.type === KpiType.SPRINT) {
+            return !!(data.sprint && data.sprint.id && data.samplingRate);
+        } else if (data.type === KpiType.PROCESSUS) {
+            return !!(data.processus && data.processus.id);
+        }
+        return false;
+    }, {
+        message: "Processus is required.",
+        path: ["processus"],
+    });
 
 type KpiFormValues = z.infer<typeof formSchema>;
 
@@ -64,37 +78,27 @@ export function KpiForm({ initialData, onSubmit, isLoading, type = KpiType.PROCE
             sprint: initialData?.sprint || null,
             processus: initialData?.processus || null,
             samplingRate: initialData?.samplingRate || "",
+            type,
         },
     });
 
     useEffect(() => {
-        if (initialData) {
-            form.reset({
-                name: initialData.name,
-                description: initialData.description || "",
-                sprint: initialData.sprint || null,
-                processus: initialData.processus || null,
-                samplingRate: initialData.samplingRate || "",
-            });
-        } else {
-            form.reset({
-                name: "",
-                description: "",
-                sprint: null,
-                processus: null,
-                samplingRate: "",
-            });
-        }
-    }, [initialData, form]);
+        form.reset({
+            name: initialData?.name || "",
+            description: initialData?.description || "",
+            sprint: initialData?.sprint || null,
+            processus: initialData?.processus || null,
+            samplingRate: initialData?.samplingRate || "",
+            type,
+        });
+    }, [initialData, type, form]);
 
     const handleSubmit = (values: KpiFormValues) => {
         const apiData = {
             ...values,
-            sprint: type === KpiType.SPRINT && values.sprint ? values.sprint : null,
-            processus: type === KpiType.PROCESSUS && values.processus ? values.processus : null,
-            manager: {
-                id: user?.id,
-            },
+            sprint: values.type === KpiType.SPRINT ? values.sprint : null,
+            processus: values.type === KpiType.PROCESSUS ? values.processus : null,
+            manager: { id: user?.id },
         };
 
         onSubmit(apiData);
@@ -103,6 +107,7 @@ export function KpiForm({ initialData, onSubmit, isLoading, type = KpiType.PROCE
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+                {/* Name */}
                 <FormField
                     control={form.control}
                     name="name"
@@ -117,6 +122,7 @@ export function KpiForm({ initialData, onSubmit, isLoading, type = KpiType.PROCE
                     )}
                 />
 
+                {/* Description */}
                 <FormField
                     control={form.control}
                     name="description"
@@ -131,34 +137,74 @@ export function KpiForm({ initialData, onSubmit, isLoading, type = KpiType.PROCE
                     )}
                 />
 
+                {/* Sprint */}
                 {type === KpiType.SPRINT && (
-                    <FormField
-                        control={form.control}
-                        name="sprint"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Sprint</FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value?.id || ""}>
+                    <>
+                        <FormField
+                            control={form.control}
+                            name="sprint"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Sprint</FormLabel>
+                                    <Select
+                                        onValueChange={(val) => field.onChange(val === "none" ? null : { id: val })}
+                                        value={field.value?.id || "none"}
+                                    >
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a sprint" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="none">No Sprint</SelectItem>
+                                            {sprints?.data.map((sprint) => (
+                                                <SelectItem key={sprint.id} value={sprint.id}>
+                                                    {sprint.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="samplingRate"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Sampling Rate</FormLabel>
                                     <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a sprint" />
-                                        </SelectTrigger>
+                                        <Input placeholder="Enter sampling rate" {...field} />
                                     </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="none">No Sprint</SelectItem>
-                                        {sprints?.data.map((sprint) => (
-                                            <SelectItem key={sprint.id} value={sprint.id}>
-                                                {sprint.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </>
                 )}
 
+                {/* Sampling Rate Input */}
+                <FormField
+                    control={form.control}
+                    name="samplingRate"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Sampling Rate</FormLabel>
+                            <FormControl>
+                                <Input
+                                    placeholder="Enter sampling rate"
+                                    type="text"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                {/* Processus */}
                 {type === KpiType.PROCESSUS && (
                     <FormField
                         control={form.control}
@@ -166,7 +212,10 @@ export function KpiForm({ initialData, onSubmit, isLoading, type = KpiType.PROCE
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Processus</FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value?.id || ""}>
+                                <Select
+                                    onValueChange={(val) => field.onChange(val === "none" ? null : { id: val })}
+                                    value={field.value?.id || "none"}
+                                >
                                     <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a processus" />
@@ -174,9 +223,9 @@ export function KpiForm({ initialData, onSubmit, isLoading, type = KpiType.PROCE
                                     </FormControl>
                                     <SelectContent>
                                         <SelectItem value="none">No Processus</SelectItem>
-                                        {processus?.data.map((processus) => (
-                                            <SelectItem key={processus.id} value={processus.id}>
-                                                {processus.label}
+                                        {processus?.data.map((proc) => (
+                                            <SelectItem key={proc.id} value={proc.id}>
+                                                {proc.label}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -187,6 +236,7 @@ export function KpiForm({ initialData, onSubmit, isLoading, type = KpiType.PROCE
                     />
                 )}
 
+                {/* Submit */}
                 <div className="flex justify-end pt-4">
                     <Button type="submit" disabled={isLoading}>
                         {isLoading ? "Saving..." : initialData ? "Update KPI" : "Create KPI"}
@@ -196,3 +246,4 @@ export function KpiForm({ initialData, onSubmit, isLoading, type = KpiType.PROCE
         </Form>
     );
 }
+

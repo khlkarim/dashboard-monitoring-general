@@ -316,20 +316,27 @@ export class ActivitySeedService {
 
     @InjectRepository(ProcessusEntity)
     private readonly processusRepository: Repository<ProcessusEntity>,
-  ) {}
+  ) { }
 
   async run(): Promise<void> {
     const count = await this.activityRepository.count();
     if (count > 0) return;
 
+    // Fetch all processus and create a Map for quick lookup by label
     const processusList = await this.processusRepository.find();
+    const processusMap = new Map(processusList.map((p) => [p.label, p]));
+
     const baseDate = new Date('2026-01-01');
+    const activitiesToSave: ActivityEntity[] = [];
 
-    const activities: ActivityEntity[] = [];
+    // Iterate through the seed Record
+    for (const [label, seeds] of Object.entries(ACTIVITIES_BY_PROCESSUS)) {
+      const correspondingProcessus = processusMap.get(label);
 
-    for (const processus of processusList) {
-      const seeds = ACTIVITIES_BY_PROCESSUS[processus.label];
-      if (!seeds) continue;
+      if (!correspondingProcessus) {
+        console.warn(`Processus with label "${label}" not found in database. Skipping seeds.`);
+        continue;
+      }
 
       for (const seed of seeds) {
         const startDate = new Date(baseDate);
@@ -338,18 +345,19 @@ export class ActivitySeedService {
         const endDate = new Date(startDate);
         endDate.setMonth(endDate.getMonth() + seed.durationMonths);
 
-        activities.push(
+        activitiesToSave.push(
           this.activityRepository.create({
             title: seed.title,
             description: seed.description,
-            processus,
             startDate,
             endDate,
+            // ManyToMany expects an array
+            processus: [correspondingProcessus],
           }),
         );
       }
     }
 
-    await this.activityRepository.save(activities);
+    await this.activityRepository.save(activitiesToSave);
   }
 }

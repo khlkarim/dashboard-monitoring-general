@@ -27,7 +27,7 @@ interface KpisTableProps {
     kpis: Kpi[];
 }
 
-export function KpisTable({ processus, kpis } : KpisTableProps) {
+export function KpisTable({ processus, kpis }: KpisTableProps) {
     const createMutation = useCreateKpi();
     const updateMutation = useUpdateKpi();
     const deleteMutation = useDeleteKpi();
@@ -72,7 +72,7 @@ export function KpisTable({ processus, kpis } : KpisTableProps) {
     };
 
     async function handleDeleteConfirm() {
-        if(deletingKpi) {
+        if (deletingKpi) {
             await deleteMutation.mutateAsync(deletingKpi.id);
             setIsDeleteOpen(false);
         }
@@ -80,7 +80,7 @@ export function KpisTable({ processus, kpis } : KpisTableProps) {
 
     return (
         <>
-            <TableCard 
+            <TableCard
                 title={processus.label}
                 description={processus.description}
                 actions={
@@ -100,7 +100,7 @@ export function KpisTable({ processus, kpis } : KpisTableProps) {
                             placeholder={"Search by name..."}
                         />
 
-                        {table.getState().columnFilters.length > 0 && 
+                        {table.getState().columnFilters.length > 0 &&
                             <Button
                                 variant="ghost"
                                 onClick={() => table.resetColumnFilters()}
@@ -128,7 +128,7 @@ export function KpisTable({ processus, kpis } : KpisTableProps) {
                 title="Create Kpi"
                 description="Add a new Kpi to your timeline."
             >
-                <KpiForm 
+                <KpiForm
                     onSubmit={handleCreateSubmit}
                     isLoading={createMutation.isPending}
                 />

@@ -8,8 +8,8 @@ export const useCreateActivity = () => {
 
     return useMutation({
         mutationFn: (data: CreateActivityRequest) => activitiesApi.create(data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['activities'] });
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ['activities'] });
             toast.success('Activity created successfully');
         },
         onError: () => {

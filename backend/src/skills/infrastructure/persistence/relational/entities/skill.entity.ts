@@ -1,13 +1,13 @@
 import {
-  CreateDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
   Column,
   ManyToMany,
+  UpdateDateColumn,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UserEntity } from '../../../../../users/infrastructure/persistence/relational/entities/user.entity';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
+import { UserEntity } from '../../../../../users/infrastructure/persistence/relational/entities/user.entity';
 
 @Entity({
   name: 'skill',
@@ -18,22 +18,14 @@ export class SkillEntity extends EntityRelationalHelper {
     type:
       String,
   })
-
-
   description?: string | null;
-
-
 
   @Column({
     nullable: true,
     type:
       String,
   })
-
-
   title?: string | null;
-
-
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -44,6 +36,6 @@ export class SkillEntity extends EntityRelationalHelper {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToMany(() => UserEntity, (user) => user.skills)
+  @ManyToMany(() => UserEntity, (user) => user.skills, { cascade: true, onDelete: 'CASCADE' })
   users: UserEntity[];
 }

@@ -62,10 +62,7 @@ export class KpisController {
     @Query() query: FindAllKpisDto,
   ): Promise<InfinityPaginationResponseDto<Kpi>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.kpisService.findAllWithPagination({
@@ -93,10 +90,7 @@ export class KpisController {
     @Param('sprintId') sprintId: string,
   ): Promise<InfinityPaginationResponseDto<Kpi>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.kpisService.findAllBySprintIdWithPagination({
@@ -125,10 +119,7 @@ export class KpisController {
     @Param('processusId') processusId: string,
   ): Promise<InfinityPaginationResponseDto<Kpi>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.kpisService.findAllByProcessusIdWithPagination({

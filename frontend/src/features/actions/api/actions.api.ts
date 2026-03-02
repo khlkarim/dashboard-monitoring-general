@@ -9,6 +9,8 @@ import {
     actionListResponseSchema,
     UpdateActionRequest,
     updateActionRequestSchema,
+    updateActionResponseSchema,
+    UpdateActionResponse
 } from '../schemas/actions.schemas';
 
 export const actionsApi = {
@@ -38,10 +40,10 @@ export const actionsApi = {
     },
 
     /** PATCH /api/v1/actions/:id */
-    update: async (id: string, data: UpdateActionRequest): Promise<ActionResponse> => {
+    update: async (id: string, data: UpdateActionRequest): Promise<UpdateActionResponse> => {
         updateActionRequestSchema.parse(data);
         const res = await api.patch(`/api/v1/actions/${id}`, data);
-        return actionResponseSchema.parse(res.data);
+        return updateActionResponseSchema.parse(res.data);
     },
 
     /** DELETE /api/v1/actions/:id */
