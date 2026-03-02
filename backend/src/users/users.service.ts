@@ -1,9 +1,14 @@
 import { ProcessusService } from '../processus/processus.service';
 import { Processus } from '../processus/domain/processus';
+import { TasksService } from '../tasks/tasks.service';
+
 import {
   HttpStatus,
   Injectable,
   UnprocessableEntityException,
+  NotFoundException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { NullableType } from '../utils/types/nullable.type';
@@ -27,15 +32,17 @@ import { Skill } from '../skills/domain/skill';
 export class UsersService {
   constructor(
     private readonly processusService: ProcessusService,
+
     private readonly usersRepository: UserRepository,
     private readonly filesService: FilesService,
     private readonly skillsService: SkillsService,
-  ) { }
+    @Inject(forwardRef(() => TasksService))
+    private readonly tasksService: TasksService,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     // Do not remove comment below.
     // <creating-property />
-
     let processus: Processus | null | undefined = undefined;
 
     if (createUserDto.processus) {
@@ -51,12 +58,9 @@ export class UsersService {
         });
       }
       processus = processusObject;
-    }
-    else if (createUserDto.processus === null) {
+    } else if (createUserDto.processus === null) {
       processus = null;
     }
-
-
 
     let password: string | undefined = undefined;
 
@@ -220,7 +224,6 @@ export class UsersService {
   ): Promise<User | null> {
     // Do not remove comment below.
     // <updating-property />
-
     let processus: Processus | null | undefined = undefined;
 
     if (updateUserDto.processus) {
@@ -236,6 +239,8 @@ export class UsersService {
         });
       }
       processus = processusObject;
+    } else if (updateUserDto.processus === null) {
+      processus = null;
     }
     else if (updateUserDto.processus === null) {
       processus = null;
@@ -370,5 +375,14 @@ export class UsersService {
 
   async remove(id: User['id']): Promise<void> {
     await this.usersRepository.remove(id);
+  }
+
+  async getMemberStatistics(userId: string) {
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    // Delegate to TasksService which contains all business logic
+    return this.tasksService.getMemberStatistics(userId);
   }
 }

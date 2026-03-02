@@ -33,4 +33,12 @@ export abstract class CommentRepository {
   ): Promise<Comment | null>;
 
   abstract remove(id: Comment['id']): Promise<void>;
+
+  // Simple data query for member statistics
+  abstract getCommentCountByUser(userId: string): Promise<number>;
+
+  abstract getCommentCountByUserAfterDate(
+    userId: string,
+    startDate: Date,
+  ): Promise<number>;
 }
