@@ -245,6 +245,9 @@ export class UsersService {
     else if (updateUserDto.processus === null) {
       processus = null;
     }
+    else if (updateUserDto.processus === null) {
+      processus = null;
+    }
 
 
 
