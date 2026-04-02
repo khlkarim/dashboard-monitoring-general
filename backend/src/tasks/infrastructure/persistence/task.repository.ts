@@ -4,6 +4,18 @@ import { NullableType } from '../../../utils/types/nullable.type';
 import { IPaginationOptions } from '../../../utils/types/pagination-options';
 import { Task } from '../../domain/task';
 
+// Raw data interfaces returned by repository
+export interface TaskStatusCount {
+  status: string;
+  count: number;
+}
+
+export interface TaskDateInfo {
+  startDate: Date;
+  completedDate: Date;
+  dueDate?: Date;
+}
+
 export abstract class TaskRepository {
   abstract create(
     data: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>,
@@ -33,4 +45,22 @@ export abstract class TaskRepository {
   ): Promise<Task | null>;
 
   abstract remove(id: Task['id']): Promise<void>;
+
+  // Simple data queries for member statistics (no business logic)
+  abstract getTaskCountByUser(userId: string): Promise<number>;
+
+  abstract getTaskStatusCountsByUser(
+    userId: string,
+  ): Promise<TaskStatusCount[]>;
+
+  abstract getOverdueTasksCountByUser(userId: string): Promise<number>;
+
+  abstract getCompletedTasksCountByUserAfterDate(
+    userId: string,
+    startDate: Date,
+  ): Promise<number>;
+
+  abstract getCompletedTasksWithDatesByUser(
+    userId: string,
+  ): Promise<TaskDateInfo[]>;
 }

@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Query,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { ProcessusService } from './processus.service';
 import { CreateProcessusDto } from './dto/create-processus.dto';
@@ -27,6 +29,7 @@ import {
 } from '../utils/dto/infinity-pagination-response.dto';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { FindAllProcessusDto } from './dto/find-all-processus.dto';
+import { ProcessusStatisticsDto } from './dto/processus-statistics.dto';
 
 @ApiTags('Processus')
 @ApiBearerAuth()
@@ -104,5 +107,22 @@ export class ProcessusController {
   })
   remove(@Param('id') id: string) {
     return this.processusService.remove(id);
+  }
+
+  @Get(':id/statistics')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+  })
+  @ApiOkResponse({
+    type: ProcessusStatisticsDto,
+    description: 'Get comprehensive statistics for a specific processus',
+  })
+  @HttpCode(HttpStatus.OK)
+  getProcessusStatistics(
+    @Param('id') id: string,
+  ): Promise<ProcessusStatisticsDto> {
+    return this.processusService.getProcessusStatistics(id);
   }
 }

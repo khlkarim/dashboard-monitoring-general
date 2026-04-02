@@ -4,15 +4,30 @@ import { Repository, In } from 'typeorm';
 import { ProcessusEntity } from '../entities/processus.entity';
 import { NullableType } from '../../../../../utils/types/nullable.type';
 import { Processus } from '../../../../domain/processus';
-import { ProcessusRepository } from '../../processus.repository';
+import {
+  ProcessusRepository,
+  TaskCriticalityCount,
+} from '../../processus.repository';
 import { ProcessusMapper } from '../mappers/processus.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
+import { UserEntity } from '../../../../../users/infrastructure/persistence/relational/entities/user.entity';
+import { KpiEntity } from '../../../../../kpis/infrastructure/persistence/relational/entities/kpi.entity';
+import { ActivityEntity } from '../../../../../activities/infrastructure/persistence/relational/entities/activity.entity';
+import { TaskEntity } from '../../../../../tasks/infrastructure/persistence/relational/entities/task.entity';
 
 @Injectable()
 export class ProcessusRelationalRepository implements ProcessusRepository {
   constructor(
     @InjectRepository(ProcessusEntity)
     private readonly processusRepository: Repository<ProcessusEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(KpiEntity)
+    private readonly kpiRepository: Repository<KpiEntity>,
+    @InjectRepository(ActivityEntity)
+    private readonly activityRepository: Repository<ActivityEntity>,
+    @InjectRepository(TaskEntity)
+    private readonly taskRepository: Repository<TaskEntity>,
   ) {}
 
   async create(data: Processus): Promise<Processus> {
@@ -78,5 +93,44 @@ export class ProcessusRelationalRepository implements ProcessusRepository {
 
   async remove(id: Processus['id']): Promise<void> {
     await this.processusRepository.delete(id);
+  }
+
+  // Simple data queries - no business logic
+  async getUserCountByProcessus(processusId: string): Promise<number> {
+    return this.userRepository.count({
+      where: { processus: { id: processusId } },
+    });
+  }
+
+  async getKpiCountByProcessus(processusId: string): Promise<number> {
+    return this.kpiRepository.count({
+      where: { processus: { id: processusId } },
+    });
+  }
+
+  async getActivityCountByProcessus(processusId: string): Promise<number> {
+    return this.activityRepository.count({
+      where: { processus: { id: processusId } },
+    });
+  }
+
+  async getTaskCriticalityCountsByProcessus(
+    processusId: string,
+  ): Promise<TaskCriticalityCount[]> {
+    // Single query with JOIN - cleaner data access, no orchestration
+    const results = await this.taskRepository
+      .createQueryBuilder('task')
+      .innerJoin('task.assignee', 'user')
+      .innerJoin('user.processus', 'processus')
+      .select('task.criticality', 'criticality')
+      .addSelect('COUNT(*)', 'count')
+      .where('processus.id = :processusId', { processusId })
+      .groupBy('task.criticality')
+      .getRawMany();
+
+    return results.map((row) => ({
+      criticality: row.criticality !== null ? parseInt(row.criticality) : null,
+      count: parseInt(row.count),
+    }));
   }
 }

@@ -4,17 +4,22 @@ import { Repository, In } from 'typeorm';
 import { TaskEntity } from '../entities/task.entity';
 import { NullableType } from '../../../../../utils/types/nullable.type';
 import { Task } from '../../../../domain/task';
-import { TaskRepository } from '../../task.repository';
+import {
+  TaskRepository,
+  TaskStatusCount,
+  TaskDateInfo,
+} from '../../task.repository';
 import { TaskMapper } from '../mappers/task.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
 import { Sprint } from 'src/sprints/domain/sprint';
+import { TaskStatusEnum } from '../../../../domain/task-status.enum';
 
 @Injectable()
 export class TaskRelationalRepository implements TaskRepository {
   constructor(
     @InjectRepository(TaskEntity)
     private readonly taskRepository: Repository<TaskEntity>,
-  ) { }
+  ) {}
 
   async create(data: Task): Promise<Task> {
     const persistenceModel = TaskMapper.toPersistence(data);
@@ -98,5 +103,68 @@ export class TaskRelationalRepository implements TaskRepository {
 
   async remove(id: Task['id']): Promise<void> {
     await this.taskRepository.delete(id);
+  }
+
+  // Simple data queries - no business logic
+  async getTaskCountByUser(userId: string): Promise<number> {
+    return this.taskRepository.count({
+      where: { assignee: { id: userId } },
+    });
+  }
+
+  async getTaskStatusCountsByUser(userId: string): Promise<TaskStatusCount[]> {
+    const results = await this.taskRepository
+      .createQueryBuilder('task')
+      .select('task.status', 'status')
+      .addSelect('COUNT(*)', 'count')
+      .where('task.assigneeId = :userId', { userId })
+      .groupBy('task.status')
+      .getRawMany();
+
+    return results.map((row) => ({
+      status: row.status,
+      count: parseInt(row.count),
+    }));
+  }
+
+  async getOverdueTasksCountByUser(userId: string): Promise<number> {
+    return this.taskRepository
+      .createQueryBuilder('task')
+      .where('task.assigneeId = :userId', { userId })
+      .andWhere('task.dueDate < :now', { now: new Date() })
+      .andWhere('task.status != :done', { done: TaskStatusEnum.DONE })
+      .getCount();
+  }
+
+  async getCompletedTasksCountByUserAfterDate(
+    userId: string,
+    startDate: Date,
+  ): Promise<number> {
+    return this.taskRepository
+      .createQueryBuilder('task')
+      .where('task.assigneeId = :userId', { userId })
+      .andWhere('task.status = :done', { done: TaskStatusEnum.DONE })
+      .andWhere('task.updatedAt >= :startDate', { startDate })
+      .getCount();
+  }
+
+  async getCompletedTasksWithDatesByUser(
+    userId: string,
+  ): Promise<TaskDateInfo[]> {
+    const results = await this.taskRepository
+      .createQueryBuilder('task')
+      .select('task.startDate', 'startDate')
+      .addSelect('task.updatedAt', 'completedDate')
+      .addSelect('task.dueDate', 'dueDate')
+      .where('task.assigneeId = :userId', { userId })
+      .andWhere('task.status = :done', { done: TaskStatusEnum.DONE })
+      .andWhere('task.startDate IS NOT NULL')
+      .getRawMany();
+
+    return results.map((row) => ({
+      startDate: new Date(row.startDate),
+      completedDate: new Date(row.completedDate),
+      dueDate: row.dueDate ? new Date(row.dueDate) : undefined,
+    }));
   }
 }

@@ -62,4 +62,10 @@ export const usersApi = {
     remove: async (id: string): Promise<void> => {
         await api.delete(`/api/v1/users/${id}`);
     },
+
+    /** GET /api/v1/users/:id/statistics */
+    getMemberStatistics: async (userId: string) => {
+        const res = await api.get(`/api/v1/users/${userId}/statistics`);
+        return res.data;
+    },
 };
