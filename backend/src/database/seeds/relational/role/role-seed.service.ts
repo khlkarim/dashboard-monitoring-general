@@ -9,35 +9,65 @@ export class RoleSeedService {
   constructor(
     @InjectRepository(RoleEntity)
     private repository: Repository<RoleEntity>,
-  ) {}
+  ) { }
 
   async run() {
-    const countUser = await this.repository.count({
+    const countAdministrator = await this.repository.count({
       where: {
-        id: RoleEnum.user,
+        id: RoleEnum.ADMINISTRATOR,
       },
     });
 
-    if (!countUser) {
+    if (!countAdministrator) {
       await this.repository.save(
         this.repository.create({
-          id: RoleEnum.user,
-          name: 'User',
+          id: RoleEnum.ADMINISTRATOR,
+          name: 'Administrator',
         }),
       );
     }
 
-    const countAdmin = await this.repository.count({
+    const countPresident = await this.repository.count({
       where: {
-        id: RoleEnum.admin,
+        id: RoleEnum.PRESIDENT,
       },
     });
 
-    if (!countAdmin) {
+    if (!countPresident) {
       await this.repository.save(
         this.repository.create({
-          id: RoleEnum.admin,
-          name: 'Admin',
+          id: RoleEnum.PRESIDENT,
+          name: 'President',
+        }),
+      );
+    }
+
+    const countMember = await this.repository.count({
+      where: {
+        id: RoleEnum.MEMBER,
+      },
+    });
+
+    if (!countMember) {
+      await this.repository.save(
+        this.repository.create({
+          id: RoleEnum.MEMBER,
+          name: 'Member',
+        }),
+      );
+    }
+
+    const countAlumni = await this.repository.count({
+      where: {
+        id: RoleEnum.ALUMNI,
+      },
+    });
+
+    if (!countAlumni) {
+      await this.repository.save(
+        this.repository.create({
+          id: RoleEnum.ALUMNI,
+          name: 'Alumni',
         }),
       );
     }

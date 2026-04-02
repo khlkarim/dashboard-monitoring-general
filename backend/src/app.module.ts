@@ -10,6 +10,7 @@ import fileConfig from './files/config/file.config';
 import facebookConfig from './auth-facebook/config/facebook.config';
 import googleConfig from './auth-google/config/google.config';
 import appleConfig from './auth-apple/config/apple.config';
+import llmConfig from './llm/config/llm.config';
 import path from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -37,11 +38,31 @@ import { TasksModule } from './tasks/tasks.module';
 import { KpisModule } from './kpis/kpis.module';
 import { ClerkModule } from './clerk/clerk.module';
 import clerkConfig from './clerk/config/clerk.config';
-
 import { ProcessusModule } from './processus/processus.module';
+
+import { RisksModule } from './risks/risks.module';
+
+import { ActionsModule } from './actions/actions.module';
+
+import { CommentsModule } from './comments/comments.module';
+
+import { NotificationsModule } from './notifications/notifications.module';
+
+import { SkillsModule } from './skills/skills.module';
+
+import { ActivitiesModule } from './activities/activities.module';
+
+import { TaskStatusesModule } from './task-statuses/task-statuses.module';
 
 @Module({
   imports: [
+    TaskStatusesModule,
+    ActivitiesModule,
+    SkillsModule,
+    NotificationsModule,
+    CommentsModule,
+    ActionsModule,
+    RisksModule,
     ProcessusModule,
     KpisModule,
     TasksModule,
@@ -58,6 +79,7 @@ import { ProcessusModule } from './processus/processus.module';
         googleConfig,
         clerkConfig,
         appleConfig,
+        llmConfig,
       ],
       envFilePath: ['.env'],
     }),
@@ -98,4 +120,4 @@ import { ProcessusModule } from './processus/processus.module';
     HomeModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

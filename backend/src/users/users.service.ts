@@ -1,11 +1,14 @@
 import { ProcessusService } from '../processus/processus.service';
-  import { Processus } from '../processus/domain/processus';
+import { Processus } from '../processus/domain/processus';
+import { TasksService } from '../tasks/tasks.service';
 
 import {
   HttpStatus,
   Injectable,
   UnprocessableEntityException,
-  
+  NotFoundException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { NullableType } from '../utils/types/nullable.type';
@@ -22,40 +25,42 @@ import { FileType } from '../files/domain/file';
 import { Role } from '../roles/domain/role';
 import { Status } from '../statuses/domain/status';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { SkillsService } from '../skills/skills.service';
+import { Skill } from '../skills/domain/skill';
 
 @Injectable()
 export class UsersService {
   constructor(
-  
-  private readonly processusService: ProcessusService,
+    private readonly processusService: ProcessusService,
 
     private readonly usersRepository: UserRepository,
     private readonly filesService: FilesService,
+    private readonly skillsService: SkillsService,
+    @Inject(forwardRef(() => TasksService))
+    private readonly tasksService: TasksService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     // Do not remove comment below.
     // <creating-property />
-            let processus: Processus  | null | undefined = undefined;
+    let processus: Processus | null | undefined = undefined;
 
-      if (createUserDto.processus) {
-        const processusObject = await this.processusService.findById(
-          createUserDto.processus.id,
-        );
-        if (!processusObject) {
-          throw new UnprocessableEntityException({
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: {
-              processus: 'notExists',
-            },
-          });
-        }
-        processus = processusObject;
+    if (createUserDto.processus) {
+      const processusObject = await this.processusService.findById(
+        createUserDto.processus.id,
+      );
+      if (!processusObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            processus: 'notExists',
+          },
+        });
       }
-              else if (createUserDto.processus === null) {
-          processus = null;
-        }
-            
+      processus = processusObject;
+    } else if (createUserDto.processus === null) {
+      processus = null;
+    }
 
     let password: string | undefined = undefined;
 
@@ -140,10 +145,24 @@ export class UsersService {
       };
     }
 
+    let skills: Skill[] | undefined = undefined;
+
+    if (createUserDto.skills) {
+      skills = await this.skillsService.findByIds(
+        createUserDto.skills.map((skill) => skill.id),
+      );
+    }
+
     return this.usersRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
-  processus,
+      phoneNumber: createUserDto.phoneNumber,
+
+      processus,
+
+      workplace: createUserDto.workplace,
+
+      mandate: createUserDto.mandate,
 
       firstName: createUserDto.firstName,
       lastName: createUserDto.lastName,
@@ -152,6 +171,7 @@ export class UsersService {
       photo: photo,
       role: role,
       status: status,
+      skills: skills,
       provider: createUserDto.provider ?? AuthProvidersEnum.email,
       socialId: createUserDto.socialId,
     });
@@ -204,7 +224,7 @@ export class UsersService {
   ): Promise<User | null> {
     // Do not remove comment below.
     // <updating-property />
-      let processus: Processus  | null | undefined = undefined;
+    let processus: Processus | null | undefined = undefined;
 
     if (updateUserDto.processus) {
       const processusObject = await this.processusService.findById(
@@ -219,11 +239,17 @@ export class UsersService {
         });
       }
       processus = processusObject;
+    } else if (updateUserDto.processus === null) {
+      processus = null;
     }
-          else if (updateUserDto.processus === null) {
-        processus = null;
-      }
-      
+    else if (updateUserDto.processus === null) {
+      processus = null;
+    }
+    else if (updateUserDto.processus === null) {
+      processus = null;
+    }
+
+
 
     let password: string | undefined = undefined;
 
@@ -316,10 +342,24 @@ export class UsersService {
       };
     }
 
-    return this.usersRepository.update(id, {
+    let skills: Skill[] | undefined = undefined;
+
+    if (updateUserDto.skills) {
+      skills = await this.skillsService.findByIds(
+        updateUserDto.skills.map((skill) => skill.id),
+      );
+    }
+
+    await this.usersRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
-  processus,
+      phoneNumber: updateUserDto.phoneNumber,
+
+      processus,
+
+      workplace: updateUserDto.workplace,
+
+      mandate: updateUserDto.mandate,
 
       firstName: updateUserDto.firstName,
       lastName: updateUserDto.lastName,
@@ -328,12 +368,24 @@ export class UsersService {
       photo,
       role,
       status,
+      skills,
       provider: updateUserDto.provider,
       socialId: updateUserDto.socialId,
     });
+
+    return this.usersRepository.findById(id);
   }
 
   async remove(id: User['id']): Promise<void> {
     await this.usersRepository.remove(id);
+  }
+
+  async getMemberStatistics(userId: string) {
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    // Delegate to TasksService which contains all business logic
+    return this.tasksService.getMemberStatistics(userId);
   }
 }

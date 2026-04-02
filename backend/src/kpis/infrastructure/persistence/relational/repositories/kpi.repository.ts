@@ -7,13 +7,15 @@ import { Kpi } from '../../../../domain/kpi';
 import { KpiRepository } from '../../kpi.repository';
 import { KpiMapper } from '../mappers/kpi.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
+import { Processus } from 'src/processus/domain/processus';
+import { Sprint } from 'src/sprints/domain/sprint';
 
 @Injectable()
 export class KpiRelationalRepository implements KpiRepository {
   constructor(
     @InjectRepository(KpiEntity)
     private readonly kpiRepository: Repository<KpiEntity>,
-  ) {}
+  ) { }
 
   async create(data: Kpi): Promise<Kpi> {
     const persistenceModel = KpiMapper.toPersistence(data);
@@ -31,6 +33,38 @@ export class KpiRelationalRepository implements KpiRepository {
     const entities = await this.kpiRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
+    });
+
+    return entities.map((entity) => KpiMapper.toDomain(entity));
+  }
+
+  async findAllBySprintIdWithPagination({
+    paginationOptions,
+    sprintId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    sprintId: Sprint['id'];
+  }): Promise<Kpi[]> {
+    const entities = await this.kpiRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      where: { sprint: { id: sprintId } },
+    });
+
+    return entities.map((entity) => KpiMapper.toDomain(entity));
+  }
+
+  async findAllByProcessusIdWithPagination({
+    paginationOptions,
+    processusId,
+  }: {
+    paginationOptions: IPaginationOptions;
+    processusId: Processus['id'];
+  }): Promise<Kpi[]> {
+    const entities = await this.kpiRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      where: { processus: { id: processusId } },
     });
 
     return entities.map((entity) => KpiMapper.toDomain(entity));
@@ -61,7 +95,7 @@ export class KpiRelationalRepository implements KpiRepository {
       throw new Error('Record not found');
     }
 
-    const updatedEntity = await this.kpiRepository.save(
+    await this.kpiRepository.save(
       this.kpiRepository.create(
         KpiMapper.toPersistence({
           ...KpiMapper.toDomain(entity),
@@ -69,6 +103,14 @@ export class KpiRelationalRepository implements KpiRepository {
         }),
       ),
     );
+
+    const updatedEntity = await this.kpiRepository.findOne({
+      where: { id },
+    });
+
+    if (!updatedEntity) {
+      throw new Error('Record not found');
+    }
 
     return KpiMapper.toDomain(updatedEntity);
   }

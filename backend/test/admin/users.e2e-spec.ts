@@ -99,10 +99,10 @@ describe('Users Module', () => {
             firstName: `UserByAdmin${Date.now()}`,
             lastName: 'E2E',
             role: {
-              id: RoleEnum.user,
+              id: RoleEnum.ADMINISTRATOR,
             },
             status: {
-              id: StatusEnum.active,
+              id: StatusEnum.ACTIVE,
             },
           })
           .expect(201);

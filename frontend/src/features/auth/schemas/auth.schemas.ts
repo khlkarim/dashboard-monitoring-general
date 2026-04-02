@@ -1,8 +1,6 @@
+import { fileTypeSchema } from '@/features/files/schemas/files.schemas';
+import { roleSchema, statusSchema, userResponseSchema } from '@/features/users/schemas/users.schemas';
 import { z } from 'zod';
-
-/* ------------------------------------------------------------
-   REQUEST SCHEMAS
------------------------------------------------------------- */
 
 /** Login */
 export const loginRequestSchema = z.object({
@@ -38,57 +36,6 @@ export const resetPasswordRequestSchema = z.object({
   password: z.string().min(1),
 });
 export type ResetPasswordRequest = z.infer<typeof resetPasswordRequestSchema>;
-
-/** Update User */
-export const updateUserRequestSchema = z.object({
-  photo: z.any().nullable().optional(), // File or null
-  firstName: z.string().min(1).optional(),
-  lastName: z.string().min(1).optional(),
-  email: z.string().email().optional(),
-  password: z.string().min(6).optional(),
-  oldPassword: z.string().min(1).optional(),
-});
-export type UpdateUserRequest = z.infer<typeof updateUserRequestSchema>;
-
-/* ------------------------------------------------------------
-   RESPONSE SCHEMAS
------------------------------------------------------------- */
-
-/** Role schema */
-export const roleSchema = z.object({
-  id: z.string().or(z.number()), // backend may return UUID or numeric ID
-  name: z.string().optional(),
-});
-
-/** Status schema */
-export const statusSchema = z.object({
-  id: z.string().or(z.number()),
-  name: z.string().optional(),
-});
-
-/** FileType schema */
-export const fileTypeSchema = z.object({
-  id: z.string(),
-  path: z.string(), // transformed to a full URL or presigned URL by backend
-});
-
-/** mirror backend’s User entity fields you need */
-export const userResponseSchema = z.object({
-  id: z.string().or(z.number()), // backend may return UUID or numeric ID
-  email: z.string().email(),
-  firstName: z.string(),
-  lastName: z.string(),
-  photo: fileTypeSchema.nullable().optional(),
-  role: roleSchema.optional(),
-  status: statusSchema.optional(),
-  provider: z.string(),
-  socialId: z.string().nullable().optional(),
-  createdAt: z.string().datetime().optional(),
-  updatedAt: z.string().datetime().optional(),
-  deletedAt: z.string().datetime().nullable(),
-});
-
-export type UserResponse = z.infer<typeof userResponseSchema>;
 
 /** Login Response */
 export const loginResponseSchema = z.object({

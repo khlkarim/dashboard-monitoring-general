@@ -1,4 +1,4 @@
-  import { ProcessusDto } from '../../processus/dto/processus.dto';
+import { ProcessusDto } from '../../processus/dto/processus.dto';
 
 import {
   // decorators here
@@ -12,34 +12,54 @@ import {
   IsNotEmpty,
   IsOptional,
   MinLength,
-
-
-
-
+  IsString,
   ValidateNested,
-
   IsNotEmptyObject,
-
-
 } from 'class-validator';
 import { FileDto } from '../../files/dto/file.dto';
 import { RoleDto } from '../../roles/dto/role.dto';
 import { StatusDto } from '../../statuses/dto/status.dto';
+import { SkillDto } from '../../skills/dto/skill.dto';
 import { lowerCaseTransformer } from '../../utils/transformers/lower-case.transformer';
 
 export class CreateUserDto {
   @ApiProperty({
     required: false,
-    type: () => 
-                        ProcessusDto,
-                })
+    type: () =>
+      String,
+  })
+  @IsOptional()
+  @IsString()
+  phoneNumber?: string | null;
 
-      @IsOptional()
-        @ValidateNested()
-    @Type(() => ProcessusDto)
-          @IsNotEmptyObject()
-      
-  processus?: ProcessusDto  | null;
+  @ApiProperty({
+    required: false,
+    type: () =>
+      ProcessusDto,
+  })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ProcessusDto)
+  @IsNotEmptyObject()
+  processus?: ProcessusDto | null;
+
+  @ApiProperty({
+    required: false,
+    type: () =>
+      String,
+  })
+  @IsOptional()
+  @IsString()
+  workplace?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () =>
+      String,
+  })
+  @IsOptional()
+  @IsString()
+  mandate?: string | null;
 
   @ApiProperty({ example: 'test1@example.com', type: String })
   @Transform(lowerCaseTransformer)
@@ -76,4 +96,9 @@ export class CreateUserDto {
   @IsOptional()
   @Type(() => StatusDto)
   status?: StatusDto;
+
+  @ApiPropertyOptional({ type: [SkillDto] })
+  @IsOptional()
+  @Type(() => SkillDto)
+  skills?: SkillDto[];
 }

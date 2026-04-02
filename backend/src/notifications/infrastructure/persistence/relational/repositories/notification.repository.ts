@@ -1,0 +1,123 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, In } from 'typeorm';
+import { NotificationEntity } from '../entities/notification.entity';
+import { NullableType } from '../../../../../utils/types/nullable.type';
+import { Notification } from '../../../../domain/notification';
+import { NotificationRepository } from '../../notification.repository';
+import { NotificationMapper } from '../mappers/notification.mapper';
+import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
+import { User } from 'src/users/domain/user';
+
+@Injectable()
+export class NotificationRelationalRepository implements NotificationRepository {
+  constructor(
+    @InjectRepository(NotificationEntity)
+    private readonly notificationRepository: Repository<NotificationEntity>,
+  ) { }
+
+  async create(data: Notification): Promise<Notification> {
+    const persistenceModel = NotificationMapper.toPersistence(data);
+    await this.notificationRepository.save(
+      this.notificationRepository.create(persistenceModel),
+    );
+
+    const newEntity = await this.notificationRepository.findOne({
+      where: { id: persistenceModel.id },
+      relations: ['recipients'],
+    });
+
+    if (!newEntity) {
+      throw new Error('Record not found');
+    }
+    return NotificationMapper.toDomain(newEntity);
+  }
+
+  async findAllWithPagination({
+    paginationOptions,
+  }: {
+    paginationOptions: IPaginationOptions;
+  }): Promise<Notification[]> {
+    const entities = await this.notificationRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      relations: ['recipients'],
+    });
+
+    return entities.map((entity) => NotificationMapper.toDomain(entity));
+  }
+
+  async findAllByUserIdWithPagination({
+    userId,
+    paginationOptions,
+  }: {
+    userId: User['id'];
+    paginationOptions: IPaginationOptions;
+  }): Promise<Notification[]> {
+    const entities = await this.notificationRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      relations: ['recipients'],
+      where: {
+        recipients: {
+          id: userId,
+        },
+      },
+    });
+
+    return entities.map((entity) => NotificationMapper.toDomain(entity));
+  }
+
+  async findById(id: Notification['id']): Promise<NullableType<Notification>> {
+    const entity = await this.notificationRepository.findOne({
+      where: { id },
+      relations: ['recipients'],
+    });
+
+    return entity ? NotificationMapper.toDomain(entity) : null;
+  }
+
+  async findByIds(ids: Notification['id'][]): Promise<Notification[]> {
+    const entities = await this.notificationRepository.find({
+      where: { id: In(ids) },
+      relations: ['recipients'],
+    });
+
+    return entities.map((entity) => NotificationMapper.toDomain(entity));
+  }
+
+  async update(
+    id: Notification['id'],
+    payload: Partial<Notification>,
+  ): Promise<Notification> {
+    const entity = await this.notificationRepository.findOne({
+      where: { id },
+      relations: ['recipients'],
+    });
+
+    if (!entity) {
+      throw new Error('Record not found');
+    }
+
+    const updatedEntity = await this.notificationRepository.save(
+      this.notificationRepository.create(
+        NotificationMapper.toPersistence({
+          ...NotificationMapper.toDomain(entity),
+          ...payload,
+        }),
+      ),
+    );
+
+    // Reload with relations to ensure recipients are included
+    const reloadedEntity = await this.notificationRepository.findOne({
+      where: { id: updatedEntity.id },
+      relations: ['recipients'],
+    });
+
+    return NotificationMapper.toDomain(reloadedEntity!);
+  }
+
+  async remove(id: Notification['id']): Promise<void> {
+    await this.notificationRepository.delete(id);
+  }
+}

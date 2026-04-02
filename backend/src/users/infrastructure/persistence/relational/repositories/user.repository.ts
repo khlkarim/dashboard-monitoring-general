@@ -15,7 +15,7 @@ export class UsersRelationalRepository implements UserRepository {
   constructor(
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<UserEntity>,
-  ) {}
+  ) { }
 
   async create(data: User): Promise<User> {
     const persistenceModel = UserMapper.toPersistence(data);
@@ -37,7 +37,7 @@ export class UsersRelationalRepository implements UserRepository {
     const where: FindOptionsWhere<UserEntity> = {};
     if (filterOptions?.roles?.length) {
       where.role = filterOptions.roles.map((role) => ({
-        id: Number(role.id),
+        id: role.id,
       }));
     }
 
@@ -59,7 +59,7 @@ export class UsersRelationalRepository implements UserRepository {
 
   async findById(id: User['id']): Promise<NullableType<User>> {
     const entity = await this.usersRepository.findOne({
-      where: { id: Number(id) },
+      where: { id: id },
     });
 
     return entity ? UserMapper.toDomain(entity) : null;
@@ -101,7 +101,7 @@ export class UsersRelationalRepository implements UserRepository {
 
   async update(id: User['id'], payload: Partial<User>): Promise<User> {
     const entity = await this.usersRepository.findOne({
-      where: { id: Number(id) },
+      where: { id },
     });
 
     if (!entity) {
@@ -121,6 +121,10 @@ export class UsersRelationalRepository implements UserRepository {
   }
 
   async remove(id: User['id']): Promise<void> {
-    await this.usersRepository.softDelete(id);
+    const user = await this.usersRepository.findOneBy({ id });
+
+    if (user) {
+      await this.usersRepository.remove(user);
+    }
   }
 }

@@ -17,6 +17,14 @@ export type ThemeMode = (typeof THEME_MODE_VALUES)[number];
 
 export const THEME_PRESET_OPTIONS = [
   {
+    label: "JEI",
+    value: "jei",
+    primary: {
+      light: "#a80f21",
+      dark: "#a80f21",
+    },
+  },
+  {
     label: "Default",
     value: "default",
     primary: {

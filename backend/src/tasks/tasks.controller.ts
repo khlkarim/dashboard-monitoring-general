@@ -8,6 +8,9 @@ import {
   Delete,
   UseGuards,
   Query,
+  Request,
+  NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -21,6 +24,9 @@ import {
 } from '@nestjs/swagger';
 import { Task } from './domain/task';
 import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../roles/roles.guard';
+import { Roles } from '../roles/roles.decorator';
+import { RoleEnum } from '../roles/roles.enum';
 import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
@@ -30,34 +36,33 @@ import { FindAllTasksDto } from './dto/find-all-tasks.dto';
 
 @ApiTags('Tasks')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({
   path: 'tasks',
   version: '1',
 })
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) {}
+  constructor(private readonly tasksService: TasksService) { }
 
-  @Post()
   @ApiCreatedResponse({
     type: Task,
   })
+  @Roles(RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
+  @Post()
   create(@Body() createTaskDto: CreateTaskDto) {
     return this.tasksService.create(createTaskDto);
   }
 
-  @Get()
   @ApiOkResponse({
     type: InfinityPaginationResponse(Task),
   })
+  @Roles(RoleEnum.ALUMNI, RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
+  @Get()
   async findAll(
     @Query() query: FindAllTasksDto,
   ): Promise<InfinityPaginationResponseDto<Task>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.tasksService.findAllWithPagination({
@@ -70,32 +75,75 @@ export class TasksController {
     );
   }
 
+  @ApiOkResponse({
+    type: InfinityPaginationResponse(Task),
+  })
+  @Roles(RoleEnum.ALUMNI, RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
+  @Get('sprint/:sprintId')
+  async findAllBySprintId(
+    @Param('sprintId') sprintId: string,
+    @Query() query: FindAllTasksDto,
+  ): Promise<InfinityPaginationResponseDto<Task>> {
+    const page = query?.page ?? 1;
+    let limit = query?.limit ?? 1000;
+
+    return infinityPagination(
+      await this.tasksService.findAllBySprintIdWithPagination({
+        paginationOptions: {
+          page,
+          limit,
+        },
+        sprintId,
+      }),
+      { page, limit },
+    );
+  }
+
+  @ApiOkResponse({
+    type: Task,
+  })
+  @Roles(RoleEnum.ALUMNI, RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   @Get(':id')
   @ApiParam({
     name: 'id',
     type: String,
     required: true,
   })
-  @ApiOkResponse({
-    type: Task,
-  })
-  findById(@Param('id') id: string) {
+  findOne(@Param('id') id: string) {
     return this.tasksService.findById(id);
   }
 
+  @ApiOkResponse({
+    type: Task,
+  })
+  @Roles(RoleEnum.ALUMNI, RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   @Patch(':id')
   @ApiParam({
     name: 'id',
     type: String,
     required: true,
   })
-  @ApiOkResponse({
-    type: Task,
-  })
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateTaskDto: UpdateTaskDto,
+    @Request() request,
+  ) {
+    // If the user is a member, they can only update tasks assigned to them
+    if (request.user.role.id === RoleEnum.MEMBER) {
+      const task = await this.tasksService.findById(id);
+      if (!task) {
+        throw new NotFoundException('Task not found');
+      }
+      if (task.assignee.id !== request.user.id) {
+        throw new ForbiddenException(
+          'You can only update tasks assigned to you',
+        );
+      }
+    }
     return this.tasksService.update(id, updateTaskDto);
   }
 
+  @Roles(RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   @Delete(':id')
   @ApiParam({
     name: 'id',

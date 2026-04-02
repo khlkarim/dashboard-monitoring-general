@@ -14,8 +14,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { getInitials } from "@/lib/utils";
+import { User } from "@/features/users/types/users.types";
 import { useAuthStore } from "@/features/auth/store/auth.store";
-import { User } from "@/features/auth/types/auth.types";
+import Link from "next/link";
 
 export function NavUser({
   user,
@@ -35,8 +36,8 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarImage src={user.photo?.path || undefined} alt={user.firstName} />
-                <AvatarFallback className="rounded-lg">{getInitials(user.firstName)}</AvatarFallback>
+                <AvatarImage src={user.photo?.path || undefined} alt={user.firstName ?? ""} />
+                <AvatarFallback className="rounded-lg">{getInitials(user.firstName ?? "")}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.firstName}</span>
@@ -54,8 +55,8 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.photo?.path || undefined} alt={user.firstName} />
-                  <AvatarFallback className="rounded-lg">{getInitials(user.firstName)}</AvatarFallback>
+                  <AvatarImage src={user.photo?.path || undefined} alt={user.firstName ?? ""} />
+                  <AvatarFallback className="rounded-lg">{getInitials(user.firstName ?? "")}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.firstName}</span>
@@ -67,11 +68,15 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <CircleUser />
-                Account
+                <Link href="/dashboard/account">
+                  Account
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Bell />
-                Notifications
+                <Link href="/dashboard/notifications">
+                  Notifications
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

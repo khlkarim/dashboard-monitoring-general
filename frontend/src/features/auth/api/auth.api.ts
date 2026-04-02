@@ -6,8 +6,6 @@ import {
   confirmEmailRequestSchema,
   forgotPasswordRequestSchema,
   resetPasswordRequestSchema,
-  updateUserRequestSchema,
-  userResponseSchema,
   refreshResponseSchema,
   LoginRequest,
   LoginResponse,
@@ -15,20 +13,17 @@ import {
   ConfirmEmailRequest,
   ForgotPasswordRequest,
   ResetPasswordRequest,
-  UpdateUserRequest,
-  UserResponse,
   RefreshResponse,
 } from '@/features/auth/schemas/auth.schemas';
+import { useAuthStore } from '../store/auth.store';
+import { filesApi } from '@/features/files/api/files.api';
+import { UpdateUserRequest, updateUserRequestSchema, UserResponse, userResponseSchema } from '@/features/users/schemas/users.schemas';
 
-/**
- * Service layer for communicating with the NestJS AuthController endpoints.
- */
 export const authApi = {
   /** POST /api/v1/auth/email/login */
   login: async (data: LoginRequest): Promise<LoginResponse> => {
     loginRequestSchema.parse(data);
     const res = await api.post('/api/v1/auth/email/login', data);
-    console.log('login response: ', res);
     return loginResponseSchema.parse(res.data);
   },
 
@@ -71,7 +66,15 @@ export const authApi = {
   /** PATCH /api/v1/auth/me */
   update: async (data: UpdateUserRequest): Promise<UserResponse> => {
     updateUserRequestSchema.parse(data);
-    const res = await api.patch('/api/v1/auth/me', data);
+
+    const payload = { ...data };
+
+    if (data.photo instanceof File) {
+      const uploadResult = await filesApi.upload(data.photo);
+      payload.photo = uploadResult.file;
+    }
+
+    const res = await api.patch('/api/v1/auth/me', payload);
     return userResponseSchema.parse(res.data);
   },
 
@@ -82,7 +85,17 @@ export const authApi = {
 
   /** POST /api/v1/auth/refresh */
   refreshToken: async (): Promise<RefreshResponse> => {
-    const res = await api.post('/api/v1/auth/refresh');
+    const res = await api.post(
+      '/api/v1/auth/refresh',
+      {
+        refreshToken: useAuthStore.getState().refreshToken,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${useAuthStore.getState().refreshToken}`,
+        },
+      }
+    );
     return refreshResponseSchema.parse(res.data);
   },
 

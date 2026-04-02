@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Query,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { ProcessusService } from './processus.service';
 import { CreateProcessusDto } from './dto/create-processus.dto';
@@ -27,6 +29,7 @@ import {
 } from '../utils/dto/infinity-pagination-response.dto';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { FindAllProcessusDto } from './dto/find-all-processus.dto';
+import { ProcessusStatisticsDto } from './dto/processus-statistics.dto';
 
 @ApiTags('Processus')
 @ApiBearerAuth()
@@ -36,7 +39,7 @@ import { FindAllProcessusDto } from './dto/find-all-processus.dto';
   version: '1',
 })
 export class ProcessusController {
-  constructor(private readonly processusService: ProcessusService) {}
+  constructor(private readonly processusService: ProcessusService) { }
 
   @Post()
   @ApiCreatedResponse({
@@ -54,10 +57,7 @@ export class ProcessusController {
     @Query() query: FindAllProcessusDto,
   ): Promise<InfinityPaginationResponseDto<Processus>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.processusService.findAllWithPagination({
@@ -107,5 +107,22 @@ export class ProcessusController {
   })
   remove(@Param('id') id: string) {
     return this.processusService.remove(id);
+  }
+
+  @Get(':id/statistics')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+  })
+  @ApiOkResponse({
+    type: ProcessusStatisticsDto,
+    description: 'Get comprehensive statistics for a specific processus',
+  })
+  @HttpCode(HttpStatus.OK)
+  getProcessusStatistics(
+    @Param('id') id: string,
+  ): Promise<ProcessusStatisticsDto> {
+    return this.processusService.getProcessusStatistics(id);
   }
 }

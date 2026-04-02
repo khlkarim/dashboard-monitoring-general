@@ -14,7 +14,7 @@ export class FilesLocalService {
   constructor(
     private readonly configService: ConfigService<AllConfigType>,
     private readonly fileRepository: FileRepository,
-  ) {}
+  ) { }
 
   async create(file: Express.Multer.File): Promise<{ file: FileType }> {
     if (!file) {
@@ -30,7 +30,7 @@ export class FilesLocalService {
       file: await this.fileRepository.create({
         path: `/${this.configService.get('app.apiPrefix', {
           infer: true,
-        })}/v1/${file.path}`,
+        })}/v1/${file.path.replace(/\\/g, '/')}`,
       }),
     };
   }

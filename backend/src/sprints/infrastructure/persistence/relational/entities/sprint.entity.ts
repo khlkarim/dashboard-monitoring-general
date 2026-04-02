@@ -1,13 +1,17 @@
 import { UserEntity } from '../../../../../users/infrastructure/persistence/relational/entities/user.entity';
+import { TaskEntity } from '../../../../../tasks/infrastructure/persistence/relational/entities/task.entity';
+import { KpiEntity } from '../../../../../kpis/infrastructure/persistence/relational/entities/kpi.entity';
 
 import {
-  CreateDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
   Column,
   ManyToOne,
+  OneToMany,
+  UpdateDateColumn,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
+import { SprintStatus } from 'src/sprints/domain/sprint-status.enum';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 
 @Entity({
@@ -15,13 +19,28 @@ import { EntityRelationalHelper } from '../../../../../utils/relational-entity-h
 })
 export class SprintEntity extends EntityRelationalHelper {
   @Column({
-    nullable: false,
-    type: Number,
+    nullable: true,
+    type:
+      Date,
   })
-  status: number;
+  validationDate?: Date | null;
 
-  @ManyToOne(() => UserEntity, { eager: true, nullable: false })
+  @Column({
+    nullable: false,
+    type: 'enum',
+    enum: SprintStatus,
+    default: SprintStatus.PLANNED,
+  })
+  status: SprintStatus;
+
+  @ManyToOne(() => UserEntity, { eager: true, onDelete: 'CASCADE', nullable: false })
   createdBy: UserEntity;
+
+  @OneToMany(() => TaskEntity, (task) => task.sprint)
+  tasks: TaskEntity[];
+
+  @OneToMany(() => KpiEntity, (kpi) => kpi.sprint)
+  kpis: KpiEntity[];
 
   @Column({
     nullable: false,

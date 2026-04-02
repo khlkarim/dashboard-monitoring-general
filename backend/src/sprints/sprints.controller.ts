@@ -21,6 +21,9 @@ import {
 } from '@nestjs/swagger';
 import { Sprint } from './domain/sprint';
 import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../roles/roles.guard';
+import { Roles } from '../roles/roles.decorator';
+import { RoleEnum } from '../roles/roles.enum';
 import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
@@ -30,18 +33,19 @@ import { FindAllSprintsDto } from './dto/find-all-sprints.dto';
 
 @ApiTags('Sprints')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({
   path: 'sprints',
   version: '1',
 })
 export class SprintsController {
-  constructor(private readonly sprintsService: SprintsService) {}
+  constructor(private readonly sprintsService: SprintsService) { }
 
   @Post()
   @ApiCreatedResponse({
     type: Sprint,
   })
+  @Roles(RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   create(@Body() createSprintDto: CreateSprintDto) {
     return this.sprintsService.create(createSprintDto);
   }
@@ -50,14 +54,12 @@ export class SprintsController {
   @ApiOkResponse({
     type: InfinityPaginationResponse(Sprint),
   })
+  @Roles(RoleEnum.ALUMNI, RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   async findAll(
     @Query() query: FindAllSprintsDto,
   ): Promise<InfinityPaginationResponseDto<Sprint>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.sprintsService.findAllWithPagination({
@@ -79,7 +81,8 @@ export class SprintsController {
   @ApiOkResponse({
     type: Sprint,
   })
-  findById(@Param('id') id: string) {
+  @Roles(RoleEnum.ALUMNI, RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
+  findOne(@Param('id') id: string) {
     return this.sprintsService.findById(id);
   }
 
@@ -92,6 +95,7 @@ export class SprintsController {
   @ApiOkResponse({
     type: Sprint,
   })
+  @Roles(RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   update(@Param('id') id: string, @Body() updateSprintDto: UpdateSprintDto) {
     return this.sprintsService.update(id, updateSprintDto);
   }
@@ -102,6 +106,7 @@ export class SprintsController {
     type: String,
     required: true,
   })
+  @Roles(RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   remove(@Param('id') id: string) {
     return this.sprintsService.remove(id);
   }

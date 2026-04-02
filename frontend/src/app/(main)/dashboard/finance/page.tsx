@@ -1,6 +1,6 @@
 "use client";
 
-import { withAuth } from "@/features/auth/components/guards/withAuth";
+import { withAuth } from "@/features/auth/components/with-auth";
 import { AccountOverview } from "./_components/account-overview";
 import { CurrencyExchange } from "./_components/currency-exchange";
 import { ExpenseSummary } from "./_components/expense-summary";

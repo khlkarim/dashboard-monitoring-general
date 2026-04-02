@@ -4,28 +4,48 @@ import { FileType } from '../../files/domain/file';
 import { Role } from '../../roles/domain/role';
 import { Status } from '../../statuses/domain/status';
 import { ApiProperty } from '@nestjs/swagger';
-
-const idType = Number;
+import { Task } from '../../tasks/domain/task';
+import { Notification } from '../../notifications/domain/notification';
+import { Skill } from '../../skills/domain/skill';
 
 export class User {
-@ApiProperty({
-  type: () => 
-                  Processus,
-            nullable: true,
-})
-
-  processus?: Processus  | null;
+  @ApiProperty({
+    type: () =>
+      String,
+    nullable: true,
+  })
+  phoneNumber?: string | null;
 
   @ApiProperty({
-    type: idType,
+    type: () =>
+      Processus,
+    nullable: true,
   })
-  id: number | string;
+  processus?: Processus | null;
+
+  @ApiProperty({
+    type: () =>
+      String,
+    nullable: true,
+  })
+  workplace?: string | null;
+
+  @ApiProperty({
+    type: () =>
+      String,
+    nullable: true,
+  })
+  mandate?: string | null;
+
+  @ApiProperty({
+    type: String,
+  })
+  id: string;
 
   @ApiProperty({
     type: String,
     example: 'john.doe@example.com',
   })
-  @Expose({ groups: ['me', 'admin'] })
   email: string | null;
 
   @Exclude({ toPlainOnly: true })
@@ -72,6 +92,16 @@ export class User {
   })
   status?: Status;
 
+  @ApiProperty({
+    type: () => [Task],
+  })
+  assignedTasks?: Task[];
+
+  @ApiProperty({
+    type: () => [Notification],
+  })
+  notifications?: Notification[];
+
   @ApiProperty()
   createdAt: Date;
 
@@ -80,4 +110,9 @@ export class User {
 
   @ApiProperty()
   deletedAt: Date;
+
+  @ApiProperty({
+    type: () => [Skill],
+  })
+  skills?: Skill[];
 }

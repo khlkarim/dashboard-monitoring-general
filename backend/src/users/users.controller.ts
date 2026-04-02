@@ -35,9 +35,9 @@ import { User } from './domain/user';
 import { UsersService } from './users.service';
 import { RolesGuard } from '../roles/roles.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
+import { MemberStatisticsDto } from './dto/member-statistics.dto';
 
 @ApiBearerAuth()
-@Roles(RoleEnum.admin)
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiTags('Users')
 @Controller({
@@ -45,7 +45,7 @@ import { infinityPagination } from '../utils/infinity-pagination';
   version: '1',
 })
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @ApiCreatedResponse({
     type: User,
@@ -53,6 +53,7 @@ export class UsersController {
   @SerializeOptions({
     groups: ['admin'],
   })
+  @Roles(RoleEnum.ADMINISTRATOR)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createProfileDto: CreateUserDto): Promise<User> {
@@ -65,20 +66,48 @@ export class UsersController {
   @SerializeOptions({
     groups: ['admin'],
   })
+  @Roles(RoleEnum.ALUMNI, RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(
     @Query() query: QueryUserDto,
   ): Promise<InfinityPaginationResponseDto<User>> {
     const page = query?.page ?? 1;
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    let limit = query?.limit ?? 1000;
 
     return infinityPagination(
       await this.usersService.findManyWithPagination({
         filterOptions: query?.filters,
+        sortOptions: query?.sort,
+        paginationOptions: {
+          page,
+          limit,
+        },
+      }),
+      { page, limit },
+    );
+  }
+
+  @SerializeOptions({
+    groups: ['alumni_read'],
+  })
+  @Get('alumni')
+  @HttpCode(HttpStatus.OK)
+  @Roles(RoleEnum.ALUMNI, RoleEnum.ADMINISTRATOR, RoleEnum.PRESIDENT, RoleEnum.MEMBER)
+  async getAlumni(
+    @Query() query: QueryUserDto,
+  ): Promise<InfinityPaginationResponseDto<User>> {
+    const page = query?.page ?? 1;
+    let limit = query?.limit ?? 1000;
+
+    return infinityPagination(
+      await this.usersService.findManyWithPagination({
+        filterOptions: {
+          ...query?.filters,
+          roles: [{
+            id: RoleEnum.ALUMNI,
+          }],
+        },
         sortOptions: query?.sort,
         paginationOptions: {
           page,
@@ -95,6 +124,7 @@ export class UsersController {
   @SerializeOptions({
     groups: ['admin'],
   })
+  @Roles(RoleEnum.ADMINISTRATOR, RoleEnum.MEMBER, RoleEnum.PRESIDENT)
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @ApiParam({
@@ -112,6 +142,7 @@ export class UsersController {
   @SerializeOptions({
     groups: ['admin'],
   })
+  @Roles(RoleEnum.ADMINISTRATOR)
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
   @ApiParam({
@@ -126,6 +157,7 @@ export class UsersController {
     return this.usersService.update(id, updateProfileDto);
   }
 
+  @Roles(RoleEnum.ADMINISTRATOR)
   @Delete(':id')
   @ApiParam({
     name: 'id',
@@ -135,5 +167,24 @@ export class UsersController {
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: User['id']): Promise<void> {
     return this.usersService.remove(id);
+  }
+
+  @ApiOkResponse({
+    type: MemberStatisticsDto,
+    description: 'Get comprehensive statistics for a specific member',
+  })
+  @SerializeOptions({
+    groups: ['admin'],
+  })
+  @Roles(RoleEnum.ALUMNI, RoleEnum.MEMBER, RoleEnum.PRESIDENT, RoleEnum.ADMINISTRATOR)
+  @Get(':id/statistics')
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+  })
+  getMemberStatistics(@Param('id') id: string): Promise<MemberStatisticsDto> {
+    return this.usersService.getMemberStatistics(id);
   }
 }
