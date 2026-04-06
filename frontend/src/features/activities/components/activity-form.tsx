@@ -25,18 +25,9 @@ import {
     UpdateActivityRequest,
 } from "../schemas/activities.schemas";
 
-import {
-    Combobox,
-    ComboboxChip,
-    ComboboxChips,
-    ComboboxChipsInput,
-    ComboboxContent,
-    ComboboxEmpty,
-    ComboboxItem,
-    ComboboxList,
-    ComboboxValue,
-    useComboboxAnchor,
-} from "@/components/ui/combobox";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 
 import { Activity } from "../types/activities.types";
 
@@ -57,8 +48,6 @@ export function ActivityForm({
         isError: isErrorProcessus,
         error: errorProcessus,
     } = useGetProcessus();
-
-    const anchor = useComboboxAnchor();
 
     const form = useForm<PartialActivityFormValues>({
         resolver: zodResolver(activityFormSchema),
@@ -179,60 +168,44 @@ export function ActivityForm({
                                 <FormItem>
                                     <FormLabel>Processus</FormLabel>
                                     <FormControl>
-                                        <Combobox
-                                            multiple
-                                            value={field.value || []}
-                                            onValueChange={(val) =>
-                                                field.onChange(val)
-                                            }
-                                        >
-                                            <ComboboxChips
-                                                ref={anchor}
-                                                className="w-full min-h-[40px] border rounded-md p-1"
-                                            >
-                                                <ComboboxValue>
-                                                    {(selectedValues: string[]) => (
-                                                        <div className="flex flex-wrap gap-1">
-                                                            {selectedValues.map((id) => {
-                                                                const item =
-                                                                    processus.data.find(
-                                                                        (p) => p.id === id
-                                                                    );
-
-                                                                return (
-                                                                    <ComboboxChip
-                                                                        key={id}
-                                                                    >
-                                                                        {item?.label ?? id}
-                                                                    </ComboboxChip>
-                                                                );
-                                                            })}
-
-                                                            <ComboboxChipsInput
-                                                                placeholder={
-                                                                    selectedValues.length === 0
-                                                                        ? "Select processus..."
-                                                                        : ""
-                                                                }
-                                                            />
-                                                        </div>
-                                                    )}
-                                                </ComboboxValue>
-                                            </ComboboxChips>
-
-                                            <ComboboxContent anchor={anchor}>
-                                                <ComboboxList>
-                                                    {processus.data.map((item) => (
-                                                        <ComboboxItem
-                                                            key={item.id}
-                                                            value={item.id}
-                                                        >
-                                                            {item.label}
-                                                        </ComboboxItem>
-                                                    ))}
-                                                </ComboboxList>
-                                            </ComboboxContent>
-                                        </Combobox>
+                                        {processus.data.length === 0 ? (
+                                            <Empty>
+                                                <EmptyHeader>
+                                                    <EmptyTitle>No available processus</EmptyTitle>
+                                                    <EmptyDescription>
+                                                        There are no processus available to select.
+                                                    </EmptyDescription>
+                                                </EmptyHeader>
+                                            </Empty>
+                                        ) : (
+                                            <ScrollArea className="h-28 p-4">
+                                                <div className="space-y-3">
+                                                    {processus.data.map((proc) => {
+                                                        const isChecked = (field.value || []).includes(proc.id);
+                                                        return (
+                                                            <div key={proc.id} className="flex items-start gap-3">
+                                                                <Checkbox
+                                                                    checked={isChecked}
+                                                                    onCheckedChange={(checked) => {
+                                                                        const current = field.value || [];
+                                                                        if (checked) {
+                                                                            field.onChange([...current, proc.id]);
+                                                                        } else {
+                                                                            field.onChange(current.filter((id) => id !== proc.id));
+                                                                        }
+                                                                    }}
+                                                                />
+                                                                <div>
+                                                                    <p className="text-sm font-medium">
+                                                                        {proc.label}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </ScrollArea>
+                                        )}
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

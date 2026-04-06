@@ -9,7 +9,7 @@ import { UserMapper } from '../../../../../users/infrastructure/persistence/rela
 export class KpiMapper {
   static toDomain(raw: KpiEntity): Kpi {
     const domainEntity = new Kpi();
-
+    domainEntity.samplingMethod = raw.samplingMethod;
     domainEntity.samples = raw.samples;
     domainEntity.samplingRate = raw.samplingRate;
 
@@ -36,7 +36,7 @@ export class KpiMapper {
 
   static toPersistence(domainEntity: Kpi): KpiEntity {
     const persistenceEntity = new KpiEntity();
-
+    persistenceEntity.samplingMethod = domainEntity.samplingMethod;
     persistenceEntity.samples = domainEntity.samples;
     persistenceEntity.samplingRate = domainEntity.samplingRate;
 

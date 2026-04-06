@@ -83,6 +83,8 @@ export class KpisService {
     return this.kpiRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+      samplingMethod: createKpiDto.samplingMethod,
+
       samples: createKpiDto.samples,
 
       samplingRate: createKpiDto.samplingRate,
@@ -214,6 +216,8 @@ export class KpisService {
     return this.kpiRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+      samplingMethod: updateKpiDto.samplingMethod,
+
       samples: updateKpiDto.samples,
 
       samplingRate: updateKpiDto.samplingRate,

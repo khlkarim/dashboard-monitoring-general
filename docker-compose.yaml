@@ -19,16 +19,6 @@ services:
     depends_on:
       - postgres
 
-  maildev:
-    image: maildev/maildev:latest
-    restart: always
-    ports:
-      - ${MAIL_CLIENT_PORT}:1080  # Web UI
-      - ${MAIL_PORT}:1025  # SMTP
-    environment:
-      - MAILDEV_SMTP_PORT=1025
-      - MAILDEV_WEB_PORT=1080
-
   backend:
     build:
       context: ./backend

@@ -12,6 +12,7 @@ export const createKpiRequestSchema = z.object({
     name: z.string().min(1),
     samples: z.array(z.string()).nullable().optional(),
     samplingRate: z.string().nullable().optional(),
+    samplingMethod: z.string().nullable().optional(),
 });
 export type CreateKpiRequest = z.infer<typeof createKpiRequestSchema>;
 
@@ -26,6 +27,7 @@ export const createKpiResponseSchema = z.object({
     updatedAt: z.string().datetime(),
     samples: z.array(z.string()).nullable().optional(),
     samplingRate: z.string().nullable().optional(),
+    samplingMethod: z.string().nullable().optional(),
 });
 export type CreateKpiResponse = z.infer<typeof createKpiResponseSchema>;
 
@@ -45,6 +47,7 @@ export const kpiResponseSchema = z.object({
     updatedAt: z.string().datetime(),
     samples: z.array(z.string()).nullable().optional(),
     samplingRate: z.string().nullable().optional(),
+    samplingMethod: z.string().nullable().optional(),
 });
 export type KpiResponse = z.infer<typeof kpiResponseSchema>;
 

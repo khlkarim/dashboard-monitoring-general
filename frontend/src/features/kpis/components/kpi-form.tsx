@@ -42,11 +42,12 @@ const formSchema = z
         sprint: z.object({ id: z.string().min(1) }).nullable().optional(),
         processus: z.object({ id: z.string().min(1) }).nullable().optional(),
         samplingRate: z.string({ message: "Sampling rate is required." }),
+        samplingMethod: z.string({ message: "Sampling method is required." }),
         type: z.nativeEnum(KpiType),
     })
     .refine((data) => {
         if (data.type === KpiType.SPRINT) {
-            return !!(data.sprint && data.sprint.id && data.samplingRate);
+            return !!(data.sprint && data.sprint.id && data.samplingRate && data.samplingMethod);
         } else if (data.type === KpiType.PROCESSUS) {
             return !!(data.processus && data.processus.id);
         }
@@ -78,6 +79,7 @@ export function KpiForm({ initialData, onSubmit, isLoading, type = KpiType.PROCE
             sprint: initialData?.sprint || null,
             processus: initialData?.processus || null,
             samplingRate: initialData?.samplingRate || "",
+            samplingMethod: initialData?.samplingMethod || "",
             type,
         },
     });
@@ -89,6 +91,7 @@ export function KpiForm({ initialData, onSubmit, isLoading, type = KpiType.PROCE
             sprint: initialData?.sprint || null,
             processus: initialData?.processus || null,
             samplingRate: initialData?.samplingRate || "",
+            samplingMethod: initialData?.samplingMethod || "",
             type,
         });
     }, [initialData, type, form]);
@@ -195,6 +198,25 @@ export function KpiForm({ initialData, onSubmit, isLoading, type = KpiType.PROCE
                             <FormControl>
                                 <Input
                                     placeholder="Enter sampling rate"
+                                    type="text"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                {/* Sampling Method Input */}
+                <FormField
+                    control={form.control}
+                    name="samplingMethod"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Sampling Method</FormLabel>
+                            <FormControl>
+                                <Input
+                                    placeholder="Enter sampling method"
                                     type="text"
                                     {...field}
                                 />

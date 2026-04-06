@@ -34,6 +34,13 @@ export function KpiStats({ kpi }: KpiStatsProps) {
                 icon: <CalendarPlus className="text-orange-500" />,
                 className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-orange-500/10 bg-gradient-to-br from-orange-500/5 to-transparent"
             },
+            {
+                title: "Sampling Method",
+                value: kpi.samplingMethod,
+                description: "Method of data collection",
+                icon: <Timer className="text-blue-500" />,
+                className: "relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 group bg-blue-500/10 bg-gradient-to-br from-blue-500/5 to-transparent"
+            },
         ]);
     }, [kpi]);
 
@@ -41,13 +48,13 @@ export function KpiStats({ kpi }: KpiStatsProps) {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {stats.map((stat, i) => {
                 return (
-                    <StatCard 
+                    <StatCard
                         key={i}
                         icon={stat.icon}
-                        title={stat.title}          
+                        title={stat.title}
                         value={stat.value}
                         className={stat.className}
-                        description={stat.description}     
+                        description={stat.description}
                     />
                 );
             })}

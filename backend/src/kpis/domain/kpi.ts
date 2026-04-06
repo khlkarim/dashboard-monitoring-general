@@ -6,6 +6,13 @@ import { User } from '../../users/domain/user';
 export class Kpi {
   @ApiProperty({
     type: () =>
+      String,
+    nullable: true,
+  })
+  samplingMethod?: string | null;
+
+  @ApiProperty({
+    type: () =>
       Number,
     nullable: true,
   })

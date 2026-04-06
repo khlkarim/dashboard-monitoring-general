@@ -87,6 +87,12 @@ export const getColumns = (
             ),
         },
         {
+            accessorKey: "samplingMethod",
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Sampling Method" />
+            ),
+        },
+        {
             id: "actions",
             header: "Actions",
             cell: ({ row }) => {

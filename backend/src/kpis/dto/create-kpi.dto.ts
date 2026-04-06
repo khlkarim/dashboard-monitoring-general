@@ -19,6 +19,15 @@ export class CreateKpiDto {
   @ApiProperty({
     required: false,
     type: () =>
+      String,
+  })
+  @IsOptional()
+  @IsString()
+  samplingMethod?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () =>
       Number,
     isArray: true,
   })

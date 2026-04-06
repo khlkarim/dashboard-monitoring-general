@@ -17,6 +17,13 @@ import { UserEntity } from '../../../../../users/infrastructure/persistence/rela
 export class KpiEntity extends EntityRelationalHelper {
   @Column({
     nullable: true,
+    type:
+      String,
+  })
+  samplingMethod?: string | null;
+
+  @Column({
+    nullable: true,
     type: 'simple-array',
   })
   samples?: number[] | null;
