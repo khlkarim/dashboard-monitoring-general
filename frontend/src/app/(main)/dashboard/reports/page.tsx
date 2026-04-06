@@ -28,7 +28,7 @@ function Page() {
   const { data: risks } = useGetRisks();
   const { data: kpis } = useGetKpis({});
   const { data: notifications } = useGetNotifications(user?.id || "");
-  const { data: processusData } = useGetProcessus({});
+  const { data: processusData } = useGetProcessus();
 
   const dashboardData = {
     sprints: sprints?.data || [],

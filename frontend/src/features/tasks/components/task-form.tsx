@@ -36,13 +36,13 @@ export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
         resolver: zodResolver(taskFormSchema),
         defaultValues: {
             status: initialData?.status || TaskStatus.TODO,
-            criticality: initialData?.criticality || null,
+            criticality: initialData?.criticality || undefined,
             deliverable: initialData?.deliverable || null,
             dueDate: initialData?.dueDate ? initialData.dueDate : "",
             startDate: initialData?.startDate ? initialData.startDate : "",
             description: initialData?.description || "",
             title: initialData?.title || "",
-            assignee: initialData?.assignee || null,
+            assignee: initialData?.assignee || undefined,
             reporter: initialData?.reporter || null,
         },
     });

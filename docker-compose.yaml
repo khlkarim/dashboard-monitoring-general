@@ -2,18 +2,16 @@ services:
   postgres:
     image: postgres:17.6-alpine
     restart: always
-    environment:
-      POSTGRES_USER: ${DATABASE_USERNAME}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-      POSTGRES_DB: ${DATABASE_NAME}
+    env_file:
+      - .env
     volumes:
       - pg_data:/var/lib/postgresql/data
-    ports:
-      - ${DATABASE_PORT}:5432
   
   adminer:
     image: adminer:latest
     restart: always
+    env_file:
+      - .env
     ports:
       - ${ADMINER_PORT}:8080
     depends_on:
@@ -29,7 +27,9 @@ services:
     env_file:
       - .env
     ports:
-      - ${EXPOSED_BACKEND_PORT}:3000
+      - ${BACKEND_PORT}:3000
+    volumes:
+      - backend_files:/usr/src/app/files
 
   frontend:
     build:
@@ -40,10 +40,11 @@ services:
     restart: always
     depends_on:
       - backend
-    environment:
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+    env_file:
+      - .env
     ports:
-      - ${EXPOSED_FRONTEND_PORT}:3000
+      - ${FRONTEND_PORT}:3000
 
 volumes:
   pg_data:
+  backend_files:

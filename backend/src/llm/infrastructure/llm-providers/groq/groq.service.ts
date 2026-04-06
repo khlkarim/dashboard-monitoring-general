@@ -21,16 +21,18 @@ export class GroqService implements LlmProviderService {
             infer: true,
         });
 
-        if (!groqApiKey) {
-            throw new Error(
-                "Missing GROQ API key. Please configure llm.groqApiKey in environment variables.",
-            );
+        if (groqApiKey) {
+            this.groq = new Groq({ apiKey: groqApiKey });
         }
-
-        this.groq = new Groq({ apiKey: groqApiKey });
     }
 
     async send(request: LlmRequest): Promise<LlmResponse> {
+        if (!this.groq) {
+            return {
+                options: [],
+            };
+        }
+
         try {
             const response = await this.groq.chat.completions.create({
                 messages: [
@@ -52,7 +54,6 @@ export class GroqService implements LlmProviderService {
                 throw new UnauthorizedException("Invalid GROQ API key");
             }
 
-            console.error("Groq error:", error);
             throw new InternalServerErrorException(
                 "Failed to communicate with Groq provider",
             );
