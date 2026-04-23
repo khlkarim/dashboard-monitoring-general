@@ -1,7 +1,15 @@
+import { Processus } from '../../processus/domain/processus';
 import { ApiProperty } from '@nestjs/swagger';
 import { Action } from 'src/actions/domain/action';
 
 export class Risk {
+  @ApiProperty({
+    type: () =>
+      Processus,
+    nullable: true,
+  })
+  processus?: Processus | null;
+
   @ApiProperty({
     type: () =>
       Number,

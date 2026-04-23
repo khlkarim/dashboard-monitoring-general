@@ -1,3 +1,4 @@
+import { processusResponseSchema } from '@/features/processus/schemas/processus.schemas';
 import { z } from 'zod';
 
 /** Create Risk */
@@ -7,6 +8,7 @@ export const createRiskRequestSchema = z.object({
     severity: z.number().optional().nullable(),
     occurrence: z.number().optional().nullable(),
     detection: z.number().optional().nullable(),
+    processus: z.object({ id: z.string() }).optional().nullable(),
 });
 export type CreateRiskRequest = z.infer<typeof createRiskRequestSchema>;
 
@@ -24,6 +26,7 @@ export const riskResponseSchema = z.object({
     detection: z.number().nullable().optional(),
     createdAt: z.string().datetime(),
     updatedAt: z.string().datetime(),
+    processus: processusResponseSchema.optional().nullable(),
 });
 export type RiskResponse = z.infer<typeof riskResponseSchema>;
 
@@ -34,6 +37,7 @@ export const riskFormSchema = z.object({
     severity: z.coerce.number({ message: "Severity is required" }).min(1),
     occurrence: z.coerce.number({ message: "Occurence is required" }).min(1),
     detection: z.coerce.number({ message: "Detection is required" }).min(1),
+    processus: z.object({ id: z.string() }, { message: "Processus is required" }),
 });
 export type RiskFormValues = z.infer<typeof riskFormSchema>;
 

@@ -1,3 +1,5 @@
+import { ProcessusEntity } from '../../../../../processus/infrastructure/persistence/relational/entities/processus.entity';
+
 import {
   CreateDateColumn,
   Entity,
@@ -5,6 +7,7 @@ import {
   UpdateDateColumn,
   Column,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 import { ActionEntity } from 'src/actions/infrastructure/persistence/relational/entities/action.entity';
@@ -13,6 +16,12 @@ import { ActionEntity } from 'src/actions/infrastructure/persistence/relational/
   name: 'risk',
 })
 export class RiskEntity extends EntityRelationalHelper {
+  @ManyToOne(
+    () => ProcessusEntity,
+    { eager: true, nullable: true }
+  )
+  processus?: ProcessusEntity | null;
+
   @Column({
     nullable: true,
     type:

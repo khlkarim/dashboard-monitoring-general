@@ -1,3 +1,4 @@
+import { ProcessusModule } from '../processus/processus.module';
 import {
   forwardRef,
   // do not remove this comment
@@ -11,6 +12,7 @@ import { ActionsModule } from 'src/actions/actions.module';
 
 @Module({
   imports: [
+    ProcessusModule,
     LlmModule,
     forwardRef(() => ActionsModule),
     // do not remove this comment

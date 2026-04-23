@@ -1,8 +1,12 @@
+import { ProcessusDto } from '../../processus/dto/processus.dto';
+
 import {
   // decorators here
   IsString,
   IsOptional,
   IsNumber,
+  ValidateNested,
+  IsNotEmptyObject,
 } from 'class-validator';
 
 import {
@@ -10,7 +14,23 @@ import {
   ApiProperty,
 } from '@nestjs/swagger';
 
+import {
+  // decorators here
+  Type,
+} from 'class-transformer';
+
 export class CreateRiskDto {
+  @ApiProperty({
+    required: false,
+    type: () =>
+      ProcessusDto,
+  })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ProcessusDto)
+  @IsNotEmptyObject()
+  processus?: ProcessusDto | null;
+
   @ApiProperty({
     required: false,
     type: () =>

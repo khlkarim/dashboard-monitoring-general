@@ -1,12 +1,17 @@
+import { ProcessusService } from '../processus/processus.service';
+import { Processus } from '../processus/domain/processus';
+
 import {
   // common
   Injectable,
+  HttpStatus,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { Risk } from './domain/risk';
 import { LlmService } from 'src/llm/llm.service';
 import { CreateRiskDto } from './dto/create-risk.dto';
 import { UpdateRiskDto } from './dto/update-risk.dto';
-import { CreateActionDto } from 'src/actions/dto/create-action.dto'; 
+import { CreateActionDto } from 'src/actions/dto/create-action.dto';
 import { IPaginationOptions } from '../utils/types/pagination-options';
 import { RiskRepository } from './infrastructure/persistence/risk.repository';
 import { ActionRepository } from 'src/actions/infrastructure/persistence/action.repository';
@@ -14,11 +19,12 @@ import { ActionRepository } from 'src/actions/infrastructure/persistence/action.
 @Injectable()
 export class RisksService {
   constructor(
+    private readonly processusService: ProcessusService,
     // Dependencies here
     private readonly llmService: LlmService,
     // the actionRepository is injected instead of the actionService to avoid circular dependencies.
     // this is probably not cool but we'll see.
-    private readonly actionRepository: ActionRepository, 
+    private readonly actionRepository: ActionRepository,
     private readonly riskRepository: RiskRepository,
   ) { }
 
@@ -28,9 +34,31 @@ export class RisksService {
   ) {
     // Do not remove comment below.
     // <creating-property />
+    let processus: Processus | null | undefined = undefined;
+
+    if (createRiskDto.processus) {
+      const processusObject = await this.processusService.findById(
+        createRiskDto.processus.id,
+      );
+      if (!processusObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            processus: 'notExists',
+          },
+        });
+      }
+      processus = processusObject;
+    }
+    else if (createRiskDto.processus === null) {
+      processus = null;
+    }
+
     const risk = await this.riskRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+      processus,
+
       detection: createRiskDto.detection,
 
       occurrence: createRiskDto.occurrence,
@@ -76,9 +104,31 @@ export class RisksService {
   ) {
     // Do not remove comment below.
     // <updating-property />
+    let processus: Processus | null | undefined = undefined;
+
+    if (updateRiskDto.processus) {
+      const processusObject = await this.processusService.findById(
+        updateRiskDto.processus.id,
+      );
+      if (!processusObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            processus: 'notExists',
+          },
+        });
+      }
+      processus = processusObject;
+    }
+    else if (updateRiskDto.processus === null) {
+      processus = null;
+    }
+
     return this.riskRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+      processus,
+
       detection: updateRiskDto.detection,
 
       occurrence: updateRiskDto.occurrence,
@@ -99,39 +149,39 @@ export class RisksService {
   async generateAction(risk: Risk): Promise<CreateActionDto[]> {
     // TODO: this should probably be extracted into a config parameter. 
     const llmRequest = {
-      content: 
+      content:
         "//Context Start//" +
         "The INSAT Junior Enterprise is a non-profit association founded in 2005 and joined the National Confederation" +
         "of Junior Enterprises (JET) in 2013. The mission of the INSAT Junior Enterprise is to train students" +
         "in the field of entrepreneurship and thereby facilitate their integration into professional life." +
         "The services provided by the INSAT Junior Enterprise mainly revolve around website development," +
         "mobile application development, and search engine optimization (SEO) of websites." +
-        "In the process of carrying out its projects Junior Entreprise INSAT might encouter some risks." + 
-        "Given a risk, Your role is to provide some corrective or preventive actions to mitigate the risk." + 
+        "In the process of carrying out its projects Junior Entreprise INSAT might encouter some risks." +
+        "Given a risk, Your role is to provide some corrective or preventive actions to mitigate the risk." +
         "Your input will be a json object representing a risk in the following format: { title?: string | null, description?: string | null, detection?: number | null, occurrence?: number | null, severity?: number | null }" +
         "You should output a json object representing a list of mitigation actions in the following format: { actions?: { title?: string | null, description?: string | null, type?: 'PREVENTIVE' | 'CORRECTIVE' | null } }" +
-        "If you fail to generate the appropriate actions simply return an empty json object to prevent json parsing errors." + 
-        "//Context End//" + 
+        "If you fail to generate the appropriate actions simply return an empty json object to prevent json parsing errors." +
+        "//Context End//" +
         "// Prompt Start //" +
-        JSON.stringify({ 
-          title: risk.title, 
-          description: risk.description,  
-          severity: risk.severity,  
-          detection: risk.detection,  
-          occurrence: risk.occurrence,  
-        }) + 
+        JSON.stringify({
+          title: risk.title,
+          description: risk.description,
+          severity: risk.severity,
+          detection: risk.detection,
+          occurrence: risk.occurrence,
+        }) +
         "// Prompt End //"
     }
 
     const llmResponse = await this.llmService.send(llmRequest);
     console.log("AI generated actions: ", llmResponse);
 
-    if(llmResponse.options.length > 0) {
+    if (llmResponse.options.length > 0) {
       let actions = [];
 
       llmResponse.options.forEach(o => {
-        if(o.content.startsWith("```json")) { o.content = o.content.slice(7); }
-        if(o.content.endsWith("```")) { o.content = o.content.slice(0, o.content.length - 3); }
+        if (o.content.startsWith("```json")) { o.content = o.content.slice(7); }
+        if (o.content.endsWith("```")) { o.content = o.content.slice(0, o.content.length - 3); }
 
         try {
           actions = actions.concat(JSON.parse(o.content).actions);

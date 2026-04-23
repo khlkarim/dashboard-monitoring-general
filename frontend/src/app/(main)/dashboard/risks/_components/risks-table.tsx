@@ -20,12 +20,14 @@ import { CreateRiskRequest } from "@/features/risks/schemas/risks.schemas";
 import { UpdateRiskRequest } from "@/features/risks/schemas/risks.schemas";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 import { DataTableViewOptions } from "@/components/data-table/data-table-view-options";
+import { Processus } from "@/features/processus/types/processus.types";
 
 interface RisksTableProps {
+    processus: Processus;
     risks: Risk[];
 }
 
-export function RisksTable({ risks } : RisksTableProps) {
+export function RisksTable({ processus, risks }: RisksTableProps) {
     const createMutation = useCreateRisk();
     const updateMutation = useUpdateRisk();
     const deleteMutation = useDeleteRisk();
@@ -70,7 +72,7 @@ export function RisksTable({ risks } : RisksTableProps) {
     };
 
     async function handleDeleteConfirm() {
-        if(deletingRisk) {
+        if (deletingRisk) {
             await deleteMutation.mutateAsync(deletingRisk.id);
             setIsDeleteOpen(false);
         }
@@ -78,9 +80,9 @@ export function RisksTable({ risks } : RisksTableProps) {
 
     return (
         <>
-            <TableCard 
-                title="Risks"
-                description="Track and manage all the risks."
+            <TableCard
+                title={processus.label}
+                description={processus.description}
                 actions={
                     <>
                         <Button onClick={handleCreate} size="sm">
@@ -98,7 +100,7 @@ export function RisksTable({ risks } : RisksTableProps) {
                             placeholder={"Search by title..."}
                         />
 
-                        {table.getState().columnFilters.length > 0 && 
+                        {table.getState().columnFilters.length > 0 &&
                             <Button
                                 variant="ghost"
                                 onClick={() => table.resetColumnFilters()}
@@ -126,7 +128,7 @@ export function RisksTable({ risks } : RisksTableProps) {
                 title="Create Risk"
                 description="Add a new risk to your timeline."
             >
-                <RiskForm 
+                <RiskForm
                     onSubmit={handleCreateSubmit}
                     isLoading={createMutation.isPending}
                 />
