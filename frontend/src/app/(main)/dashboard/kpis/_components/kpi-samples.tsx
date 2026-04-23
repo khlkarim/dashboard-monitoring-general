@@ -24,8 +24,6 @@ export function KpiSamples({ kpi }: KpiSamplesProps) {
     const [editingValue, setEditingValue] = useState("");
     const [newSample, setNewSample] = useState("");
 
-    if (!kpi.samples) return null;
-
     function startEdit(index: number) {
         setEditingIndex(index);
         setEditingValue(kpi.samples![index]);
@@ -58,7 +56,7 @@ export function KpiSamples({ kpi }: KpiSamplesProps) {
     async function handleAddSample() {
         if (!newSample.trim()) return;
 
-        const updatedSamples = [...kpi.samples!, newSample.trim()];
+        const updatedSamples = kpi.samples ? [...kpi.samples, newSample.trim()] : [newSample.trim()];
 
         await updateMutation.mutateAsync({
             id: kpi.id,
@@ -71,7 +69,7 @@ export function KpiSamples({ kpi }: KpiSamplesProps) {
     return (
         <div className="lg:col-span-8 flex flex-col gap-6">
             {/* Chart Visualization */}
-            {kpi.samples.length > 0 && (
+            {kpi.samples && kpi.samples.length > 0 && (
                 <KpiChart samples={kpi.samples} kpiName={kpi.name} />
             )}
 
@@ -112,7 +110,7 @@ export function KpiSamples({ kpi }: KpiSamplesProps) {
                     </div>
 
                     {/* Samples list */}
-                    {kpi.samples.length > 0 ? (
+                    {kpi.samples && kpi.samples.length > 0 ? (
                         <div className="space-y-2">
                             {kpi.samples.map((sample, index) => (
                                 <div
