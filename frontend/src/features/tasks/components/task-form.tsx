@@ -21,6 +21,7 @@ import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useGetUsers } from "@/features/users/hooks/use-get-users";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Task } from "../types/tasks.types";
+import { useGetProcessus } from "@/features/processus/hooks/use-get-processus";
 
 interface TaskFormProps {
     initialData?: Task | null;
@@ -29,6 +30,7 @@ interface TaskFormProps {
 }
 
 export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
+    const { data: processus } = useGetProcessus();
     const user = useAuthStore((state) => state.user);
     const { data: users } = useGetUsers();
 
@@ -44,6 +46,9 @@ export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
             title: initialData?.title || "",
             assignee: initialData?.assignee || undefined,
             reporter: initialData?.reporter || null,
+            expectedDelivrable: initialData?.expectedDelivrable || null,
+            estimatedStartDate: initialData?.estimatedStartDate ? initialData.estimatedStartDate : "",
+            estimatedEndDate: initialData?.estimatedEndDate ? initialData.estimatedEndDate : "",
         },
     });
 
@@ -99,6 +104,44 @@ export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
                         </FormItem>
                     )}
                 />
+
+                <div className="flex gap-4">
+                    <FormField
+                        control={form.control}
+                        name="estimatedStartDate"
+                        render={({ field }) => (
+                            <FormItem className="w-1/2">
+                                <FormLabel>Estimated Start Date</FormLabel>
+                                <FormControl>
+                                    <DatePicker
+                                        date={field.value ? new Date(field.value) : undefined}
+                                        setDate={(date) => field.onChange(date?.toISOString() || "")}
+                                        placeholder="Pick an estimated start date"
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="estimatedEndDate"
+                        render={({ field }) => (
+                            <FormItem className="w-1/2">
+                                <FormLabel>Estimated End Date</FormLabel>
+                                <FormControl>
+                                    <DatePicker
+                                        date={field.value ? new Date(field.value) : undefined}
+                                        setDate={(date) => field.onChange(date?.toISOString() || "")}
+                                        placeholder="Pick an estimated end date"
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
 
                 <div className="flex gap-4">
                     <FormField
@@ -207,6 +250,35 @@ export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
                                     </SelectContent>
                                 </Select>
                             </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="processus"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Processus</FormLabel>
+                            <Select
+                                onValueChange={(val) => field.onChange(val === "none" ? null : { id: val })}
+                                value={field.value?.id || "none"}
+                            >
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a processus" />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectItem value="none">No Processus</SelectItem>
+                                    {processus?.data.map((proc) => (
+                                        <SelectItem key={proc.id} value={proc.id}>
+                                            {proc.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                             <FormMessage />
                         </FormItem>
                     )}

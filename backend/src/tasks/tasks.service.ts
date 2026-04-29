@@ -1,3 +1,6 @@
+import { ProcessusService } from '../processus/processus.service';
+import { Processus } from '../processus/domain/processus';
+
 import { UsersService } from '../users/users.service';
 import { User } from '../users/domain/user';
 import { SprintsService } from '../sprints/sprints.service';
@@ -24,17 +27,38 @@ import {
 @Injectable()
 export class TasksService {
   constructor(
+    private readonly processusService: ProcessusService,
     @Inject(forwardRef(() => UsersService))
     private readonly userService: UsersService,
     private readonly sprintService: SprintsService,
     // Dependencies here
     private readonly taskRepository: TaskRepository,
     private readonly commentRepository: CommentRepository,
-  ) {}
+  ) { }
 
   async create(createTaskDto: CreateTaskDto) {
     // Do not remove comment below.
     // <creating-property />
+    let processus: Processus | null | undefined = undefined;
+
+    if (createTaskDto.processus) {
+      const processusObject = await this.processusService.findById(
+        createTaskDto.processus.id,
+      );
+      if (!processusObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            processus: 'notExists',
+          },
+        });
+      }
+      processus = processusObject;
+    }
+    else if (createTaskDto.processus === null) {
+      processus = null;
+    }
+
     const reporterObject = await this.userService.findById(
       createTaskDto.reporter.id,
     );
@@ -77,6 +101,14 @@ export class TasksService {
     return this.taskRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+      estimatedEndDate: createTaskDto.estimatedEndDate,
+
+      estimatedStartDate: createTaskDto.estimatedStartDate,
+
+      expectedDelivrable: createTaskDto.expectedDelivrable,
+
+      processus,
+
       criticality: createTaskDto.criticality,
       startDate: createTaskDto.startDate,
 
@@ -142,6 +174,26 @@ export class TasksService {
   ) {
     // Do not remove comment below.
     // <updating-property />
+    let processus: Processus | null | undefined = undefined;
+
+    if (updateTaskDto.processus) {
+      const processusObject = await this.processusService.findById(
+        updateTaskDto.processus.id,
+      );
+      if (!processusObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            processus: 'notExists',
+          },
+        });
+      }
+      processus = processusObject;
+    }
+    else if (updateTaskDto.processus === null) {
+      processus = null;
+    }
+
     let reporter: User | undefined = undefined;
 
     if (updateTaskDto.reporter) {
@@ -196,6 +248,14 @@ export class TasksService {
     return this.taskRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+      estimatedEndDate: updateTaskDto.estimatedEndDate,
+
+      estimatedStartDate: updateTaskDto.estimatedStartDate,
+
+      expectedDelivrable: updateTaskDto.expectedDelivrable,
+
+      processus,
+
       criticality: updateTaskDto.criticality,
 
       startDate: updateTaskDto.startDate,
@@ -285,7 +345,7 @@ export class TasksService {
       const totalDays = completedTasksWithDates.reduce((sum, task) => {
         const days = Math.floor(
           (task.completedDate.getTime() - task.startDate.getTime()) /
-            (1000 * 60 * 60 * 24),
+          (1000 * 60 * 60 * 24),
         );
         return sum + days;
       }, 0);

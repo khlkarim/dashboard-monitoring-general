@@ -16,6 +16,7 @@ import { useUpdateTask } from '@/features/tasks/hooks/use-update-task';
 const columns = [
     { id: TaskStatus.TODO.toString(), name: 'Planned', color: '#6B7280' },
     { id: TaskStatus.IN_PROGRESS.toString(), name: 'In Progress', color: '#F59E0B' },
+    { id: TaskStatus.BLOCKED.toString(), name: 'Blocked', color: '#ff3c00ff' },
     { id: TaskStatus.DONE.toString(), name: 'Done', color: '#10B981' },
 ];
 
@@ -51,7 +52,7 @@ export function TasksBoard({ tasks }: TasksBoardProps) {
         // First check if dropped directly on a column
         const droppedColumn = columns.find((col) => col.id === over.id);
         let newColumnId: string;
-        
+
         if (droppedColumn) {
             // Dropped directly on a column
             newColumnId = droppedColumn.id;
@@ -62,14 +63,15 @@ export function TasksBoard({ tasks }: TasksBoardProps) {
         }
 
         const newStatus = newColumnId;
-        
+
         // Only update if status actually changed
         if (
             (
-                newStatus == TaskStatus.DONE || 
+                newStatus == TaskStatus.DONE ||
                 newStatus == TaskStatus.IN_PROGRESS ||
+                newStatus == TaskStatus.BLOCKED ||
                 newStatus == TaskStatus.TODO
-            ) && 
+            ) &&
             newStatus !== draggedItem.task.status
         ) {
             await updateMutation.mutateAsync({

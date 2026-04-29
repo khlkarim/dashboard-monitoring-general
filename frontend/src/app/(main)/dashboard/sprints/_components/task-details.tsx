@@ -35,11 +35,23 @@ export function TaskDetails({ task }: TaskDetailsProps) {
             <Badge variant="outline">
               {task.status.replace("_", " ")}
             </Badge>
+
+            {task.processus && (
+              <Badge variant="outline">
+                {task.processus.label}
+              </Badge>)
+            }
           </div>
 
           {task.deliverable && (
             <p className="text-sm text-muted-foreground">
               Deliverable: {task.deliverable}
+            </p>
+          )}
+
+          {task.expectedDelivrable && (
+            <p className="text-sm text-muted-foreground">
+              Expected Deliverable: {task.expectedDelivrable}
             </p>
           )}
         </div>
@@ -49,6 +61,16 @@ export function TaskDetails({ task }: TaskDetailsProps) {
         {/* Meta */}
         <Card>
           <CardContent className="grid grid-cols-2 gap-4 py-4 text-sm">
+            <div>
+              <p className="text-muted-foreground">Estimated Start date</p>
+              <p className="font-medium">{formatDate(task.estimatedStartDate)}</p>
+            </div>
+
+            <div>
+              <p className="text-muted-foreground">Estimated End date</p>
+              <p className="font-medium">{formatDate(task.estimatedEndDate)}</p>
+            </div>
+
             <div>
               <p className="text-muted-foreground">Start date</p>
               <p className="font-medium">{formatDate(task.startDate)}</p>

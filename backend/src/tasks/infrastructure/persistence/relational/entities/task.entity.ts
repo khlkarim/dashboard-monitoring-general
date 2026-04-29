@@ -1,3 +1,5 @@
+import { ProcessusEntity } from '../../../../../processus/infrastructure/persistence/relational/entities/processus.entity';
+
 import { UserEntity } from '../../../../../users/infrastructure/persistence/relational/entities/user.entity';
 import { SprintEntity } from '../../../../../sprints/infrastructure/persistence/relational/entities/sprint.entity';
 import { CommentEntity } from '../../../../../comments/infrastructure/persistence/relational/entities/comment.entity';
@@ -18,6 +20,33 @@ import { TaskStatusEnum } from '../../../../domain/task-status.enum';
   name: 'task',
 })
 export class TaskEntity extends EntityRelationalHelper {
+  @Column({
+    nullable: true,
+    type:
+      Date,
+  })
+  estimatedEndDate?: Date | null;
+
+  @Column({
+    nullable: true,
+    type:
+      Date,
+  })
+  estimatedStartDate?: Date | null;
+
+  @Column({
+    nullable: true,
+    type:
+      String,
+  })
+  expectedDelivrable?: string | null;
+
+  @ManyToOne(
+    () => ProcessusEntity,
+    { eager: true, nullable: true }
+  )
+  processus?: ProcessusEntity | null;
+
   @Column({
     nullable: true,
     type:

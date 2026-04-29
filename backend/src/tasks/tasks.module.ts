@@ -1,3 +1,4 @@
+import { ProcessusModule } from '../processus/processus.module';
 import { UsersModule } from '../users/users.module';
 import { SprintsModule } from '../sprints/sprints.module';
 import { CommentsModule } from '../comments/comments.module';
@@ -12,6 +13,7 @@ import { RelationalTaskPersistenceModule } from './infrastructure/persistence/re
 
 @Module({
   imports: [
+    ProcessusModule,
     forwardRef(() => UsersModule),
     forwardRef(() => SprintsModule),
     forwardRef(() => CommentsModule),
@@ -22,4 +24,4 @@ import { RelationalTaskPersistenceModule } from './infrastructure/persistence/re
   providers: [TasksService],
   exports: [TasksService, RelationalTaskPersistenceModule],
 })
-export class TasksModule {}
+export class TasksModule { }

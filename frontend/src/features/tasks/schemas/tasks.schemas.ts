@@ -1,16 +1,18 @@
 import { z } from 'zod';
-import { sprintResponseSchema } from '@/features/sprints/schemas/sprints.schemas';
 import { userResponseSchema } from '@/features/users/schemas/users.schemas';
+import { sprintResponseSchema } from '@/features/sprints/schemas/sprints.schemas';
+import { processusResponseSchema } from '@/features/processus/schemas/processus.schemas';
 
 export enum TaskStatus {
     TODO = 'TODO',
     IN_PROGRESS = 'IN_PROGRESS',
+    BLOCKED = 'BLOCKED',
     DONE = 'DONE',
 }
 
 /** Create Task */
 export const createTaskRequestSchema = z.object({
-    status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.DONE]).default(TaskStatus.TODO),
+    status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.BLOCKED, TaskStatus.DONE]).default(TaskStatus.TODO),
     criticality: z.number().optional().nullable(),
     startDate: z.string().datetime().optional().nullable(),
     deliverable: z.string().optional().nullable(),
@@ -20,6 +22,10 @@ export const createTaskRequestSchema = z.object({
     dueDate: z.string().datetime(),
     description: z.string().optional().nullable(),
     title: z.string().min(1),
+    processus: z.object({ id: z.string() }).optional().nullable(),
+    estimatedStartDate: z.string().datetime().optional().nullable(),
+    estimatedEndDate: z.string().datetime().optional().nullable(),
+    expectedDelivrable: z.string().optional().nullable(),
 });
 export type CreateTaskRequest = z.infer<typeof createTaskRequestSchema>;
 
@@ -30,7 +36,7 @@ export type UpdateTaskRequest = z.infer<typeof updateTaskRequestSchema>;
 /** Task Entity */
 export const taskResponseSchema = z.object({
     id: z.string(),
-    status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.DONE]),
+    status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.BLOCKED, TaskStatus.DONE]),
     criticality: z.number().optional().nullable(),
     startDate: z.string().datetime().optional().nullable(),
     deliverable: z.string().optional().nullable(),
@@ -42,12 +48,16 @@ export const taskResponseSchema = z.object({
     title: z.string(),
     createdAt: z.string().datetime(),
     updatedAt: z.string().datetime(),
+    processus: processusResponseSchema.optional().nullable(),
+    estimatedStartDate: z.string().datetime().optional().nullable(),
+    estimatedEndDate: z.string().datetime().optional().nullable(),
+    expectedDelivrable: z.string().optional().nullable(),
 });
 export type TaskResponse = z.infer<typeof taskResponseSchema>;
 
 /** Task Form Schema */
 export const taskFormSchema = z.object({
-    status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.DONE]).default(TaskStatus.TODO),
+    status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.BLOCKED, TaskStatus.DONE]).default(TaskStatus.TODO),
     criticality: z.number({ message: "Criticality is required." }),
     deliverable: z.string().optional().nullable(),
     dueDate: z.string().min(1, { message: "Due date is required." }),
@@ -56,6 +66,10 @@ export const taskFormSchema = z.object({
     reporter: z.object({ id: z.string() }).optional().nullable(),
     assignee: z.object({ id: z.string() }, { message: "Assigne is required." }),
     startDate: z.string().min(1, { message: "Start date is required." }),
+    processus: z.object({ id: z.string() }).optional().nullable(),
+    estimatedStartDate: z.string().datetime().optional().nullable(),
+    estimatedEndDate: z.string().datetime().optional().nullable(),
+    expectedDelivrable: z.string().optional().nullable(),
 })
     .refine((data) => data.startDate < data.dueDate, {
         message: "Start date must be before the due date.",

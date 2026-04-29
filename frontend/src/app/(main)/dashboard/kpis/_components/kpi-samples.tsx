@@ -20,55 +20,102 @@ interface KpiSamplesProps {
 export function KpiSamples({ kpi }: KpiSamplesProps) {
     const updateMutation = useUpdateKpi();
 
-    const [editingIndex, setEditingIndex] = useState<number | null>(null);
-    const [editingValue, setEditingValue] = useState("");
-    const [newSample, setNewSample] = useState("");
+    // Editing state (triplet)
+    const [editing, setEditing] = useState<{
+        index: number;
+        value: string;
+        target: string;
+        date: string;
+    } | null>(null);
+
+    // New sample state (triplet)
+    const [newValue, setNewValue] = useState("");
+    const [newTarget, setNewTarget] = useState("");
+    const [newDate, setNewDate] = useState("");
 
     function startEdit(index: number) {
-        setEditingIndex(index);
-        setEditingValue(kpi.samples![index]);
+        setEditing({
+            index,
+            value: kpi.samples![index],
+            target: kpi.targetSamples?.[index] ?? "",
+            date: kpi.sampleDates![index],
+        });
     }
 
     async function handleUpdateConfirm() {
-        if (editingIndex === null) return;
+        if (!editing) return;
+
+        const { index, value, target, date } = editing;
 
         const updatedSamples = [...kpi.samples!];
-        updatedSamples[editingIndex] = editingValue;
+        const updatedTargets = kpi.targetSamples
+            ? [...kpi.targetSamples]
+            : new Array(kpi.samples!.length).fill(null);
+        const updatedDates = [...kpi.sampleDates!];
+
+        updatedSamples[index] = value;
+        updatedTargets[index] = target || null;
+        updatedDates[index] = date;
 
         await updateMutation.mutateAsync({
             id: kpi.id,
-            data: { samples: updatedSamples },
+            data: {
+                samples: updatedSamples,
+                targetSamples: updatedTargets,
+                sampleDates: updatedDates,
+            },
         });
 
-        setEditingIndex(null);
-        setEditingValue("");
+        setEditing(null);
     }
 
     async function handleDelete(index: number) {
-        const updatedSamples = kpi.samples!.filter((_, i) => i !== index);
-
         await updateMutation.mutateAsync({
             id: kpi.id,
-            data: { samples: updatedSamples },
+            data: {
+                samples: kpi.samples!.filter((_, i) => i !== index),
+                targetSamples: kpi.targetSamples?.filter((_, i) => i !== index),
+                sampleDates: kpi.sampleDates!.filter((_, i) => i !== index),
+            },
         });
     }
 
     async function handleAddSample() {
-        if (!newSample.trim()) return;
+        if (!newValue.trim() || !newDate.trim()) return;
 
-        const updatedSamples = kpi.samples ? [...kpi.samples, newSample.trim()] : [newSample.trim()];
+        const updatedSamples = kpi.samples
+            ? [...kpi.samples, newValue.trim()]
+            : [newValue.trim()];
+
+        let updatedTargets = kpi.targetSamples;
+
+        if (newTarget) {
+            updatedTargets = kpi.targetSamples
+                ? [...kpi.targetSamples, newTarget.trim()]
+                : [newTarget.trim()];
+        }
+
+        const updatedDates = kpi.sampleDates
+            ? [...kpi.sampleDates, newDate]
+            : [newDate];
 
         await updateMutation.mutateAsync({
             id: kpi.id,
-            data: { samples: updatedSamples },
+            data: {
+                samples: updatedSamples,
+                targetSamples: updatedTargets,
+                sampleDates: updatedDates,
+            },
         });
 
-        setNewSample("");
+        setNewValue("");
+        setNewTarget("");
+        setNewDate("");
     }
 
     return (
         <div className="lg:col-span-8 flex flex-col gap-6">
-            {/* Chart Visualization */}
+            {/* Chart */}
             {kpi.samples && kpi.samples.length > 0 && (
                 <KpiChart samples={kpi.samples} kpiName={kpi.name} />
             )}
@@ -85,23 +132,32 @@ export function KpiSamples({ kpi }: KpiSamplesProps) {
                 </CardHeader>
 
                 <CardContent className="space-y-4">
-                    {/* Add sample */}
+                    {/* Add Sample */}
                     <div className="flex gap-2">
                         <Input
-                            placeholder="Add new sample..."
-                            value={newSample}
-                            onChange={(e) => setNewSample(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                    handleAddSample();
-                                }
-                            }}
+                            placeholder="Value"
+                            value={newValue}
+                            onChange={(e) => setNewValue(e.target.value)}
+                            disabled={updateMutation.isPending}
+                        />
+                        <Input
+                            placeholder="Target (optional)"
+                            value={newTarget}
+                            onChange={(e) => setNewTarget(e.target.value)}
+                            disabled={updateMutation.isPending}
+                        />
+                        <Input
+                            type="date"
+                            value={newDate}
+                            onChange={(e) => setNewDate(e.target.value)}
                             disabled={updateMutation.isPending}
                         />
                         <Button
                             onClick={handleAddSample}
                             disabled={
-                                updateMutation.isPending || !newSample.trim()
+                                updateMutation.isPending ||
+                                !newValue.trim() ||
+                                !newDate.trim()
                             }
                         >
                             <Plus className="h-4 w-4 mr-1" />
@@ -109,7 +165,7 @@ export function KpiSamples({ kpi }: KpiSamplesProps) {
                         </Button>
                     </div>
 
-                    {/* Samples list */}
+                    {/* Samples List */}
                     {kpi.samples && kpi.samples.length > 0 ? (
                         <div className="space-y-2">
                             {kpi.samples.map((sample, index) => (
@@ -117,28 +173,53 @@ export function KpiSamples({ kpi }: KpiSamplesProps) {
                                     key={index}
                                     className="flex justify-between items-center p-3 border rounded-md bg-muted/20"
                                 >
-                                    {editingIndex === index ? (
-                                        <Input
-                                            value={editingValue}
-                                            onChange={(e) =>
-                                                setEditingValue(e.target.value)
-                                            }
-                                            onBlur={handleUpdateConfirm}
-                                            onKeyDown={(e) => {
-                                                if (e.key === "Enter") {
-                                                    handleUpdateConfirm();
+                                    {editing?.index === index ? (
+                                        <div className="flex gap-2">
+                                            <Input
+                                                value={editing.value}
+                                                onChange={(e) =>
+                                                    setEditing({
+                                                        ...editing,
+                                                        value: e.target.value,
+                                                    })
                                                 }
-                                                if (e.key === "Escape") {
-                                                    setEditingIndex(null);
+                                                className="max-w-[120px]"
+                                            />
+                                            <Input
+                                                value={editing.target}
+                                                onChange={(e) =>
+                                                    setEditing({
+                                                        ...editing,
+                                                        target: e.target.value,
+                                                    })
                                                 }
-                                            }}
-                                            autoFocus
-                                            className="max-w-xs"
-                                        />
+                                                placeholder="Target"
+                                                className="max-w-[120px]"
+                                            />
+                                            <Input
+                                                type="date"
+                                                value={editing.date}
+                                                onChange={(e) =>
+                                                    setEditing({
+                                                        ...editing,
+                                                        date: e.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </div>
                                     ) : (
-                                        <span className="font-mono text-sm">
-                                            {sample}
-                                        </span>
+                                        <div className="text-sm font-mono">
+                                            <div>Value: {sample}</div>
+                                            <div>
+                                                Target:{" "}
+                                                {kpi.targetSamples?.[index] ??
+                                                    "-"}
+                                            </div>
+                                            <div>
+                                                Date:{" "}
+                                                {kpi.sampleDates?.[index]}
+                                            </div>
+                                        </div>
                                     )}
 
                                     <div className="flex items-center gap-5">
@@ -149,8 +230,12 @@ export function KpiSamples({ kpi }: KpiSamplesProps) {
                                         <Button
                                             size="icon"
                                             variant="ghost"
-                                            className="h-5 w-5 text-muted-foreground hover:text-primary"
-                                            onClick={() => startEdit(index)}
+                                            className="h-5 w-5"
+                                            onClick={() =>
+                                                editing?.index === index
+                                                    ? handleUpdateConfirm()
+                                                    : startEdit(index)
+                                            }
                                         >
                                             <Pencil className="h-4 w-4" />
                                         </Button>
@@ -158,8 +243,10 @@ export function KpiSamples({ kpi }: KpiSamplesProps) {
                                         <Button
                                             size="icon"
                                             variant="ghost"
-                                            className="h-5 w-5 text-muted-foreground hover:text-destructive"
-                                            onClick={() => handleDelete(index)}
+                                            className="h-5 w-5 text-destructive"
+                                            onClick={() =>
+                                                handleDelete(index)
+                                            }
                                         >
                                             <Trash2 className="h-4 w-4" />
                                         </Button>

@@ -12,8 +12,8 @@ interface ActionTabsProps {
     risk: Risk;
 }
 
-export function ActionTabs({ risk } : ActionTabsProps) {
-    const { 
+export function ActionTabs({ risk }: ActionTabsProps) {
+    const {
         data: actions,
         isError,
         error
@@ -21,18 +21,20 @@ export function ActionTabs({ risk } : ActionTabsProps) {
 
     const [preventiveActions, setPreventiveActions] = useState<Action[]>([]);
     const [correctiveActions, setCorrectiveActions] = useState<Action[]>([]);
+    const [mesurementMethods, setMesurementMethods] = useState<Action[]>([]);
 
     useEffect(() => {
-        if(actions) {
+        if (actions) {
             setPreventiveActions(actions.data.filter((action) => action.type === ActionType.PREVENTIVE));
             setCorrectiveActions(actions.data.filter((action) => action.type === ActionType.CORRECTIVE));
+            setMesurementMethods(actions.data.filter((action) => action.type === ActionType.MESUREMENT_METHOD));
         }
     }, [actions]);
 
-    if(isError) {
+    if (isError) {
         return (
             <div className="lg:col-span-8 flex flex-col gap-6">
-                <ErrorDisplay 
+                <ErrorDisplay
                     title={"Failed to load actions of risk: " + risk?.title}
                     error={error}
                 />
@@ -53,6 +55,7 @@ export function ActionTabs({ risk } : ActionTabsProps) {
                             <TabsList>
                                 <TabsTrigger value="preventive">Preventive</TabsTrigger>
                                 <TabsTrigger value="corrective">Corrective</TabsTrigger>
+                                <TabsTrigger value="mesurement_method">Mesurement Methods</TabsTrigger>
                             </TabsList>
                         </div>
 
@@ -78,6 +81,21 @@ export function ActionTabs({ risk } : ActionTabsProps) {
                                 </div>
                             ) : (
                                 correctiveActions.map((action) => (
+                                    <ActionCard
+                                        key={action.id}
+                                        action={action}
+                                    />
+                                ))
+                            )}
+                        </TabsContent>
+
+                        <TabsContent value="mesurement_method" className="mt-0 space-y-4">
+                            {mesurementMethods.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center p-8 text-center border rounded-lg border-dashed text-muted-foreground">
+                                    <p>No mesurement methods recorded.</p>
+                                </div>
+                            ) : (
+                                mesurementMethods.map((action) => (
                                     <ActionCard
                                         key={action.id}
                                         action={action}

@@ -30,6 +30,18 @@ export class KpiEntity extends EntityRelationalHelper {
 
   @Column({
     nullable: true,
+    type: 'simple-array',
+  })
+  targetSamples?: number[] | null;
+
+  @Column({
+    nullable: true,
+    type: 'simple-array',
+  })
+  sampleDates?: Date[] | null;
+
+  @Column({
+    nullable: true,
     type:
       String,
   })

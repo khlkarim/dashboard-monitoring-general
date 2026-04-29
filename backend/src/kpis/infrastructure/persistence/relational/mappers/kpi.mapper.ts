@@ -11,6 +11,9 @@ export class KpiMapper {
     const domainEntity = new Kpi();
     domainEntity.samplingMethod = raw.samplingMethod;
     domainEntity.samples = raw.samples;
+    domainEntity.targetSamples = raw.targetSamples;
+    domainEntity.sampleDates = raw.sampleDates;
+    domainEntity.samples = raw.samples;
     domainEntity.samplingRate = raw.samplingRate;
 
     if (raw.processus) {
@@ -38,6 +41,8 @@ export class KpiMapper {
     const persistenceEntity = new KpiEntity();
     persistenceEntity.samplingMethod = domainEntity.samplingMethod;
     persistenceEntity.samples = domainEntity.samples;
+    persistenceEntity.targetSamples = domainEntity.targetSamples;
+    persistenceEntity.sampleDates = domainEntity.sampleDates;
     persistenceEntity.samplingRate = domainEntity.samplingRate;
 
     if (domainEntity.processus) {

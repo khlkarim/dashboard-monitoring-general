@@ -11,6 +11,8 @@ export const createKpiRequestSchema = z.object({
     description: z.string().nullable().optional(),
     name: z.string().min(1),
     samples: z.array(z.string()).nullable().optional(),
+    targetSamples: z.array(z.string()).nullable().optional(),
+    sampleDates: z.array(z.string()).nullable().optional(),
     samplingRate: z.string().nullable().optional(),
     samplingMethod: z.string().nullable().optional(),
 });
@@ -26,6 +28,8 @@ export const createKpiResponseSchema = z.object({
     createdAt: z.string().datetime(),
     updatedAt: z.string().datetime(),
     samples: z.array(z.string()).nullable().optional(),
+    targetSamples: z.array(z.string()).nullable().optional(),
+    sampleDates: z.array(z.string()).nullable().optional(),
     samplingRate: z.string().nullable().optional(),
     samplingMethod: z.string().nullable().optional(),
 });
@@ -46,6 +50,8 @@ export const kpiResponseSchema = z.object({
     createdAt: z.string().datetime(),
     updatedAt: z.string().datetime(),
     samples: z.array(z.string()).nullable().optional(),
+    targetSamples: z.array(z.string()).nullable().optional(),
+    sampleDates: z.array(z.string()).nullable().optional(),
     samplingRate: z.string().nullable().optional(),
     samplingMethod: z.string().nullable().optional(),
 });

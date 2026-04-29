@@ -1,3 +1,5 @@
+import { ProcessusDto } from '../../processus/dto/processus.dto';
+
 import { UserDto } from '../../users/dto/user.dto';
 import { SprintDto } from '../../sprints/dto/sprint.dto';
 
@@ -25,6 +27,46 @@ import {
 import { TaskStatusEnum } from '../domain/task-status.enum';
 
 export class CreateTaskDto {
+  @ApiProperty({
+    required: false,
+    type: () =>
+      Date,
+  })
+  @IsOptional()
+  @Transform(({ value }) => new Date(value))
+  @IsDate()
+  estimatedEndDate?: Date | null;
+
+  @ApiProperty({
+    required: false,
+    type: () =>
+      Date,
+  })
+  @IsOptional()
+  @Transform(({ value }) => new Date(value))
+  @IsDate()
+  estimatedStartDate?: Date | null;
+
+  @ApiProperty({
+    required: false,
+    type: () =>
+      String,
+  })
+  @IsOptional()
+  @IsString()
+  expectedDelivrable?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () =>
+      ProcessusDto,
+  })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ProcessusDto)
+  @IsNotEmptyObject()
+  processus?: ProcessusDto | null;
+
   @ApiProperty({
     required: false,
     type: () =>

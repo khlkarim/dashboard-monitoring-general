@@ -4,6 +4,7 @@ import { riskResponseSchema } from '@/features/risks/schemas/risks.schemas';
 export enum ActionType {
     PREVENTIVE = 'PREVENTIVE',
     CORRECTIVE = 'CORRECTIVE',
+    MESUREMENT_METHOD = 'MESUREMENT_METHOD',
 }
 
 /** Create Action */
@@ -11,7 +12,7 @@ export const createActionRequestSchema = z.object({
     risk: z.object({ id: z.string() }),
     title: z.string().optional().nullable(),
     description: z.string().optional().nullable(),
-    type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE]).default(ActionType.CORRECTIVE),
+    type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE, ActionType.MESUREMENT_METHOD]).default(ActionType.CORRECTIVE),
 });
 export type CreateActionRequest = z.infer<typeof createActionRequestSchema>;
 
@@ -19,7 +20,7 @@ export type CreateActionRequest = z.infer<typeof createActionRequestSchema>;
 export const updateActionRequestSchema = z.object({
     title: z.string().optional().nullable(),
     description: z.string().optional().nullable(),
-    type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE]).default(ActionType.CORRECTIVE),
+    type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE, ActionType.MESUREMENT_METHOD]).default(ActionType.CORRECTIVE),
 });
 export type UpdateActionRequest = z.infer<typeof updateActionRequestSchema>;
 
@@ -28,7 +29,7 @@ export const updateActionResponseSchema = z.object({
     title: z.string().nullable().optional(),
     description: z.string().nullable().optional(),
     risk: riskResponseSchema.optional().nullable(),
-    type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE]),
+    type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE, ActionType.MESUREMENT_METHOD]),
     createdAt: z.string().datetime(),
     updatedAt: z.string().datetime(),
 });
@@ -40,7 +41,7 @@ export const actionResponseSchema = z.object({
     title: z.string().nullable().optional(),
     description: z.string().nullable().optional(),
     risk: riskResponseSchema,
-    type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE]),
+    type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE, ActionType.MESUREMENT_METHOD]),
     createdAt: z.string().datetime(),
     updatedAt: z.string().datetime(),
 });
@@ -50,7 +51,7 @@ export type ActionResponse = z.infer<typeof actionResponseSchema>;
 export const actionFormSchema = z.object({
     title: z.string().min(1, { message: "Action title is required" }),
     description: z.string().nullable().optional(),
-    type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE]).default(ActionType.CORRECTIVE),
+    type: z.enum([ActionType.PREVENTIVE, ActionType.CORRECTIVE, ActionType.MESUREMENT_METHOD]).default(ActionType.CORRECTIVE),
 });
 export type ActionFormValues = z.infer<typeof actionFormSchema>;
 

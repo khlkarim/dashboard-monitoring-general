@@ -1,7 +1,7 @@
-import { Processus } from '../../processus/domain/processus';
 import { ApiProperty } from '@nestjs/swagger';
-import { Sprint } from '../../sprints/domain/sprint';
 import { User } from '../../users/domain/user';
+import { Sprint } from '../../sprints/domain/sprint';
+import { Processus } from '../../processus/domain/processus';
 
 export class Kpi {
   @ApiProperty({
@@ -17,6 +17,20 @@ export class Kpi {
     nullable: true,
   })
   samples?: number[] | null;
+
+  @ApiProperty({
+    type: () =>
+      Number,
+    nullable: true,
+  })
+  targetSamples?: number[] | null;
+
+  @ApiProperty({
+    type: () =>
+      Date,
+    nullable: true,
+  })
+  sampleDates?: Date[] | null;
 
   @ApiProperty({
     type: () =>

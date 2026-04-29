@@ -38,6 +38,26 @@ export class CreateKpiDto {
   @ApiProperty({
     required: false,
     type: () =>
+      Number,
+    isArray: true,
+  })
+  @IsOptional()
+  @IsArray()
+  targetSamples?: number[] | null;
+
+  @ApiProperty({
+    required: false,
+    type: () =>
+      Date,
+    isArray: true,
+  })
+  @IsOptional()
+  @IsArray()
+  sampleDates?: Date[] | null;
+
+  @ApiProperty({
+    required: false,
+    type: () =>
       String,
   })
   @IsOptional()
