@@ -5,6 +5,7 @@ import { SprintEntity } from '../../../../sprints/infrastructure/persistence/rel
 import { UserEntity } from '../../../../users/infrastructure/persistence/relational/entities/user.entity';
 import { RoleEnum } from '../../../../roles/roles.enum';
 import { SprintStatus } from 'src/sprints/domain/sprint-status.enum';
+import { sprints } from '../data/sprints';
 
 @Injectable()
 export class SprintSeedService {
@@ -16,45 +17,35 @@ export class SprintSeedService {
     ) { }
 
     async run() {
-        const admin = await this.userRepository.findOne({
-            where: { role: { id: RoleEnum.ADMINISTRATOR } },
+        const president = await this.userRepository.findOne({
+            where: { role: { id: RoleEnum.PRESIDENT } },
         });
 
-        if (!admin) {
-            console.log('Admin user not found. Skipping sprint seeding.');
+        if (!president) {
+            console.log('President user not found. Skipping sprint seeding.');
             return;
         }
 
         const count = await this.repository.count();
+        if (count > 0) return;
 
-        if (count === 0) {
-            const today = new Date();
-            const nextMonth = new Date(today);
-            nextMonth.setMonth(today.getMonth() + 1);
+        const sprintsToCreate: SprintEntity[] = [];
 
-            const twoMonthsLater = new Date(today);
-            twoMonthsLater.setMonth(today.getMonth() + 2);
-
-            await this.repository.save([
+        for (const sprint of sprints) {
+            sprintsToCreate.push(
                 this.repository.create({
-                    name: 'Sprint 1',
-                    goal: 'Initial MVP Release',
-                    startDate: today,
-                    validationDate: nextMonth,
-                    endDate: twoMonthsLater,
-                    status: SprintStatus.ACTIVE,
-                    createdBy: admin,
+                    name: sprint.name,
+                    startDate: sprint.startDate,
+                    endDate: sprint.endDate,
+                    validationDate: sprint.validationDate,
+                    createdBy: { id: president.id },
+                    status: SprintStatus.COMPLETED
                 }),
-                this.repository.create({
-                    name: 'Sprint 2',
-                    goal: 'Feature Expansion',
-                    startDate: nextMonth,
-                    validationDate: twoMonthsLater,
-                    endDate: twoMonthsLater,
-                    status: SprintStatus.PLANNED,
-                    createdBy: admin,
-                }),
-            ]);
+            );
+        }
+
+        if (sprintsToCreate.length) {
+            await this.repository.save(sprintsToCreate);
         }
     }
 }

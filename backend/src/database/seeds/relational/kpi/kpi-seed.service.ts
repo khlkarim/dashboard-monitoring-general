@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { KpiEntity } from '../../../../kpis/infrastructure/persistence/relational/entities/kpi.entity';
 import { UserEntity } from '../../../../users/infrastructure/persistence/relational/entities/user.entity';
-import { SprintEntity } from '../../../../sprints/infrastructure/persistence/relational/entities/sprint.entity';
 import { RoleEnum } from '../../../../roles/roles.enum';
 import { ProcessusEntity } from '../../../../processus/infrastructure/persistence/relational/entities/processus.entity';
+import { kpis } from '../data/kpis';
 
 @Injectable()
 export class KpiSeedService {
@@ -14,8 +14,6 @@ export class KpiSeedService {
         private repository: Repository<KpiEntity>,
         @InjectRepository(UserEntity)
         private userRepository: Repository<UserEntity>,
-        @InjectRepository(SprintEntity)
-        private sprintRepository: Repository<SprintEntity>,
         @InjectRepository(ProcessusEntity)
         private processusRepository: Repository<ProcessusEntity>,
     ) { }
@@ -30,39 +28,37 @@ export class KpiSeedService {
             return;
         }
 
-        const sprint = await this.sprintRepository.findOne({ where: {} });
-        const processus = await this.processusRepository.findOne({ where: {} });
-
         const count = await this.repository.count();
+        if (count > 0) return;
 
-        if (count === 0) {
-            await this.repository.save([
-                this.repository.create({
-                    name: 'Response Time',
-                    description: 'Average response time for API requests in ms',
-                    sprint: sprint || null,
-                    manager: member,
-                    samplingRate: "Every 10 days",
-                    samples: [1, 2, 3, 4, 5],
+        const kpisToCreate: KpiEntity[] = [];
 
-                }),
-                this.repository.create({
-                    name: 'Customer Satisfaction',
-                    description: 'CSAT Score from 1 to 10',
-                    processus: processus || null,
-                    manager: member,
-                    samplingRate: "Every month",
-                    samples: [1, 2, 3, 4, 5],
-                }),
-                this.repository.create({
-                    name: 'Bug Fix Rate',
-                    description: 'Number of bugs fixed per week',
-                    processus: processus || null,
-                    manager: member,
-                    samplingRate: "Every week",
-                    samples: [1, 2, 3, 4, 5],
-                }),
-            ]);
+        for (const [processusLabel, processusData] of Object.entries(kpis)) {
+            const processus = await this.processusRepository.findOne({
+                where: {
+                    label: processusLabel
+                }
+            });
+
+            for (const kpi of processusData.kpis) {
+                kpisToCreate.push(
+                    this.repository.create({
+                        name: kpi.name,
+                        description: kpi.description,
+                        sampleDates: kpi.sampleDates,
+                        targetSamples: kpi.targetSamples?.slice(0, kpi.sampleDates?.length),
+                        samples: kpi.samples?.slice(0, kpi.sampleDates?.length),
+                        samplingMethod: kpi.samplingMethod,
+                        samplingRate: kpi.samplingRate,
+                        processus: { id: processus?.id },
+                        manager: { id: member.id }
+                    }),
+                );
+            }
+        }
+
+        if (kpisToCreate.length) {
+            await this.repository.save(kpisToCreate);
         }
     }
 }

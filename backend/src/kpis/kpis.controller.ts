@@ -160,10 +160,10 @@ export class KpisController {
   async update(
     @Param('id') id: string,
     @Body() updateKpiDto: UpdateKpiDto,
-    @Request() request,
+    // @Request() request,
   ) {
     // If user is Member, check if they are the creator
-    if (request.user.role.id === RoleEnum.MEMBER) {
+    /*if (request.user.role.id === RoleEnum.MEMBER) {
       const kpi = await this.kpisService.findById(id);
       if (!kpi) {
         throw new NotFoundException('KPI not found');
@@ -171,7 +171,7 @@ export class KpisController {
       if (kpi.manager.id !== request.user.id) {
         throw new ForbiddenException('You can only update KPIs managed by you');
       }
-    }
+    }*/
     return this.kpisService.update(id, updateKpiDto);
   }
 

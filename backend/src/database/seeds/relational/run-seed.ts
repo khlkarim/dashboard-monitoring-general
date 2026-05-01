@@ -34,7 +34,7 @@ const runSeed = async () => {
   await app.get(ActivitySeedService).run();
 
   // Run task statistics seed for comprehensive testing
-  await app.get(TaskStatisticsSeedService).run();
+  // await app.get(TaskStatisticsSeedService).run();
 
   await app.close();
 };

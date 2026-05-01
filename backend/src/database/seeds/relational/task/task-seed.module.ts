@@ -6,9 +6,10 @@ import { SprintEntity } from '../../../../sprints/infrastructure/persistence/rel
 import { SkillEntity } from '../../../../skills/infrastructure/persistence/relational/entities/skill.entity';
 import { TaskSeedService } from './task-seed.service';
 import { TaskStatisticsSeedService } from './task-statistics-seed.service';
+import { ProcessusEntity } from 'src/processus/infrastructure/persistence/relational/entities/processus.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([TaskEntity, UserEntity, SprintEntity, SkillEntity])],
+    imports: [TypeOrmModule.forFeature([TaskEntity, UserEntity, SprintEntity, SkillEntity, ProcessusEntity])],
     providers: [TaskSeedService, TaskStatisticsSeedService],
     exports: [TaskSeedService, TaskStatisticsSeedService],
 })

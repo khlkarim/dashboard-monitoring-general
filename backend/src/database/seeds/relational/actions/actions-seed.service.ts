@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { ActionEntity } from '../../../../actions/infrastructure/persistence/relational/entities/action.entity';
 import { RiskEntity } from '../../../../risks/infrastructure/persistence/relational/entities/risk.entity';
 import { ActionType } from 'src/actions/domain/action-type.enum';
+import { risks } from '../data/risks';
 
 @Injectable()
 export class ActionsSeedService {
@@ -15,27 +16,39 @@ export class ActionsSeedService {
     ) { }
 
     async run() {
-        const risks = await this.riskRepository.find();
+        const count = await this.repository.count();
+        if (count > 0) return;
 
-        for (const risk of risks) {
-            const actions = await this.repository.find({ where: { risk: { id: risk.id } } });
-            if (actions.length > 0) {
-                continue;
+        const actionsToCreate: ActionEntity[] = [];
+
+        for (const [processusLabel, processusData] of Object.entries(risks)) {
+            for (const riskData of processusData.risks) {
+                const risk = await this.riskRepository.findOne({ where: { title: riskData.title } });
+
+                for (const action of riskData.actions) {
+                    let actionType = ActionType.CORRECTIVE;
+                    if (action.type === 'PREVENTIVE') {
+                        actionType = ActionType.PREVENTIVE;
+                    }
+                    if (action.type === 'MESUREMENT_METHOD') {
+                        actionType = ActionType.MESUREMENT_METHOD;
+                    }
+
+                    actionsToCreate.push(
+                        this.repository.create({
+                            title: action.title,
+                            description: action.description,
+                            type: actionType,
+                            risk: { id: risk?.id }
+                        }),
+                    );
+                }
+
             }
-            await this.repository.save([
-                this.repository.create({
-                    title: 'Action 1',
-                    description: 'Description 1',
-                    type: ActionType.PREVENTIVE,
-                    risk,
-                }),
-                this.repository.create({
-                    title: 'Action 2',
-                    description: 'Description 2',
-                    type: ActionType.CORRECTIVE,
-                    risk,
-                }),
-            ]);
+        }
+
+        if (actionsToCreate.length) {
+            await this.repository.save(actionsToCreate);
         }
     }
 }

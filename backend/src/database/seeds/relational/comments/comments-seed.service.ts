@@ -16,25 +16,5 @@ export class CommentsSeedService {
     private userRepository: Repository<UserEntity>,
   ) { }
 
-  async run() {
-    const user = await this.userRepository.findOneBy({});
-    const tasks = await this.taskRepository.find();
-
-    if (!user || tasks.length === 0) {
-      return;
-    }
-
-    const count = await this.repository.count();
-
-    if (count === 0) {
-      for (const task of tasks) {
-        const comment = this.repository.create({
-          content: 'Comment for task ' + task.id,
-          task,
-          author: user,
-        });
-        await this.repository.save(comment);
-      }
-    }
-  }
+  async run() { }
 }
